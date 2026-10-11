@@ -72,12 +72,18 @@ umbrellapwa/
 
 ## Publicar una nueva version
 
-1. Sube `APP_VERSION` en `includes/config.php` (rompe el cache de css/js con `?v=`).
-2. Sube `CACHE_VERSION` en `sw.js`.
-3. Si agregas archivos que deben funcionar offline, agregalos a `PRECACHE` en `sw.js`.
+- **CSS y JS**: no hay que hacer nada. `asset()` agrega `?v=<fecha de modificacion>`
+  a cada archivo, asi que al cambiar un archivo cambia su URL y todos reciben la
+  version nueva en la siguiente carga (el service worker no puede servir la vieja).
+- **Paginas PHP**: siempre se piden a la red; nunca quedan en cache.
+- **Archivos sin `?v=`** (iconos, manifest): se actualizan en segundo plano.
+- **`sw.js`**: si lo cambias, los usuarios veran el aviso **"Hay una nueva version
+  disponible"** y al tocar **Actualizar** se activa. Sube `CACHE_VERSION` solo si
+  cambias la lista `PRECACHE` o quieres vaciar todo el cache.
+- `APP_VERSION` en `includes/config.php` es solo el numero que se muestra en la app.
 
-Los usuarios veran el aviso **"Hay una nueva version disponible"** y al tocar
-**Actualizar** se carga la version nueva.
+Durante el desarrollo, en Chrome DevTools -> Application -> Service Workers activa
+**Update on reload** para no depender del cache.
 
 ## Regenerar iconos y splash
 

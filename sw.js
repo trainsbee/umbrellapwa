@@ -5,14 +5,18 @@
  *  - Paginas (navegacion): red primero. Si no hay conexion -> offline.html.
  *    Las paginas PHP NO se guardan en cache para no dejar datos privados
  *    en el dispositivo.
- *  - Assets estaticos (css, js, iconos, fuentes, imagenes): se sirven desde
- *    cache y se actualizan en segundo plano (stale-while-revalidate).
+ *  - Assets con ?v= (css y js del HTML, ver asset() en config.php): la URL
+ *    cambia cuando cambia el archivo, asi que se tratan como inmutables:
+ *    cache si ya esta esa version exacta; si no, red (y se borran las
+ *    versiones viejas). Sin conexion se usa la ultima copia guardada.
+ *  - Otros assets estaticos (iconos, manifest): cache y actualizacion en
+ *    segundo plano (stale-while-revalidate).
  *
- * Al publicar cambios en assets, sube CACHE_VERSION para que los
- * usuarios reciban la nueva version.
+ * CACHE_VERSION solo hay que subirlo para cambiar la lista PRECACHE o
+ * limpiar todo el cache.
  */
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
 const OFFLINE_URL = 'offline.html';
 
@@ -76,7 +80,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   if (/\.(css|js|png|jpg|jpeg|svg|webp|ico|woff2?|webmanifest)$/.test(url.pathname)) {
-    event.respondWith(staleWhileRevalidate(event));
+    event.respondWith(url.searchParams.has('v') ? versionedAsset(event) : staleWhileRevalidate(event));
   }
 });
 
@@ -91,9 +95,36 @@ async function networkFirstPage(event) {
   }
 }
 
+async function versionedAsset(event) {
+  const cache = await caches.open(STATIC_CACHE);
+  const exact = await cache.match(event.request);
+  if (exact) return exact;
+
+  try {
+    const res = await fetch(event.request);
+    if (res.ok) {
+      await deleteOtherVersions(cache, event.request.url);
+      await cache.put(event.request, res.clone());
+    }
+    return res;
+  } catch (err) {
+    // Sin conexion: la ultima copia de ese archivo, sea cual sea su version.
+    return (await cache.match(event.request, { ignoreSearch: true })) || Response.error();
+  }
+}
+
+async function deleteOtherVersions(cache, url) {
+  const path = new URL(url).pathname;
+  const keys = await cache.keys();
+  await Promise.all(
+    keys
+      .filter((req) => req.url !== url && new URL(req.url).pathname === path)
+      .map((req) => cache.delete(req))
+  );
+}
+
 async function staleWhileRevalidate(event) {
   const cache = await caches.open(STATIC_CACHE);
-  // ignoreSearch: los assets llevan ?v=APP_VERSION en el HTML
   const cached = await cache.match(event.request, { ignoreSearch: true });
   const network = fetch(event.request)
     .then((res) => {

@@ -29,8 +29,14 @@ function e(string $value): string
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
 }
 
-/** URL de un asset con ?v= para romper cache al cambiar de version. */
+/**
+ * URL de un asset con ?v=<fecha de modificacion>. Cada vez que el archivo
+ * cambia, su URL cambia sola y ni el navegador ni el service worker
+ * pueden servir la copia vieja.
+ */
 function asset(string $path): string
 {
-    return $path . '?v=' . APP_VERSION;
+    $file = dirname(__DIR__) . '/' . ltrim($path, '/');
+    $version = is_file($file) ? (string) filemtime($file) : APP_VERSION;
+    return $path . '?v=' . $version;
 }
