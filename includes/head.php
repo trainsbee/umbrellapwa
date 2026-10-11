@@ -40,5 +40,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <meta name="msapplication-TileColor" content="<?= e(THEME_COLOR) ?>">
 <meta name="msapplication-TileImage" content="assets/icons/icon-144.png">
 <meta name="msapplication-tap-highlight" content="no">
+
+<link rel="stylesheet" href="<?= e(asset('assets/css/app.css')) ?>">
 </head>
 <body>

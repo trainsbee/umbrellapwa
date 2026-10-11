@@ -19,6 +19,7 @@ const OFFLINE_URL = 'offline.html';
 const PRECACHE = [
   OFFLINE_URL,
   'manifest.webmanifest',
+  'assets/css/app.css',
   'assets/js/app.js',
   'assets/js/pwa/register-sw.js',
   'assets/js/pwa/install.js',
