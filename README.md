@@ -1,1 +1,79 @@
-# umbrellawpa
+# UmbrellaApp
+
+PWA (Progressive Web App) en PHP, instalable en iPhone, iPad, Android, Windows y macOS.
+
+## Requisitos
+
+- PHP 8.1+ con la extension GD (solo para regenerar iconos y splash)
+- Apache con `mod_rewrite`, `mod_headers`, `mod_mime` y `mod_deflate` (XAMPP ya los trae)
+
+## Correr en local
+
+Con XAMPP encendido, abre <http://localhost/umbrellapwa/>.
+
+`localhost` cuenta como origen seguro, asi que el service worker funciona sin HTTPS.
+Para probar desde un telefono en la red local **se necesita HTTPS**: usa un tunel
+(por ejemplo `cloudflared tunnel --url http://localhost` o `ngrok http 80`) o un
+certificado local con `mkcert`.
+
+## Estructura
+
+```
+umbrellapwa/
+├── index.php               Pagina de inicio
+├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
+├── sw.js                   Service worker (cache y modo offline)
+├── offline.html            Pagina que se muestra sin conexion
+├── .htaccess               MIME, cache, compresion y seguridad
+├── includes/               Partes PHP (bloqueado desde el navegador)
+│   ├── config.php          Nombre, version y colores de la app
+│   ├── head.php            <head> con todos los meta tags PWA
+│   ├── footer.php          Scripts y cierre del documento
+│   ├── install-sheet.php   Hoja "Instalar app"
+│   └── splash-links.php    Generado: enlaces de splash de iOS
+├── assets/
+│   ├── css/app.css         Estilos base
+│   ├── js/app.js           JS de la app
+│   ├── js/pwa/             Registro del SW e instalacion
+│   ├── icons/              Favicon, iconos Apple/Android/Windows
+│   ├── splash/             Splash screens de iOS / iPadOS
+│   ├── img/                Imagenes
+│   └── fonts/              Fuentes
+└── tools/                  Generadores (bloqueado desde el navegador)
+```
+
+## Soporte por plataforma
+
+| Plataforma | Como se instala | Que usa |
+|---|---|---|
+| Android (Chrome, Edge, Samsung) | Boton "Instalar" (dialogo nativo) | manifest, iconos maskable |
+| Windows (Edge, Chrome) | Boton "Instalar" o icono en la barra de direcciones | manifest, `msapplication-*` |
+| macOS (Chrome, Edge) | Boton "Instalar" | manifest |
+| macOS (Safari 17+) | Instrucciones: Archivo -> Agregar al Dock | `apple-touch-icon` |
+| iPhone / iPad | Instrucciones: Compartir -> Agregar a inicio | `apple-*` meta, splash screens |
+
+## Publicar una nueva version
+
+1. Sube `APP_VERSION` en `includes/config.php` (rompe el cache de css/js con `?v=`).
+2. Sube `CACHE_VERSION` en `sw.js`.
+3. Si agregas archivos que deben funcionar offline, agregalos a `PRECACHE` en `sw.js`.
+
+Los usuarios veran el aviso **"Hay una nueva version disponible"** y al tocar
+**Actualizar** se carga la version nueva.
+
+## Regenerar iconos y splash
+
+El logo esta dibujado en `tools/brand.php`. Despues de cambiarlo:
+
+```bash
+php tools/generate-icons.php
+php tools/generate-splash.php
+```
+
+`favicon.svg` se edita a mano.
+
+## Secretos
+
+Nunca pongas API keys ni contrasenas en archivos versionados. Usa
+`includes/config.local.php` (esta en `.gitignore`); `config.php` lo carga
+automaticamente si existe.
