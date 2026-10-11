@@ -178,17 +178,7 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .landing-muted { color: var(--text-3); }
 .landing-heading .landing-subtitle { margin-left: 0; }
 
-/* Feature cards */
-.landing-bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.landing-card, .landing-device {
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  transition: border-color .2s;
-}
-.landing-card:hover, .landing-device:hover { border-color: var(--border-3); }
-.landing-card--large { grid-column: span 2; grid-row: span 2; display: flex; flex-direction: column; }
+/* Icon tile (devices) */
 .landing-card-icon {
   display: inline-grid; place-items: center;
   width: 36px; height: 36px; margin-bottom: 16px;
@@ -197,10 +187,6 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
   border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
   border-radius: 10px;
 }
-.landing-card h3, .landing-device h3 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.landing-card p, .landing-device p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--text-2); }
-.landing-card--large h3 { font-size: 22px; }
-.landing-card--large p { font-size: 15px; max-width: 420px; }
 
 /* ---------- Live panel ---------- */
 .landing-live {
@@ -234,7 +220,6 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 
 /* Line charts */
 .landing-chart { display: block; width: 100%; height: 220px; overflow: visible; }
-.landing-mini-chart .landing-chart { height: 150px; }
 .landing-chart-guide { stroke: var(--border); stroke-width: 1; stroke-dasharray: 4 6; vector-effect: non-scaling-stroke; }
 /* No vector-effect here: with non-scaling-stroke Chrome measures the stroke
    in pixels and pathLength stops being 1000 (lines never reached the end). */
@@ -309,10 +294,77 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .event-signed    { --event-color: var(--l-green); }
 .event-compliance { --event-color: var(--accent); }
 
-/* Notification and pillar cards */
-.landing-events { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
-.landing-pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.landing-technology .landing-pillars { margin-bottom: 32px; }
+/* ---------- Platform hub ---------- */
+/* Umbrella sits on top and every area hangs from it. On wide screens the
+   connecting curves are drawn by landing.js; on narrow screens a CSS trunk
+   runs down the middle instead. */
+.landing-hub { position: relative; }
+.landing-hub-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.landing-hub-line { fill: none; stroke: var(--border-2); stroke-width: 1.5; }
+.landing-hub-flow {
+  fill: none; stroke: var(--l-teal); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 24 1000; stroke-dashoffset: 1024;
+  animation: landing-hub-flow 2.8s linear infinite;
+}
+.landing-hub-flow:nth-of-type(4n+2) { stroke: var(--l-lilac); animation-delay: -.7s; }
+.landing-hub-flow:nth-of-type(4n+3) { animation-delay: -1.4s; }
+.landing-hub-flow:nth-of-type(4n)   { stroke: var(--l-green); animation-delay: -2.1s; }
+@keyframes landing-hub-flow { to { stroke-dashoffset: 0; } }
+
+.landing-hub-core {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  width: max-content; margin: 0 auto 88px;
+}
+.landing-hub-core .landing-app-icon { width: 76px; height: 76px; border-radius: 22px; }
+.landing-hub-name { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
+
+.landing-hub-branches { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.landing-branch { position: relative; align-self: start; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+/* Vertical line through each branch with a light falling down it */
+.landing-branch::before {
+  content: ""; position: absolute; top: 18px; bottom: 18px; left: 50%; width: 1px;
+  background: var(--border-2);
+}
+.landing-branch::after {
+  content: ""; position: absolute; top: 18px; left: calc(50% - .5px); width: 1px; height: 40px;
+  background: linear-gradient(transparent, var(--l-teal), transparent);
+  animation: landing-fall 3.2s linear infinite;
+  animation-delay: calc(var(--branch) * -.6s);
+}
+/* The light travels the exact height of each branch, whatever its length */
+@keyframes landing-fall { from { top: 18px; opacity: 1; } 85% { opacity: 1; } to { top: calc(100% - 58px); opacity: 0; } }
+
+.landing-branch-title {
+  position: relative; z-index: 1;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  font-size: 14px; font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  border-radius: 999px;
+}
+.landing-branch-title .icon { color: var(--accent); }
+.landing-branch-nodes { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+/* Module / feature chip: icon + name, nothing else */
+.landing-node {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 6px 12px;
+  font-size: 13px; font-weight: 500; white-space: nowrap;
+  color: var(--text-2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  transition: border-color .2s, color .2s;
+}
+.landing-node:hover { color: var(--text); border-color: var(--border-3); }
+.landing-node .icon { color: var(--text-3); }
+.landing-node--large { padding: 10px 16px; font-size: 14px; }
+.landing-node--large .icon { color: var(--accent); }
+.landing-chips { list-style: none; margin: 0 auto 32px; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 860px; }
+
 .landing-trainsbee-link {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 14px; font-weight: 500; color: var(--text); text-decoration: none;
@@ -321,91 +373,14 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
   transition: border-color .15s, color .15s;
 }
 .landing-trainsbee-link:hover { color: var(--l-teal); border-color: var(--l-teal); }
-.landing-events .landing-card-icon {
-  color: var(--event-color);
-  background: color-mix(in srgb, var(--event-color) 12%, transparent);
-  border-color: color-mix(in srgb, var(--event-color) 28%, transparent);
-}
-.landing-mini-chart { margin-top: auto; padding-top: 24px; }
 
-/* ---------- By the numbers ---------- */
-.landing-stats {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
-  margin-top: -40px; margin-bottom: 24px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  overflow: hidden;
-  padding: 0;
-}
-.landing-stats div { display: flex; flex-direction: column; gap: 6px; padding: 24px; background: var(--panel); }
-.landing-stats strong {
-  font-size: clamp(28px, 4vw, 40px); font-weight: 700; letter-spacing: -.03em; line-height: 1;
-  background: linear-gradient(90deg, var(--l-lilac), var(--l-teal));
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-}
-:root[data-theme="light"] .landing-stats strong { background-image: linear-gradient(90deg, var(--accent), #14a396); }
-.landing-stats span { font-size: 13px; line-height: 1.5; color: var(--text-2); }
-
-/* ---------- Pipeline ---------- */
-.landing-pipeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; counter-reset: stage; }
-.landing-stage {
-  position: relative; overflow: hidden;
-  display: flex; flex-direction: column;
-  padding: 22px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  transition: border-color .2s;
-}
-.landing-stage:hover { border-color: var(--border-3); }
-/* A light travels along the top edge of each stage, one after another */
-.landing-stage::before {
-  content: ""; position: absolute; top: 0; left: -40%; width: 40%; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--l-teal), transparent);
-  animation: landing-travel 6s linear infinite;
-  animation-delay: calc(var(--stage) * 1s);
-}
-@keyframes landing-travel { 0% { left: -40%; } 16%, 100% { left: 100%; } }
-.landing-stage-step {
-  position: absolute; top: 18px; right: 18px;
-  font-size: 12px; font-weight: 600; color: var(--text-3);
-  font-variant-numeric: tabular-nums;
-}
-.landing-stage h3 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
-.landing-stage p { margin: 6px 0 16px; font-size: 14px; line-height: 1.55; color: var(--text-2); }
-.landing-stage-statuses { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; }
-
-/* Status chip (pipeline, coaching) */
-.landing-status {
-  padding: 2px 8px;
-  font-size: 11px; font-weight: 600; letter-spacing: .02em; text-transform: uppercase;
-  color: var(--text-2);
-  border: 1px solid var(--border-2);
-  border-radius: 6px;
-}
-.landing-status--ok { color: var(--l-green); border-color: color-mix(in srgb, var(--l-green) 40%, transparent); }
-.landing-status--fail { color: var(--l-rose); border-color: color-mix(in srgb, var(--l-rose) 40%, transparent); }
-
-/* ---------- QA coaching demo ---------- */
-.landing-coaching { display: flex; flex-direction: column; gap: 8px; margin-top: auto; padding-top: 24px; }
-.landing-coaching-row {
-  display: flex; align-items: center; gap: 12px;
-  padding: 10px 12px;
-  font-size: 13px; color: var(--text-2);
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-}
-.landing-coaching-row > span:nth-child(2) { flex: 1; min-width: 0; }
-.landing-coaching-time { flex: none; font-size: 12px; font-weight: 600; color: var(--l-teal); font-variant-numeric: tabular-nums; }
-
-/* ---------- Automation ---------- */
-.landing-two-columns.landing-automation { align-items: start; }
+/* ---------- Agent monitor ---------- */
+.landing-team { margin-top: 64px; }
 .landing-monitor { background: var(--surface); border: 1px solid var(--border-2); border-radius: 18px; overflow: hidden; }
 .landing-monitor-list { list-style: none; margin: 0; padding: 8px 14px 14px; }
 .landing-monitor-list li { display: flex; align-items: center; gap: 12px; padding: 10px 0; }
 .landing-monitor-list li + li { border-top: 1px solid var(--border); }
+.landing-mini-avatar { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border-2); }
 .landing-monitor-name { flex: 1; display: flex; flex-direction: column; }
 .landing-monitor-name strong { font-size: 13px; font-weight: 600; }
 .landing-monitor-name small { font-size: 12px; color: var(--text-3); }
@@ -426,75 +401,24 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .state-call i, .state-ringing i { animation: landing-blink 1.4s ease-in-out infinite; }
 @keyframes landing-blink { 50% { opacity: .25; } }
 
-.landing-automation-list { display: flex; flex-direction: column; gap: 10px; }
-.landing-automation-item {
-  display: flex; gap: 14px; align-items: flex-start;
-  padding: 16px 18px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: border-color .2s;
-}
-.landing-automation-item:hover { border-color: var(--border-3); }
-.landing-automation-item .landing-card-icon { flex: none; width: 32px; height: 32px; margin: 0; }
-.landing-automation-item h3 { font-size: 15px; font-weight: 600; letter-spacing: -.01em; }
-.landing-automation-item p { margin: 4px 0 0; font-size: 13px; line-height: 1.55; color: var(--text-2); }
-
 /* Two columns: text + visual */
 .landing-two-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
 .landing-two-columns .landing-heading { margin-bottom: 0; }
 
-/* CSS-only phone mockup */
-.landing-phone {
-  position: relative; justify-self: center;
-  width: 260px; height: 530px;
-  display: flex; flex-direction: column;
-  background: var(--bg);
-  border: 1px solid var(--border-3);
-  border-radius: 40px;
-  padding: 14px 12px 10px;
-  overflow: hidden;
-}
-.landing-phone-island { width: 84px; height: 22px; margin: 0 auto 12px; border-radius: 999px; background: var(--surface-2); }
-.landing-phone-bar { display: grid; grid-template-columns: 26px 1fr 26px; align-items: center; margin-bottom: 14px; }
-.landing-mini-circle { width: 26px; height: 26px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border-2); }
-.landing-mini-title { text-align: center; font-size: 12px; font-weight: 600; }
-.landing-phone-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
-.landing-mini-card, .landing-mini-group { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
-.landing-mini-card { display: flex; align-items: center; gap: 10px; padding: 10px; }
-.landing-mini-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--surface-2); border: 1px solid var(--border-2); }
-.landing-mini-lines { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-.landing-mini-lines i, .landing-mini-row i { display: block; height: 6px; border-radius: 3px; background: var(--surface-2); }
-.landing-mini-lines i:first-child { width: 60%; background: var(--border-3); }
-.landing-mini-lines i:last-child { width: 40%; }
-.landing-mini-group { padding: 0 10px; }
-.landing-mini-row { display: flex; align-items: center; gap: 10px; height: 32px; }
-.landing-mini-row + .landing-mini-row { border-top: 1px solid var(--border); }
-.landing-mini-row i { flex: 1; max-width: 55%; }
-.landing-mini-icon { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid var(--text-2); }
-.landing-mini-group:first-of-type .landing-mini-row:first-child .landing-mini-icon { border-color: var(--accent); }
-.landing-mini-group:first-of-type .landing-mini-row:first-child i { background: color-mix(in srgb, var(--accent) 45%, transparent); }
-.landing-phone-nav { display: flex; justify-content: space-around; padding: 12px 6px 6px; margin: 10px -12px -10px; border-top: 1px solid var(--border); background: var(--panel); }
-.landing-phone-nav i { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--text-3); }
-.landing-phone-nav i.active { border-color: var(--accent); }
-
 /* Devices */
+.landing-device {
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  transition: border-color .2s;
+}
+.landing-device:hover { border-color: var(--border-3); }
+.landing-device h3 { font-size: 16px; font-weight: 600; letter-spacing: -.01em; }
+.landing-device p { margin: 6px 0 0; font-size: 14px; line-height: 1.55; color: var(--text-2); }
 .landing-devices { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; }
 .landing-device { text-align: center; }
 .landing-device .landing-card-icon { margin-left: auto; margin-right: auto; }
-
-/* Security */
-.landing-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
-.landing-list li { display: flex; gap: 14px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
-.landing-list strong { font-size: 15px; font-weight: 600; }
-.landing-list p { margin: 4px 0 0; font-size: 14px; color: var(--text-2); }
-.landing-check {
-  display: grid; place-items: center; flex: none;
-  width: 24px; height: 24px; margin-top: 1px;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent) 12%, transparent);
-  border-radius: 50%;
-}
 
 /* Closing CTA */
 .landing-final { padding-bottom: 120px; }
@@ -545,30 +469,31 @@ body.landing .landing-footer { padding-bottom: calc(96px + var(--safe-bottom)); 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
   .landing-discover .icon, .landing-live-dot::after, .landing-pulse, .landing-dot,
-  .landing-aurora i, .landing-gradient, .landing-stage::before, .landing-agent-state i { animation: none !important; }
+  .landing-aurora i, .landing-gradient, .landing-agent-state i, .landing-hub-flow, .landing-branch::after { animation: none !important; }
   .landing-line { stroke-dashoffset: 0; animation: none !important; }
 }
 
+
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .landing-stats { grid-template-columns: 1fr 1fr; }
-  .landing-pipeline { grid-template-columns: 1fr 1fr; }
+@media (max-width: 999px) {
+  /* The hub becomes a vertical trunk with every area hanging from it */
+  .landing-hub-lines { display: none; }
+  .landing-hub-core { margin-bottom: 28px; }
+  .landing-hub-branches { grid-template-columns: 1fr; gap: 28px; }
+  .landing-hub-branches::before {
+    content: ""; position: absolute; top: -28px; bottom: 0; left: 50%; width: 1px;
+    background: linear-gradient(var(--border-2) 85%, transparent);
+  }
+  .landing-branch::before, .landing-branch::after { display: none; }
+  .landing-branch-nodes { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 560px; }
   .landing-live-body { grid-template-columns: 1fr; }
   .landing-feed { border-left: 0; border-top: 1px solid var(--border); }
-  .landing-events, .landing-pillars { grid-template-columns: 1fr 1fr; }
-  .landing-bento { grid-template-columns: 1fr 1fr; }
   .landing-devices { grid-template-columns: repeat(3, 1fr); }
-  .landing-two-columns { grid-template-columns: 1fr; gap: 40px; }
+  .landing-two-columns { grid-template-columns: 1fr; gap: 32px; }
 }
 @media (max-width: 600px) {
   .landing-section { padding: 72px 0; }
-  .landing-stats { margin-top: 0; margin-left: 20px; margin-right: 20px; width: auto; }
-  .landing-stats div { padding: 18px; }
-  .landing-pipeline { grid-template-columns: 1fr; }
-  .landing-events, .landing-pillars { grid-template-columns: 1fr; }
   .landing-chart { height: 170px; }
-  .landing-bento { grid-template-columns: 1fr; }
-  .landing-card--large { grid-column: auto; grid-row: auto; }
   .landing-devices { grid-template-columns: 1fr 1fr; }
   .landing-device:last-child { grid-column: span 2; }
 }

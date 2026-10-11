@@ -117,4 +117,50 @@
       start();
     }
   }
+
+  // Platform hub: on wide screens, draw a curve from the Umbrella logo down to
+  // each area, with a pulse of light flowing along it. Narrow screens use the
+  // CSS trunk instead (see landing.css).
+  var hub = document.querySelector('[data-landing-hub]');
+  if (hub) {
+    var SVG_NS = 'http://www.w3.org/2000/svg';
+    var svg = hub.querySelector('[data-landing-hub-lines]');
+    var core = hub.querySelector('[data-landing-hub-core]');
+    var targets = hub.querySelectorAll('[data-landing-hub-target]');
+
+    var makePath = function (d, className) {
+      var path = document.createElementNS(SVG_NS, 'path');
+      path.setAttribute('d', d);
+      path.setAttribute('class', className);
+      path.setAttribute('pathLength', '1000');
+      return path;
+    };
+
+    var drawHub = function () {
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      if (window.innerWidth < 1000) return;
+      var box = hub.getBoundingClientRect();
+      var from = core.getBoundingClientRect();
+      var x1 = from.left + from.width / 2 - box.left;
+      var y1 = from.bottom - box.top + 6;
+      var flows = [];
+      targets.forEach(function (target) {
+        var to = target.getBoundingClientRect();
+        var x2 = to.left + to.width / 2 - box.left;
+        var y2 = to.top - box.top;
+        var mid = y1 + (y2 - y1) / 2;
+        var d = 'M' + x1 + ' ' + y1 + ' C' + x1 + ' ' + mid + ', ' + x2 + ' ' + mid + ', ' + x2 + ' ' + y2;
+        svg.appendChild(makePath(d, 'landing-hub-line'));
+        flows.push(makePath(d, 'landing-hub-flow'));
+      });
+      // Pulses go on top of every base line
+      flows.forEach(function (flow) { svg.appendChild(flow); });
+    };
+
+    drawHub();
+    if ('ResizeObserver' in window) new ResizeObserver(drawHub).observe(hub);
+    else window.addEventListener('resize', drawHub);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(drawHub);
+  }
 })();
+
