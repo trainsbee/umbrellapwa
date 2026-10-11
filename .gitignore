@@ -13,7 +13,7 @@ Thumbs.db
 includes/config.local.php
 
 # Dependencias / builds
-node_modules/
-vendor/
+/node_modules/
+/vendor/
 *.zip
 *.log
