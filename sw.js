@@ -21,6 +21,7 @@ const PRECACHE = [
   'manifest.webmanifest',
   'assets/js/app.js',
   'assets/js/pwa/register-sw.js',
+  'assets/js/pwa/install.js',
   'assets/icons/favicon.svg',
   'assets/icons/icon-192.png',
   'assets/icons/icon-512.png',

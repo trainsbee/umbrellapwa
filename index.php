@@ -9,5 +9,6 @@ require __DIR__ . '/includes/head.php';
 <main class="app">
   <h1><?= e(APP_NAME) ?></h1>
   <p>Base PWA lista. Version <?= e(APP_VERSION) ?>.</p>
+  <button type="button" class="btn-primary" data-pwa-install hidden>Instalar app</button>
 </main>
 <?php require __DIR__ . '/includes/footer.php'; ?>
