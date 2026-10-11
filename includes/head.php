@@ -34,6 +34,7 @@ $pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <meta name="apple-mobile-web-app-title" content="<?= e(APP_SHORT_NAME) ?>">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="format-detection" content="telephone=no">
+<?php require __DIR__ . '/splash-links.php'; ?>
 
 <!-- Windows (tiles del menu inicio) -->
 <meta name="msapplication-TileColor" content="<?= e(THEME_COLOR) ?>">
