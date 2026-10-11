@@ -21,6 +21,15 @@ $pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="<?= e(THEME_COLOR) ?>">
 <meta name="color-scheme" content="dark light">
+<script>
+  // Aplica el tema guardado antes de pintar (evita el parpadeo).
+  try {
+    if (localStorage.getItem('umbrella-theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f6f7');
+    }
+  } catch (e) {}
+</script>
 <meta name="application-name" content="<?= e(APP_NAME) ?>">
 <meta name="mobile-web-app-capable" content="yes">
 

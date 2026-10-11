@@ -42,6 +42,24 @@
   --safe-left: env(safe-area-inset-left, 0px);
 }
 
+/* Tema claro: <html data-theme="light">. El oscuro es el predeterminado. */
+:root[data-theme="light"] {
+  --fondo: #f6f6f7;
+  --panel: #ffffff;
+  --superficie: #ffffff;
+  --superficie-2: #f1f1f3;
+  --borde: rgba(16, 24, 40, .08);
+  --borde-2: rgba(16, 24, 40, .13);
+  --borde-3: rgba(16, 24, 40, .22);
+  --texto: #17181a;
+  --suave: #5f646d;
+  --tenue: #9aa0a6;
+  --sombra-btn: 0 1px 2px rgba(16, 24, 40, .08), inset 0 -1px 0 rgba(16, 24, 40, .05);
+  --sombra-tarjeta: 0 1px 2px rgba(16, 24, 40, .04);
+  color-scheme: light;
+}
+:root { color-scheme: dark; --sombra-tarjeta: none; }
+
 *, *::before, *::after { box-sizing: border-box; }
 
 [hidden] { display: none !important; }
@@ -274,6 +292,7 @@ i.icon[width="22"] { width: 22px; height: 22px; }
   border: 1px solid var(--borde-2); background: var(--superficie);
 }
 .aviso .icon { margin-top: 2px; }
+:root[data-theme="light"] .aviso--error { color: #c5221f; }
 .aviso--error { color: #f28b82; border-color: rgba(234, 67, 53, .35); background: rgba(234, 67, 53, .08); }
 
 /* ==================================================================
@@ -294,6 +313,7 @@ i.icon[width="22"] { width: 22px; height: 22px; }
   border-radius: 12px;
   box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
 }
+:root[data-theme="light"] .auth-card { box-shadow: 0 12px 32px rgba(16, 24, 40, .08); }
 .auth-brand { text-align: center; margin-bottom: 22px; }
 .auth-logo {
   display: inline-grid; place-items: center;
