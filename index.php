@@ -17,8 +17,8 @@ $pageCss = ['assets/css/landing.css'];
 $bodyClass = 'landing';
 $bodyAttrs = ['data-install-auto' => 'off'];
 
-// Everything that hangs from Umbrella: [group icon, group, [[icon, module], ...]]
-$hub = [
+// Everything Umbrella brings together, one area per row: [area icon, area, [[icon, module], ...]]
+$areas = [
     ['briefcase', 'Operations', [
         ['phone-call', 'Processing'], ['edit-3', 'Sales'], ['shield', 'Compliance'],
         ['clipboard', 'Enrollments'], ['repeat', 'Follow-up'], ['credit-card', 'Payments'],
@@ -123,24 +123,29 @@ require __DIR__ . '/includes/head.php';
         <h2>Everything your operation needs.<br><span class="landing-muted">In one place, 24/7.</span></h2>
       </div>
 
-      <div class="landing-hub reveal" data-landing-hub>
-        <svg class="landing-hub-lines" aria-hidden="true" data-landing-hub-lines></svg>
-        <div class="landing-hub-core" data-landing-hub-core>
-          <span class="landing-app-icon"><?= icon('logo', 30) ?></span>
-          <span class="landing-hub-name">Umbrella</span>
-          <span class="landing-live-pill"><i class="landing-live-dot"></i> 24/7</span>
-        </div>
-        <div class="landing-hub-branches">
-          <?php foreach ($hub as $i => [$groupIcon, $group, $modules]): ?>
-            <div class="landing-branch" style="--branch: <?= $i ?>">
-              <span class="landing-branch-title" data-landing-hub-target><?= icon($groupIcon, 15) ?> <?= e($group) ?></span>
-              <ul class="landing-branch-nodes">
-                <?php foreach ($modules as [$moduleIcon, $module]): ?>
-                  <li class="landing-node"><?= icon($moduleIcon, 14) ?> <?= e($module) ?></li>
+      <div class="landing-marquees reveal" aria-label="Everything Umbrella brings together">
+        <?php foreach ($areas as $row => [$groupIcon, $group, $modules]):
+            // Repeat the row until it is wide enough, then duplicate it so the loop is seamless
+            $items = [];
+            while (count($items) < 10) {
+                $items = array_merge($items, [[$groupIcon, $group, true]], array_map(fn ($m) => [$m[0], $m[1], false], $modules));
+            }
+        ?>
+          <div class="landing-marquee area-<?= $row ?><?= $row % 2 ? ' landing-marquee--reverse' : '' ?>" style="--duration: <?= 46 + $row * 7 ?>s">
+            <ul class="landing-marquee-track">
+              <?php foreach ([false, true] as $isCopy): ?>
+                <?php foreach ($items as [$itemIcon, $label, $isGroup]): ?>
+                  <li class="landing-node<?= $isGroup ? ' landing-node--group' : '' ?>"<?= $isCopy ? ' aria-hidden="true"' : '' ?>><?= icon($itemIcon, 14) ?> <?= e($label) ?></li>
                 <?php endforeach; ?>
-              </ul>
-            </div>
-          <?php endforeach; ?>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        <?php endforeach; ?>
+
+        <div class="landing-marquee-core" aria-hidden="true">
+          <span class="landing-marquee-glow"></span>
+          <span class="landing-app-icon"><?= icon('logo', 30) ?></span>
+          <span class="landing-live-pill"><i class="landing-live-dot"></i> 24/7</span>
         </div>
       </div>
     </div>

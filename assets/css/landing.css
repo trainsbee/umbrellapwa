@@ -294,59 +294,61 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .event-signed    { --event-color: var(--l-green); }
 .event-compliance { --event-color: var(--accent); }
 
-/* ---------- Platform hub ---------- */
-/* Umbrella sits on top and every area hangs from it. On wide screens the
-   connecting curves are drawn by landing.js; on narrow screens a CSS trunk
-   runs down the middle instead. */
-.landing-hub { position: relative; }
-.landing-hub-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
-.landing-hub-line { fill: none; stroke: var(--border-2); stroke-width: 1.5; }
-.landing-hub-flow {
-  fill: none; stroke: var(--l-teal); stroke-width: 2; stroke-linecap: round;
-  stroke-dasharray: 24 1000; stroke-dashoffset: 1024;
-  animation: landing-hub-flow 2.8s linear infinite;
+/* ---------- Platform: endless module rows ---------- */
+/* One row per area, scrolling forever in alternating directions behind a
+   glowing Umbrella logo. Edges fade out with a mask. */
+.landing-marquees {
+  position: relative;
+  display: flex; flex-direction: column; gap: 14px;
+  padding: 12px 0;
+  /* Full bleed: the rows run edge to edge, beyond the content width */
+  margin: 0 calc(50% - 50vw);
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-.landing-hub-flow:nth-of-type(4n+2) { stroke: var(--l-lilac); animation-delay: -.7s; }
-.landing-hub-flow:nth-of-type(4n+3) { animation-delay: -1.4s; }
-.landing-hub-flow:nth-of-type(4n)   { stroke: var(--l-green); animation-delay: -2.1s; }
-@keyframes landing-hub-flow { to { stroke-dashoffset: 0; } }
+.landing-marquee { overflow: hidden; }
+.landing-marquee-track {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; gap: 12px; width: max-content;
+  animation: landing-marquee var(--duration, 50s) linear infinite;
+}
+.landing-marquee--reverse .landing-marquee-track { animation-direction: reverse; }
+.landing-marquee:hover .landing-marquee-track { animation-play-state: paused; }
+/* The track holds the items twice, so moving it by half loops seamlessly */
+@keyframes landing-marquee { from { transform: translateX(0); } to { transform: translateX(calc(-50% - 6px)); } }
 
-.landing-hub-core {
-  position: relative; z-index: 1;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-  width: max-content; margin: 0 auto 88px;
-}
-.landing-hub-core .landing-app-icon { width: 76px; height: 76px; border-radius: 22px; }
-.landing-hub-name { font-size: 18px; font-weight: 700; letter-spacing: -.02em; }
-
-.landing-hub-branches { position: relative; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
-.landing-branch { position: relative; align-self: start; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-/* Vertical line through each branch with a light falling down it */
-.landing-branch::before {
-  content: ""; position: absolute; top: 18px; bottom: 18px; left: 50%; width: 1px;
-  background: var(--border-2);
-}
-.landing-branch::after {
-  content: ""; position: absolute; top: 18px; left: calc(50% - .5px); width: 1px; height: 40px;
-  background: linear-gradient(transparent, var(--l-teal), transparent);
-  animation: landing-fall 3.2s linear infinite;
-  animation-delay: calc(var(--branch) * -.6s);
-}
-/* The light travels the exact height of each branch, whatever its length */
-@keyframes landing-fall { from { top: 18px; opacity: 1; } 85% { opacity: 1; } to { top: calc(100% - 58px); opacity: 0; } }
-
-.landing-branch-title {
-  position: relative; z-index: 1;
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 14px;
-  font-size: 14px; font-weight: 600;
+/* Area colors */
+.area-0 { --area: var(--l-teal); }
+.area-1 { --area: var(--l-lilac); }
+.area-2 { --area: var(--l-green); }
+.area-3 { --area: #f9ab00; }
+.area-4 { --area: var(--l-rose); }
+.landing-marquee .landing-node .icon { color: var(--area); }
+.landing-node--group {
   color: var(--text);
-  background: var(--panel);
-  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
-  border-radius: 999px;
+  font-weight: 600;
+  border-color: color-mix(in srgb, var(--area) 45%, transparent);
+  background: color-mix(in srgb, var(--area) 10%, var(--surface));
 }
-.landing-branch-title .icon { color: var(--accent); }
-.landing-branch-nodes { position: relative; z-index: 1; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+/* Glowing Umbrella logo fixed in the middle; the rows pass behind it */
+.landing-marquee-core {
+  position: absolute; left: 50%; top: 50%; z-index: 2;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 40px 64px;
+  background: radial-gradient(closest-side, var(--bg) 72%, transparent);
+}
+.landing-marquee-core .landing-app-icon { position: relative; width: 84px; height: 84px; border-radius: 24px; border-color: color-mix(in srgb, var(--accent) 55%, transparent); }
+.landing-marquee-glow {
+  position: absolute; left: 50%; top: 40%; width: 180px; height: 180px; margin: -90px 0 0 -90px;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 45%, transparent), transparent 65%);
+  filter: blur(20px);
+  animation: landing-glow 4s ease-in-out infinite;
+}
+@keyframes landing-glow { 50% { transform: scale(1.18); opacity: .7; } }
+.landing-section--alt .landing-marquee-core { background: radial-gradient(closest-side, var(--panel) 72%, transparent); }
 
 /* Module / feature chip: icon + name, nothing else */
 .landing-node {
@@ -469,23 +471,16 @@ body.landing .landing-footer { padding-bottom: calc(96px + var(--safe-bottom)); 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
   .landing-discover .icon, .landing-live-dot::after, .landing-pulse, .landing-dot,
-  .landing-aurora i, .landing-gradient, .landing-agent-state i, .landing-hub-flow, .landing-branch::after { animation: none !important; }
+  .landing-aurora i, .landing-gradient, .landing-agent-state i, .landing-marquee-glow { animation: none !important; }
+  .landing-marquee-track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+  .landing-marquee-track [aria-hidden="true"] { display: none; }
+  .landing-marquee-core { position: static; transform: none; margin: 12px auto 0; }
   .landing-line { stroke-dashoffset: 0; animation: none !important; }
 }
 
 
 /* ---------- Responsive ---------- */
 @media (max-width: 999px) {
-  /* The hub becomes a vertical trunk with every area hanging from it */
-  .landing-hub-lines { display: none; }
-  .landing-hub-core { margin-bottom: 28px; }
-  .landing-hub-branches { grid-template-columns: 1fr; gap: 28px; }
-  .landing-hub-branches::before {
-    content: ""; position: absolute; top: -28px; bottom: 0; left: 50%; width: 1px;
-    background: linear-gradient(var(--border-2) 85%, transparent);
-  }
-  .landing-branch::before, .landing-branch::after { display: none; }
-  .landing-branch-nodes { flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 560px; }
   .landing-live-body { grid-template-columns: 1fr; }
   .landing-feed { border-left: 0; border-top: 1px solid var(--border); }
   .landing-devices { grid-template-columns: repeat(3, 1fr); }
@@ -493,6 +488,11 @@ body.landing .landing-footer { padding-bottom: calc(96px + var(--safe-bottom)); 
 }
 @media (max-width: 600px) {
   .landing-section { padding: 72px 0; }
+  .landing-marquees { gap: 10px; }
+  .landing-marquee-track { gap: 8px; }
+  .landing-node { padding: 5px 10px; font-size: 12px; }
+  .landing-marquee-core { padding: 30px 44px; }
+  .landing-marquee-core .landing-app-icon { width: 64px; height: 64px; border-radius: 18px; }
   .landing-chart { height: 170px; }
   .landing-devices { grid-template-columns: 1fr 1fr; }
   .landing-device:last-child { grid-column: span 2; }
