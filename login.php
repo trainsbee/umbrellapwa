@@ -3,12 +3,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/config.php';
 
-// Base visual del login. La autenticacion (Supabase) se conecta despues.
+// Base visual del login. La autenticacion (Supabase) se conecta despues;
+// mientras tanto el boton entra directo a la app para poder revisarla.
 $email = '';
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim((string) ($_POST['email'] ?? ''));
-    $error = 'El inicio de sesión todavía no está conectado.';
+    header('Location: inicio.php');
+    exit;
 }
 
 $pageTitle = 'Iniciar sesión';
