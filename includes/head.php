@@ -5,6 +5,9 @@ declare(strict_types=1);
  * Apertura del documento: <head> completo y <body>.
  * Variables opcionales antes del include:
  *   $pageTitle (string) titulo de la pagina
+ *   $pageCss   (array)  hojas de estilo extra de la pagina
+ *   $bodyClass (string) clases del <body>
+ *   $bodyAttrs (array)  atributos extra del <body>, ej. ['data-install-auto' => 'off']
  */
 
 $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
@@ -51,5 +54,8 @@ $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <meta name="msapplication-tap-highlight" content="no">
 
 <link rel="stylesheet" href="<?= e(asset('assets/css/app.css')) ?>">
+<?php foreach ($pageCss ?? [] as $css): ?>
+<link rel="stylesheet" href="<?= e(asset($css)) ?>">
+<?php endforeach; ?>
 </head>
-<body<?= !empty($bodyClass) ? ' class="' . e($bodyClass) . '"' : '' ?>>
+<body<?= !empty($bodyClass) ? ' class="' . e($bodyClass) . '"' : '' ?><?php foreach ($bodyAttrs ?? [] as $attr => $value): ?> <?= e($attr) ?>="<?= e($value) ?>"<?php endforeach; ?>>

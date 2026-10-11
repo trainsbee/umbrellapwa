@@ -196,6 +196,8 @@ html.install-sheet-open { overflow: hidden; }
 .btn--fantasma:hover { background: var(--superficie); border-color: var(--borde-2); color: var(--texto); filter: none; }
 
 .btn--bloque { width: 100%; }
+/* Llamado a la accion principal (landing): mas alto que los controles de la app */
+.btn--grande { height: 40px; padding: 0 22px; font-size: 14px; border-radius: 8px; gap: 8px; }
 .btn--icono { width: var(--control-h); padding: 0; }
 
 .btn[data-cargando] { pointer-events: none; }
