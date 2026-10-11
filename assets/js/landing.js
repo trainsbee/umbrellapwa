@@ -65,4 +65,55 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   });
+
+  // Panel en vivo: cada pocos segundos entra un evento nuevo (ilustrativo).
+  var feed = document.querySelector('[data-landing-feed]');
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (feed && !reduced) {
+    var TIPOS = [
+      ['user-plus', 'lead', 'Nuevo lead', ['Formulario web', 'Campaña de referidos', 'Llamada entrante', 'Landing de producto']],
+      ['edit-3', 'firmando', 'Cliente firmando', ['en proceso']],
+      ['check-circle', 'firmado', 'Cliente firmó', ['completado']],
+      ['shield', 'compliance', 'Compliance completado', ['Verificación aprobada']],
+    ];
+    var NOMBRES = ['Andrea M.', 'Carlos R.', 'Lucía P.', 'Jorge A.', 'Sofía V.', 'Daniel H.', 'Valeria T.', 'Miguel S.'];
+    var contrato = 4822;
+    var pick = function (list) { return list[Math.floor(Math.random() * list.length)]; };
+
+    var stamp = function (li) { li.setAttribute('data-ts', String(Date.now())); };
+    feed.querySelectorAll('li').forEach(function (li, i) { li.setAttribute('data-ts', String(Date.now() - (i + 1) * 9000)); });
+
+    var refreshTimes = function () {
+      feed.querySelectorAll('li').forEach(function (li) {
+        var secs = Math.round((Date.now() - Number(li.getAttribute('data-ts'))) / 1000);
+        li.querySelector('.landing-evento-hora').textContent = secs < 3 ? 'ahora' : (secs < 60 ? 'hace ' + secs + ' s' : 'hace ' + Math.round(secs / 60) + ' min');
+      });
+    };
+
+    var addEvent = function () {
+      var t = pick(TIPOS);
+      var detalle = t[1] === 'lead' ? pick(NOMBRES) + ' · ' + pick(t[3])
+        : (t[1] === 'compliance' ? t[3][0] + ' · #' + (contrato - 3) : 'Contrato #' + (contrato++) + ' · ' + t[3][0]);
+      var li = document.createElement('li');
+      li.className = 'landing-evento evento-' + t[1];
+      li.innerHTML = '<span class="landing-evento-icono"><i data-feather="' + t[0] + '" width="15" height="15"></i></span>' +
+        '<span class="landing-evento-texto"><strong>' + t[2] + '</strong><small>' + detalle + '</small></span>' +
+        '<span class="landing-evento-hora">ahora</span>';
+      stamp(li);
+      feed.insertBefore(li, feed.firstChild);
+      if (window.feather) window.feather.replace();
+      while (feed.children.length > 4) feed.removeChild(feed.lastChild);
+    };
+
+    var timer = null;
+    var start = function () { if (!timer) timer = setInterval(function () { addEvent(); refreshTimes(); }, 3800); };
+    var stop = function () { clearInterval(timer); timer = null; };
+    refreshTimes();
+    setInterval(refreshTimes, 1000);
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) { entries[0].isIntersecting ? start() : stop(); }).observe(feed);
+    } else {
+      start();
+    }
+  }
 })();
