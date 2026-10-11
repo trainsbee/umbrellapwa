@@ -1,126 +1,128 @@
 # UmbrellaApp
 
-PWA (Progressive Web App) en PHP, instalable en iPhone, iPad, Android, Windows y macOS.
+A PHP Progressive Web App (PWA), installable on iPhone, iPad, Android, Windows and macOS.
 
-## Requisitos
+Code (files, identifiers, comments) is written in English; user-facing text is in Spanish.
 
-- PHP 8.1+ con la extension GD (solo para regenerar iconos y splash)
-- Apache con `mod_rewrite`, `mod_headers`, `mod_mime` y `mod_deflate` (XAMPP ya los trae)
+## Requirements
 
-## Correr en local
+- PHP 8.1+ with the GD extension (only to regenerate icons and splash screens)
+- Apache with `mod_rewrite`, `mod_headers`, `mod_mime` and `mod_deflate` (XAMPP ships them)
 
-Con XAMPP encendido, abre <http://localhost/umbrellapwa/>.
+## Running locally
 
-`localhost` cuenta como origen seguro, asi que el service worker funciona sin HTTPS.
-Para probar desde un telefono en la red local **se necesita HTTPS**: usa un tunel
-(por ejemplo `cloudflared tunnel --url http://localhost` o `ngrok http 80`) o un
-certificado local con `mkcert`.
+With XAMPP running, open <http://localhost/umbrellapwa/>.
 
-## Estructura
+`localhost` counts as a secure origin, so the service worker works without HTTPS.
+Testing from a phone on the local network **requires HTTPS**: use a tunnel
+(for example `cloudflared tunnel --url http://localhost` or `ngrok http 80`) or a
+local certificate with `mkcert`.
+
+## Structure
 
 ```
 umbrellapwa/
-├── index.php               Landing publica (instalar app); la app instalada abre en login.php
-├── login.php               Login (base visual; por ahora entra directo a home.php)
-├── home.php, sales.php, opportunities.php, reports.php   Secciones
-├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
-├── sw.js                   Service worker (cache y modo offline)
-├── offline.php             Vista sin conexion (menu y modo oscuro, sin datos)
-├── .htaccess               MIME, cache, compresion y seguridad
-├── includes/               Partes PHP (bloqueado desde el navegador)
-│   ├── config.php          Nombre, version y colores de la app
-│   ├── icons.php           Iconos Feather: icon('nombre', tamano)
-│   ├── nav.php             Secciones del menu (NAV_ITEMS)
-│   ├── shell-top.php       Barra superior + menu lateral (paginas internas)
-│   ├── shell-bottom.php    Barra de navegacion inferior + cierre
-│   ├── head.php            <head> con todos los meta tags PWA
-│   ├── footer.php          Scripts y cierre del documento
-│   ├── install-sheet.php   Hoja "Instalar app"
-│   └── splash-links.php    Generado: enlaces de splash de iOS
+├── index.php               Public landing page (install the app); the installed app opens login.php
+├── login.php               Login (visual base; for now it goes straight to home.php)
+├── home.php, sales.php, opportunities.php, reports.php   App sections
+├── manifest.webmanifest    Web App Manifest (name, icons, colors)
+├── sw.js                   Service worker (caching and offline mode)
+├── offline.php             Offline view (menu and dark mode, no data)
+├── .htaccess               MIME types, caching, compression and security
+├── includes/               PHP partials (blocked from the browser)
+│   ├── config.php          App name, version and colors
+│   ├── icons.php           Feather icons: icon('name', size)
+│   ├── charts.php          SVG line charts (landing page)
+│   ├── nav.php             Menu sections (NAV_ITEMS)
+│   ├── shell-top.php       Top bar + sidebar (internal pages)
+│   ├── shell-bottom.php    Bottom navigation bar + closing tags
+│   ├── head.php            <head> with every PWA meta tag
+│   ├── footer.php          Scripts and document closing
+│   ├── install-sheet.php   "Install app" sheet
+│   └── splash-links.php    Generated: iOS splash links
 ├── assets/
-│   ├── css/app.css         Estilos base
-│   ├── css/landing.css     Estilos de la landing
-│   ├── js/app.js           JS de la app
-│   ├── js/landing.js       JS de la landing (boton fijo, animaciones)
-│   ├── js/pwa/             Registro del SW e instalacion
-│   ├── icons/              Favicon, iconos Apple/Android/Windows
-│   ├── splash/             Splash screens de iOS / iPadOS
-│   ├── img/                Imagenes
-│   └── fonts/              Fuentes
-└── tools/                  Generadores (bloqueado desde el navegador)
+│   ├── css/app.css         Base styles
+│   ├── css/landing.css     Landing page styles
+│   ├── js/app.js           App JavaScript
+│   ├── js/landing.js       Landing page JavaScript (sticky bar, animations, live feed)
+│   ├── js/pwa/             Service worker registration and install flow
+│   ├── js/vendor/          Third-party libraries (Feather Icons)
+│   ├── icons/              Favicon, Apple/Android/Windows icons
+│   ├── splash/             iOS / iPadOS splash screens
+│   ├── img/                Images
+│   └── fonts/              Fonts
+├── deploy/                 Server configuration (nginx)
+└── tools/                  Generators (blocked from the browser)
 ```
 
-## Diseno
+## Design
 
-- **Paleta**: la del ecosistema Umbrella (igual que Umbrella Streaming). Variables en `:root` de `assets/css/app.css`: `--fondo`, `--panel`, `--superficie`, `--superficie-2`, `--acento`, etc.
-- **Controles**: 28px de alto y 16px de padding lateral (tamanos estilo Supabase), radio de 6px.
-- **Botones**: `.btn`, `.btn--primario`, `.btn--peligro`, `.btn--fantasma`, `.btn--bloque`, `.btn--icono`. Acabado "raised": borde de 1px, brillo interior y hover con `brightness`.
-- **Campos**: `.campo` > `label` + `.input`. Con icono: envolver en `.input-grupo`.
-- **Iconos**: [Feather Icons](https://feathericons.com) 4.29.2, guardado en `assets/js/vendor/` (funciona offline). En PHP `<?= icon('mail') ?>`, en HTML `<i data-feather="mail"></i>`.
-- **Temas**: oscuro (predeterminado) y claro con `<html data-theme="light">`. El interruptor "Modo oscuro" del menu lo cambia y se recuerda en el navegador.
-- **Estructura**: barra superior (boton circular + titulo centrado), menu lateral estilo lista de ajustes (`.grupo` > `.fila`) y barra inferior en movil. En escritorio (>= 1024px) el menu queda fijo a la izquierda.
-- **Nueva seccion**: agregala a `NAV_ITEMS` en `includes/nav.php` y crea su archivo con `$pageTitle`, `$activeNav` y `shell-top.php` / `shell-bottom.php`.
-- **Logo**: el paraguas (`icon('logo')`). Los PNG se generan desde `tools/brand.php`.
+- **Palette**: the Umbrella ecosystem palette (same as Umbrella Streaming). Variables in `:root` of `assets/css/app.css`: `--bg`, `--panel`, `--surface`, `--surface-2`, `--accent`, `--text`, `--text-2`, `--text-3`, `--border`, etc.
+- **Controls**: 28px tall with 16px horizontal padding (Supabase-style sizes), 6px radius.
+- **Buttons**: `.btn`, `.btn--primary`, `.btn--danger`, `.btn--ghost`, `.btn--block`, `.btn--icon`, `.btn--large`. Flat finish: 1px border, subtle gradient and a `brightness` hover. No shadows.
+- **Fields**: `.field` > `label` + `.input`. With an icon: wrap it in `.input-group`.
+- **Icons**: [Feather Icons](https://feathericons.com) 4.29.2, stored in `assets/js/vendor/` (works offline). In PHP `<?= icon('mail') ?>`, in HTML `<i data-feather="mail"></i>`.
+- **Themes**: dark (default) and light via `<html data-theme="light">`. The "Modo oscuro" switch in the sidebar toggles it and the browser remembers the choice.
+- **Layout**: top bar (circular button + centered title), settings-style sidebar (`.group` > `.row`) and a bottom bar on phones. On desktop (>= 1024px) the sidebar is pinned to the left.
+- **New section**: add it to `NAV_ITEMS` in `includes/nav.php` and create its file with `$pageTitle`, `$activeNav` and `shell-top.php` / `shell-bottom.php`.
+- **Logo**: the umbrella (`icon('logo')`). PNGs are generated from `tools/brand.php`.
 
-## Soporte por plataforma
+## Platform support
 
-| Plataforma | Como se instala | Que usa |
+| Platform | How it installs | What it uses |
 |---|---|---|
-| Android (Chrome, Edge, Samsung) | Boton "Instalar" (dialogo nativo) | manifest, iconos maskable |
-| Windows (Edge, Chrome) | Boton "Instalar" o icono en la barra de direcciones | manifest, `msapplication-*` |
-| macOS (Chrome, Edge) | Boton "Instalar" | manifest |
-| macOS (Safari 17+) | Instrucciones: Archivo -> Agregar al Dock | `apple-touch-icon` |
-| iPhone / iPad | Instrucciones: Compartir -> Agregar a inicio | `apple-*` meta, splash screens |
+| Android (Chrome, Edge, Samsung) | "Install" button (native dialog) | manifest, maskable icons |
+| Windows (Edge, Chrome) | "Install" button or the address bar icon | manifest, `msapplication-*` |
+| macOS (Chrome, Edge) | "Install" button | manifest |
+| macOS (Safari 17+) | Instructions: File -> Add to Dock | `apple-touch-icon` |
+| iPhone / iPad | Instructions: Share -> Add to Home Screen | `apple-*` meta tags, splash screens |
 
-## Publicar una nueva version
+## Shipping a new version
 
-- **CSS y JS**: no hay que hacer nada. `asset()` agrega `?v=<fecha de modificacion>`
-  a cada archivo, asi que al cambiar un archivo cambia su URL y todos reciben la
-  version nueva en la siguiente carga (el service worker no puede servir la vieja).
-- **Paginas PHP**: siempre se piden a la red; nunca quedan en cache.
-- **Archivos sin `?v=`** (iconos, manifest): se actualizan en segundo plano.
-- **`sw.js`**: si lo cambias, los usuarios veran el aviso **"Hay una nueva version
-  disponible"** y al tocar **Actualizar** se activa. Sube `CACHE_VERSION` solo si
-  cambias la lista `PRECACHE` o quieres vaciar todo el cache.
-- `APP_VERSION` en `includes/config.php` es solo el numero que se muestra en la app.
+- **CSS and JS**: nothing to do. `asset()` appends `?v=<last modified time>` to every
+  file, so changing a file changes its URL and everyone gets the new version on the
+  next load (the service worker cannot serve the old one).
+- **PHP pages**: always fetched from the network; never cached.
+- **Files without `?v=`** (icons, manifest): refreshed in the background.
+- **`sw.js`**: if you change it, users see the **"Hay una nueva versión disponible"**
+  toast and it activates when they tap **Actualizar**. Only bump `CACHE_VERSION` when
+  you change the `PRECACHE` list or want to wipe the cache.
+- `APP_VERSION` in `includes/config.php` is only the number shown in the app.
 
-Durante el desarrollo, en Chrome DevTools -> Application -> Service Workers activa
-**Update on reload** para no depender del cache.
+During development, enable **Update on reload** in Chrome DevTools -> Application ->
+Service Workers so the cache never gets in the way.
 
-## Regenerar iconos y splash
+## Regenerating icons and splash screens
 
-El logo esta dibujado en `tools/brand.php`. Despues de cambiarlo:
+The logo is drawn in `tools/brand.php`. After changing it:
 
 ```bash
 php tools/generate-icons.php
 php tools/generate-splash.php
 ```
 
-`favicon.svg` se edita a mano.
+`favicon.svg` is edited by hand.
 
-## Secretos
+## Secrets
 
-Nunca pongas API keys ni contrasenas en archivos versionados. Usa
-`includes/config.local.php` (esta en `.gitignore`); `config.php` lo carga
-automaticamente si existe.
+Never put API keys or passwords in versioned files. Use `includes/config.local.php`
+(git-ignored); `config.php` loads it automatically when it exists.
 
-## Produccion
+## Production
 
 - URL: <https://pwa.umbrellasync.com>
-- VPS Hostinger con aaPanel + nginx, PHP 8.4. Sitio en `/www/wwwroot/pwa.umbrellasync.com`
-  (es un clon de este repo; dueno de los archivos: `www`).
-- SSL: Let's Encrypt desde aaPanel (se renueva solo).
-- nginx ignora el `.htaccess`. Sus reglas equivalentes estan en
-  [`deploy/nginx-pwa.conf`](deploy/nginx-pwa.conf), instalado en
+- Hostinger VPS with aaPanel + nginx, PHP 8.4. Site at `/www/wwwroot/pwa.umbrellasync.com`
+  (a clone of this repo; files owned by `www`).
+- SSL: Let's Encrypt from aaPanel (renews automatically).
+- nginx ignores `.htaccess`. The equivalent rules live in
+  [`deploy/nginx-pwa.conf`](deploy/nginx-pwa.conf), installed at
   `/www/server/panel/vhost/nginx/extension/pwa.umbrellasync.com/pwa.conf`.
-  Si lo cambias, copialo al servidor y ejecuta `nginx -t && nginx -s reload`.
+  If you change it, copy it to the server and run `nginx -t && nginx -s reload`.
 
-### Desplegar
+### Deploying
 
-Haz push a `main` y luego:
+Push to `main`, then:
 
 ```bash
-ssh root@<VPS> 'cd /www/wwwroot/pwa.umbrellasync.com && git pull --ff-only && chown -R www:www .git assets includes tools deploy *.php *.html sw.js manifest.webmanifest'
+ssh root@<VPS> 'cd /www/wwwroot/pwa.umbrellasync.com && git pull --ff-only && chown -R www:www .git assets includes tools deploy *.php sw.js manifest.webmanifest'
 ```
-
-Recuerda subir `APP_VERSION` y `CACHE_VERSION` para que los usuarios reciban la actualizacion.
