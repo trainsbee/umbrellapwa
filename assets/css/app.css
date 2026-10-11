@@ -321,6 +321,11 @@ i.icon[width="22"] { width: 22px; height: 22px; }
 .auth form .btn--primary { margin-top: 6px; }
 .auth-install { margin-top: 10px; }
 .auth-footer { margin: 18px 0 0; font-size: 12px; color: var(--text-3); }
+.auth { position: relative; }
+.auth-back { position: absolute; top: calc(16px + var(--safe-top)); left: calc(16px + var(--safe-left)); }
+.auth-logo { text-decoration: none; }
+/* Inside the installed app the landing page never shows, so there is nothing to go back to */
+@media (display-mode: standalone) { .auth-back { display: none; } }
 
 /* ==================================================================
    Internal page layout: top bar + sidebar

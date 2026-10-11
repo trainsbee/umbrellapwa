@@ -12,15 +12,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-$pageTitle = 'Iniciar sesión';
+$pageTitle = 'Sign in';
 require __DIR__ . '/includes/head.php';
 ?>
 <main class="auth">
+  <!-- Back to the landing page (hidden inside the installed app, where the landing never shows) -->
+  <a class="btn btn--ghost auth-back" href="./"><?= icon('arrow-left', 14) ?> Back to home</a>
+
   <div class="auth-card">
     <div class="auth-brand">
-      <span class="auth-logo"><?= icon('logo', 22) ?></span>
-      <h1>Inicia sesión</h1>
-      <p>Usa tu cuenta de Umbrella para continuar.</p>
+      <a class="auth-logo" href="./" aria-label="Umbrella home"><?= icon('logo', 22) ?></a>
+      <h1>Sign in</h1>
+      <p>Use your Umbrella account to continue.</p>
     </div>
 
     <?php if ($error !== null): ?>
@@ -29,33 +32,33 @@ require __DIR__ . '/includes/head.php';
 
     <form method="post" action="login.php" novalidate>
       <div class="field">
-        <label for="email">Correo</label>
+        <label for="email">Email</label>
         <div class="input-group">
           <?= icon('mail', 14, 'input-icon') ?>
           <input class="input" type="email" id="email" name="email" value="<?= e($email) ?>"
-                 placeholder="tu@correo.com" autocomplete="username" inputmode="email" autocapitalize="off" required>
+                 placeholder="you@company.com" autocomplete="username" inputmode="email" autocapitalize="off" required>
         </div>
       </div>
 
       <div class="field">
         <div class="field-header">
-          <label for="password">Contraseña</label>
-          <a href="#" class="link-subtle">¿Olvidaste tu contraseña?</a>
+          <label for="password">Password</label>
+          <a href="#" class="link-subtle">Forgot your password?</a>
         </div>
         <div class="input-group">
           <?= icon('lock', 14, 'input-icon') ?>
           <input class="input" type="password" id="password" name="password"
                  placeholder="••••••••" autocomplete="current-password" required>
-          <button type="button" class="input-action" data-toggle-password="password" aria-label="Mostrar contraseña">
+          <button type="button" class="input-action" data-toggle-password="password" aria-label="Show password">
             <?= icon('eye', 14, 'when-hidden') ?><?= icon('eye-off', 14, 'when-visible') ?>
           </button>
         </div>
       </div>
 
-      <button type="submit" class="btn btn--primary btn--block"><?= icon('log-in') ?> Iniciar sesión</button>
+      <button type="submit" class="btn btn--primary btn--block"><?= icon('log-in') ?> Sign in</button>
     </form>
 
-    <button type="button" class="btn btn--ghost btn--block auth-install" data-pwa-install hidden><?= icon('download') ?> Instalar app</button>
+    <button type="button" class="btn btn--ghost btn--block auth-install" data-pwa-install hidden><?= icon('download') ?> Install app</button>
   </div>
 
   <p class="auth-footer"><?= e(APP_NAME) ?> &middot; v<?= e(APP_VERSION) ?></p>
