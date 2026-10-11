@@ -1,0 +1,19 @@
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+.claude/
+
+# Secretos y configuracion local (nunca subir)
+.env
+.env.*
+includes/config.local.php
+
+# Dependencias / builds
+node_modules/
+vendor/
+*.zip
+*.log
