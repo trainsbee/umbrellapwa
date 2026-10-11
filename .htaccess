@@ -1,0 +1,54 @@
+# ------------------------------------------------------------------
+# UmbrellaApp - configuracion de Apache para la PWA
+# Los secretos NO van aqui: usa includes/config.local.php (ignorado por git).
+# ------------------------------------------------------------------
+
+Options -Indexes
+DirectoryIndex index.php
+
+# Tipos MIME que la PWA necesita
+<IfModule mod_mime.c>
+    AddType application/manifest+json .webmanifest
+    AddType text/javascript .js
+    AddType image/svg+xml .svg
+    AddType image/x-icon .ico
+    AddType font/woff2 .woff2
+    AddCharset utf-8 .js .css .webmanifest .html
+</IfModule>
+
+# Bloquear carpetas internas y archivos sensibles
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(includes|tools)/ - [F,L]
+    RewriteRule (^|/)\. - [F,L]
+    RewriteRule \.(sql|md|log|zip)$ - [F,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # Seguridad basica
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+    Header always set X-Frame-Options "SAMEORIGIN"
+
+    # Paginas PHP: siempre frescas
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-cache, private"
+    </FilesMatch>
+
+    # Assets estaticos (llevan ?v= de version)
+    <FilesMatch "\.(css|js|png|jpg|jpeg|svg|webp|ico|woff2?)$">
+        Header set Cache-Control "public, max-age=604800"
+    </FilesMatch>
+
+    # El service worker y el manifest nunca se cachean en el navegador,
+    # asi las actualizaciones llegan de inmediato. (Va despues de la regla
+    # de assets para tener prioridad.)
+    <FilesMatch "^(sw\.js|manifest\.webmanifest|offline\.html)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# Compresion
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript application/manifest+json image/svg+xml
+</IfModule>

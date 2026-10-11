@@ -30,7 +30,10 @@ const PRECACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE))
+    caches.open(STATIC_CACHE).then((cache) =>
+      // cache: 'reload' evita copiar versiones viejas del cache HTTP
+      cache.addAll(PRECACHE.map((url) => new Request(url, { cache: 'reload' })))
+    )
   );
   // No se llama skipWaiting() aqui: la pagina pregunta al usuario antes
   // de activar una version nueva (ver assets/js/pwa/register-sw.js).
