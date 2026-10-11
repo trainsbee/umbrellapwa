@@ -2,6 +2,9 @@
 (function () {
   'use strict';
 
+  // Iconos: <i data-feather="nombre"> -> SVG (ver includes/icons.php)
+  if (window.feather) window.feather.replace();
+
   // Mostrar / ocultar contrasena: <button data-toggle-password="idDelInput">
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-toggle-password]');

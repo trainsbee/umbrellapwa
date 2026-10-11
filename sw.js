@@ -21,6 +21,7 @@ const PRECACHE = [
   'manifest.webmanifest',
   'assets/css/app.css',
   'assets/js/app.js',
+  'assets/js/vendor/feather.min.js',
   'assets/js/pwa/register-sw.js',
   'assets/js/pwa/install.js',
   'assets/icons/favicon.svg',
