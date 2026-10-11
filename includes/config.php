@@ -17,6 +17,8 @@ const APP_LANG        = 'es';
 const THEME_COLOR      = '#1C1C1C';
 const BACKGROUND_COLOR = '#1C1C1C';
 
+require_once __DIR__ . '/icons.php';
+
 if (is_file(__DIR__ . '/config.local.php')) {
     require __DIR__ . '/config.local.php';
 }

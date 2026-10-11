@@ -229,3 +229,6 @@ html.install-sheet-open { overflow: hidden; }
   -webkit-box-shadow: 0 0 0 40px var(--superficie) inset;
   caret-color: var(--texto);
 }
+
+/* Iconos SVG (includes/icons.php) */
+.icon { display: inline-block; flex: none; vertical-align: middle; }
