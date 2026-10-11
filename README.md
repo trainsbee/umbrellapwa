@@ -20,7 +20,7 @@ certificado local con `mkcert`.
 
 ```
 umbrellapwa/
-├── index.php               Entrada: redirige al login
+├── index.php               Landing publica (instalar app); la app instalada abre en login.php
 ├── login.php               Login (base visual; por ahora entra directo a home.php)
 ├── home.php, sales.php, opportunities.php, reports.php   Secciones
 ├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
@@ -39,7 +39,9 @@ umbrellapwa/
 │   └── splash-links.php    Generado: enlaces de splash de iOS
 ├── assets/
 │   ├── css/app.css         Estilos base
+│   ├── css/landing.css     Estilos de la landing
 │   ├── js/app.js           JS de la app
+│   ├── js/landing.js       JS de la landing (boton fijo, animaciones)
 │   ├── js/pwa/             Registro del SW e instalacion
 │   ├── icons/              Favicon, iconos Apple/Android/Windows
 │   ├── splash/             Splash screens de iOS / iPadOS
