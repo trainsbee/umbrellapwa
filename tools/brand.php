@@ -2,56 +2,56 @@
 declare(strict_types=1);
 
 /**
- * Dibujo del logo de UmbrellaApp con GD: el paraguas del icono
- * 'logo' de includes/icons.php, trazado en color acento sobre fondo oscuro.
- *   <path d="M23 12a11 11 0 0 0-22 0"/>   (cupula)
- *   <path d="M12 12v7a2 2 0 0 0 4 0"/>    (baston y mango)
- * Lo usan generate-icons.php y generate-splash.php.
+ * Draws the UmbrellaApp logo with GD: the umbrella from the 'logo' icon in
+ * includes/icons.php, stroked in the accent color on a dark background.
+ *   <path d="M23 12a11 11 0 0 0-22 0"/>   (canopy)
+ *   <path d="M12 12v7a2 2 0 0 0 4 0"/>    (shaft and handle)
+ * Used by generate-icons.php and generate-splash.php.
  */
 
 const BRAND_BG     = [0x0F, 0x10, 0x12];
 const BRAND_STROKE = [0x7C, 0x74, 0xFF];
 
-/** Color GD a partir de [r, g, b]. */
+/** GD color from [r, g, b]. */
 function brand_color(GdImage $img, array $rgb): int
 {
     return imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
 }
 
 /**
- * Dibuja el paraguas centrado en un cuadro de $size px con esquina en ($ox, $oy).
- * Coordenadas del icono en una cuadricula de 24x24 (trazo de 2 unidades).
+ * Draws the umbrella centered in a $size px box whose corner is at ($ox, $oy).
+ * Icon coordinates use a 24x24 grid (2-unit stroke).
  */
 function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size): void
 {
     $u = $size / 24;
-    // El dibujo ocupa y de 0 a 22: se baja 1 unidad para centrarlo.
+    // The drawing spans y 0 to 22: shift it down 1 unit to center it.
     $x = fn (float $v): int => (int) round($ox + $v * $u);
     $y = fn (float $v): int => (int) round($oy + ($v + 1) * $u);
     $d = fn (float $v): int => (int) round($v * $u);
 
     $bg = brand_color($img, BRAND_BG);
     $ink = brand_color($img, BRAND_STROKE);
-    $w = 2; // grosor del trazo
+    $w = 2; // stroke width
 
-    // Cupula: media circunferencia superior, centro (12,12), radio 11
+    // Canopy: upper half circle, center (12,12), radius 11
     imagefilledarc($img, $x(12), $y(12), $d(2 * (11 + $w / 2)), $d(2 * (11 + $w / 2)), 180, 360, $ink, IMG_ARC_PIE);
     imagefilledarc($img, $x(12), $y(12), $d(2 * (11 - $w / 2)), $d(2 * (11 - $w / 2)), 180, 360, $bg, IMG_ARC_PIE);
 
-    // Baston: de (12,12) a (12,19)
+    // Shaft: from (12,12) to (12,19)
     imagefilledrectangle($img, $x(12 - $w / 2), $y(12), $x(12 + $w / 2), $y(19), $ink);
 
-    // Mango: media circunferencia inferior, centro (14,19), radio 2
+    // Handle: lower half circle, center (14,19), radius 2
     imagefilledarc($img, $x(14), $y(19), $d(2 * (2 + $w / 2)), $d(2 * (2 + $w / 2)), 0, 180, $ink, IMG_ARC_PIE);
     imagefilledarc($img, $x(14), $y(19), $d(2 * (2 - $w / 2)), $d(2 * (2 - $w / 2)), 0, 180, $bg, IMG_ARC_PIE);
 
-    // Puntas redondeadas
+    // Round caps
     foreach ([[1, 12], [23, 12], [12, 12], [12, 19], [16, 19]] as [$px, $py]) {
         imagefilledellipse($img, $x($px), $y($py), $d($w), $d($w), $ink);
     }
 }
 
-/** Rectangulo relleno con esquinas redondeadas. */
+/** Filled rectangle with rounded corners. */
 function brand_rounded_rect(GdImage $img, int $x1, int $y1, int $x2, int $y2, int $r, int $color): void
 {
     imagefilledrectangle($img, $x1 + $r, $y1, $x2 - $r, $y2, $color);
@@ -62,11 +62,11 @@ function brand_rounded_rect(GdImage $img, int $x1, int $y1, int $x2, int $y2, in
 }
 
 /**
- * Genera un icono cuadrado de $size px.
- *  'any'      -> cuadro redondeado con esquinas transparentes
- *  'full'     -> fondo completo (Apple / tiles / splash)
- *  'maskable' -> fondo completo, logo dentro de la zona segura de Android
- * Dibuja a 4x y reduce para obtener bordes suaves.
+ * Generates a square icon of $size px.
+ *  'any'      -> rounded tile with transparent corners
+ *  'full'     -> full background (Apple / tiles / splash)
+ *  'maskable' -> full background, logo inside Android's safe zone
+ * Draws at 4x and scales down for smooth edges.
  */
 function brand_icon(int $size, string $mode): GdImage
 {

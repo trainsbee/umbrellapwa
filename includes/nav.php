@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Secciones principales de la app. Las usan el menu lateral y la barra
- * de navegacion inferior. Clave => [titulo, icono Feather, archivo].
+ * Main app sections, used by the sidebar and the bottom navigation bar.
+ * Key => [label, Feather icon, file].
  */
 const NAV_ITEMS = [
     'home'          => ['Inicio',        'home',        'home.php'],
@@ -12,10 +12,10 @@ const NAV_ITEMS = [
     'reports'       => ['Reportes',      'bar-chart-2', 'reports.php'],
 ];
 
-// Usuario de muestra hasta conectar el login con Supabase.
-const DEMO_USER = ['nombre' => 'Usuario Umbrella', 'rol' => 'Sin rol asignado'];
+// Sample user until the login is connected to Supabase.
+const DEMO_USER = ['name' => 'Usuario Umbrella', 'role' => 'Sin rol asignado'];
 
-/** Iniciales para el avatar: "Usuario Umbrella" -> "UU". */
+/** Avatar initials: "Usuario Umbrella" -> "UU". */
 function initials(string $name): string
 {
     $parts = preg_split('/\s+/', trim($name)) ?: [];

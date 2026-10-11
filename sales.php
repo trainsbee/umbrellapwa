@@ -7,7 +7,7 @@ $pageTitle = 'Ventas';
 $activeNav = 'sales';
 require __DIR__ . '/includes/shell-top.php';
 ?>
-<section class="vacio">
+<section class="empty-state">
   <?= icon('trending-up', 22) ?>
   <h2>Ventas</h2>
   <p>Aquí irán las ventas.</p>

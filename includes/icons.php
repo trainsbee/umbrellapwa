@@ -2,14 +2,14 @@
 declare(strict_types=1);
 
 /**
- * Iconos de la app: Feather Icons (https://feathericons.com).
- * La libreria esta en assets/js/vendor/feather.min.js (local, funciona offline)
- * y feather.replace() convierte cada <i data-feather="..."> en un SVG.
+ * App icons: Feather Icons (https://feathericons.com).
+ * The library lives in assets/js/vendor/feather.min.js (local, works offline)
+ * and feather.replace() turns every <i data-feather="..."> into an SVG.
  *
- * Uso en PHP: <?= icon('mail') ?>, <?= icon('bell', 18, 'mi-clase') ?>
- * Uso en HTML: <i data-feather="mail"></i>
+ * In PHP: <?= icon('mail') ?>, <?= icon('bell', 18, 'my-class') ?>
+ * In HTML: <i data-feather="mail"></i>
  *
- * El logo (paraguas) no es de Feather: se dibuja en linea con el mismo trazo.
+ * The logo (umbrella) is not a Feather icon: it is inlined with the same stroke style.
  */
 
 const LOGO_PATHS = '<path d="M23 12a11 11 0 0 0-22 0"/><path d="M12 12v7a2 2 0 0 0 4 0"/>';
@@ -25,7 +25,7 @@ function icon(string $name, int $size = 16, string $class = ''): string
             . LOGO_PATHS . '</svg>';
     }
 
-    // Se reserva el espacio con width/height para que no salte al reemplazarse.
+    // width/height reserve the space so the layout does not jump when replaced.
     return '<i data-feather="' . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . '" class="' . $cls . '"'
         . ' width="' . $size . '" height="' . $size . '" aria-hidden="true"></i>';
 }

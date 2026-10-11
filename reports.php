@@ -7,7 +7,7 @@ $pageTitle = 'Reportes';
 $activeNav = 'reports';
 require __DIR__ . '/includes/shell-top.php';
 ?>
-<section class="vacio">
+<section class="empty-state">
   <?= icon('bar-chart-2', 22) ?>
   <h2>Reportes</h2>
   <p>Aquí irán los reportes.</p>

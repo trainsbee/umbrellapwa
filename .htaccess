@@ -1,12 +1,12 @@
 # ------------------------------------------------------------------
-# UmbrellaApp - configuracion de Apache para la PWA
-# Los secretos NO van aqui: usa includes/config.local.php (ignorado por git).
+# UmbrellaApp - Apache configuration for the PWA
+# Secrets do NOT belong here: use includes/config.local.php (git-ignored).
 # ------------------------------------------------------------------
 
 Options -Indexes
 DirectoryIndex index.php
 
-# Tipos MIME que la PWA necesita
+# MIME types the PWA needs
 <IfModule mod_mime.c>
     AddType application/manifest+json .webmanifest
     AddType text/javascript .js
@@ -16,7 +16,7 @@ DirectoryIndex index.php
     AddCharset utf-8 .js .css .webmanifest .html
 </IfModule>
 
-# Bloquear carpetas internas y archivos sensibles
+# Block internal folders and sensitive files
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteRule ^(includes|tools|deploy)/ - [F,L]
@@ -25,30 +25,29 @@ DirectoryIndex index.php
 </IfModule>
 
 <IfModule mod_headers.c>
-    # Seguridad basica
+    # Basic security
     Header always set X-Content-Type-Options "nosniff"
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
     Header always set X-Frame-Options "SAMEORIGIN"
 
-    # Paginas PHP: siempre frescas
+    # PHP pages: always fresh
     <FilesMatch "\.php$">
         Header set Cache-Control "no-cache, private"
     </FilesMatch>
 
-    # Assets estaticos (llevan ?v= de version)
+    # Static assets (carry a ?v= version)
     <FilesMatch "\.(css|js|png|jpg|jpeg|svg|webp|ico|woff2?)$">
         Header set Cache-Control "public, max-age=604800"
     </FilesMatch>
 
-    # El service worker y el manifest nunca se cachean en el navegador,
-    # asi las actualizaciones llegan de inmediato. (Va despues de la regla
-    # de assets para tener prioridad.)
+    # The service worker and manifest are never cached by the browser, so
+    # updates arrive immediately. (Placed after the assets rule so it wins.)
     <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
     </FilesMatch>
 </IfModule>
 
-# Compresion
+# Compression
 <IfModule mod_deflate.c>
     AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript application/manifest+json image/svg+xml
 </IfModule>

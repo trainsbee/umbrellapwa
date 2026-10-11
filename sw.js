@@ -1,19 +1,19 @@
 /**
- * Service worker de UmbrellaApp.
+ * UmbrellaApp service worker.
  *
- * Estrategias:
- *  - Paginas (navegacion): siempre de la red. Las paginas NO se guardan en
- *    cache (ni datos privados ni versiones viejas). Sin conexion se muestra
- *    offline.php: la estructura de la app con el aviso "Conectate a internet".
- *  - Assets con ?v= (css y js del HTML, ver asset() en config.php): la URL
- *    cambia cuando cambia el archivo, asi que se tratan como inmutables:
- *    cache si ya esta esa version exacta; si no, red (y se borran las
- *    versiones viejas). Sin conexion se usa la ultima copia guardada.
- *  - Otros assets estaticos (iconos, manifest): cache y actualizacion en
- *    segundo plano (stale-while-revalidate).
+ * Strategies:
+ *  - Pages (navigation): always from the network. Pages are NOT cached
+ *    (no private data, no stale versions). Offline, offline.php is shown:
+ *    the app shell with a "connect to the internet" message.
+ *  - Assets with ?v= (CSS and JS from the HTML, see asset() in config.php):
+ *    the URL changes when the file changes, so they are treated as
+ *    immutable: served from cache if that exact version is there, otherwise
+ *    from the network (older versions are deleted). Offline, the last saved
+ *    copy is used.
+ *  - Other static assets (icons, manifest): cached and refreshed in the
+ *    background (stale-while-revalidate).
  *
- * CACHE_VERSION solo hay que subirlo para cambiar la lista PRECACHE o
- * limpiar todo el cache.
+ * Only bump CACHE_VERSION to change the PRECACHE list or wipe the cache.
  */
 
 const CACHE_VERSION = 'v5';
@@ -37,12 +37,12 @@ const PRECACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) =>
-      // cache: 'reload' evita copiar versiones viejas del cache HTTP
+      // cache: 'reload' avoids copying stale versions from the HTTP cache
       cache.addAll(PRECACHE.map((url) => new Request(url, { cache: 'reload' })))
     )
   );
-  // No se llama skipWaiting() aqui: la pagina pregunta al usuario antes
-  // de activar una version nueva (ver assets/js/pwa/register-sw.js).
+  // skipWaiting() is not called here: the page asks the user before
+  // activating a new version (see assets/js/pwa/register-sw.js).
 });
 
 self.addEventListener('activate', (event) => {
@@ -84,8 +84,8 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// La vista offline se renueva en segundo plano mientras hay conexion, para
-// que su estructura coincida con la version actual de la app.
+// The offline view is refreshed in the background while online so its
+// layout matches the current version of the app.
 const OFFLINE_REFRESH_MS = 10 * 60 * 1000;
 let offlineRefreshedAt = 0;
 
@@ -109,7 +109,7 @@ async function refreshOffline() {
     const res = await fetch(OFFLINE_URL, { cache: 'reload' });
     if (res.ok) await (await caches.open(STATIC_CACHE)).put(OFFLINE_URL, res);
   } catch (err) {
-    // Sin conexion: se queda la copia anterior.
+    // Offline: keep the previous copy.
   }
 }
 
@@ -126,7 +126,7 @@ async function versionedAsset(event) {
     }
     return res;
   } catch (err) {
-    // Sin conexion: la ultima copia de ese archivo, sea cual sea su version.
+    // Offline: the last copy of that file, whatever its version.
     return (await cache.match(event.request, { ignoreSearch: true })) || Response.error();
   }
 }

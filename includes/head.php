@@ -2,12 +2,12 @@
 declare(strict_types=1);
 
 /**
- * Apertura del documento: <head> completo y <body>.
- * Variables opcionales antes del include:
- *   $pageTitle (string) titulo de la pagina
- *   $pageCss   (array)  hojas de estilo extra de la pagina
- *   $bodyClass (string) clases del <body>
- *   $bodyAttrs (array)  atributos extra del <body>, ej. ['data-install-auto' => 'off']
+ * Document opening: full <head> and <body>.
+ * Optional variables before including:
+ *   $pageTitle (string) page title
+ *   $pageCss   (array)  extra stylesheets for the page
+ *   $bodyClass (string) <body> classes
+ *   $bodyAttrs (array)  extra <body> attributes, e.g. ['data-install-auto' => 'off']
  */
 
 $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
@@ -20,12 +20,12 @@ $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <title><?= e($docTitle) ?></title>
 <meta name="description" content="<?= e(APP_DESCRIPTION) ?>">
 
-<!-- PWA: manifest y color de la barra del sistema -->
+<!-- PWA: manifest and system bar color -->
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="<?= e(THEME_COLOR) ?>">
 <meta name="color-scheme" content="dark light">
 <script>
-  // Aplica el tema guardado antes de pintar (evita el parpadeo).
+  // Apply the saved theme before first paint (avoids a flash).
   try {
     if (localStorage.getItem('umbrella-theme') === 'light') {
       document.documentElement.setAttribute('data-theme', 'light');
@@ -36,7 +36,7 @@ $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <meta name="application-name" content="<?= e(APP_NAME) ?>">
 <meta name="mobile-web-app-capable" content="yes">
 
-<!-- Favicons (navegadores de escritorio) -->
+<!-- Favicons (desktop browsers) -->
 <link rel="icon" href="assets/icons/favicon.ico" sizes="32x32">
 <link rel="icon" href="assets/icons/favicon.svg" type="image/svg+xml">
 
@@ -48,7 +48,7 @@ $docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 <meta name="format-detection" content="telephone=no">
 <?php require __DIR__ . '/splash-links.php'; ?>
 
-<!-- Windows (tiles del menu inicio) -->
+<!-- Windows (Start menu tiles) -->
 <meta name="msapplication-TileColor" content="<?= e(THEME_COLOR) ?>">
 <meta name="msapplication-TileImage" content="assets/icons/icon-144.png">
 <meta name="msapplication-tap-highlight" content="no">

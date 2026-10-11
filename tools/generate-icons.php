@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 /**
- * Genera todos los iconos de la PWA en assets/icons/.
- * Uso: php tools/generate-icons.php
+ * Generates every PWA icon into assets/icons/.
+ * Usage: php tools/generate-icons.php
  */
 
 require __DIR__ . '/brand.php';
@@ -11,7 +11,7 @@ require __DIR__ . '/brand.php';
 $dir = dirname(__DIR__) . '/assets/icons';
 
 $icons = [
-    // archivo                    tamano  modo
+    // file                       size    mode
     ['favicon-16.png',            16,     'any'],
     ['favicon-32.png',            32,     'any'],
     ['apple-touch-icon.png',      180,    'full'],     // iPhone / iPad / macOS Safari
@@ -27,7 +27,7 @@ foreach ($icons as [$file, $size, $mode]) {
     echo "ok  $file ({$size}x{$size}, $mode)\n";
 }
 
-// favicon.ico con PNGs embebidos de 16 y 32 (formato ICO moderno)
+// favicon.ico with embedded 16 and 32 px PNGs (modern ICO format)
 $entries = [];
 foreach ([16, 32] as $size) {
     ob_start();

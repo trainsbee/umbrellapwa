@@ -2,88 +2,88 @@
 declare(strict_types=1);
 
 /**
- * Estructura de las paginas internas: barra superior, menu lateral y
- * apertura de <main>. Se cierra con includes/shell-bottom.php.
- * Variables antes del include:
- *   $pageTitle (string) titulo de la pagina
- *   $activeNav (string) clave de NAV_ITEMS que va marcada
+ * Internal page layout: top bar, sidebar and the opening <main>.
+ * Closed by includes/shell-bottom.php.
+ * Variables before including:
+ *   $pageTitle (string) page title
+ *   $activeNav (string) NAV_ITEMS key to highlight
  */
 
 require_once __DIR__ . '/nav.php';
 
 $activeNav = $activeNav ?? '';
 $user = DEMO_USER;
-$bodyClass = 'con-shell';
+$bodyClass = 'has-shell';
 require __DIR__ . '/head.php';
 ?>
 <header class="topbar">
-  <button type="button" class="btn-circulo topbar-menu" data-sidebar-open aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menú">
+  <button type="button" class="btn-circle topbar-menu" data-sidebar-open aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menú">
     <?= icon('menu', 18) ?>
   </button>
-  <h1 class="topbar-titulo"><?= e($pageTitle) ?></h1>
-  <span class="btn-circulo-espacio" aria-hidden="true"></span>
+  <h1 class="topbar-title"><?= e($pageTitle) ?></h1>
+  <span class="btn-circle-spacer" aria-hidden="true"></span>
 </header>
 
-<div class="sidebar-fondo" data-sidebar-close></div>
+<div class="sidebar-backdrop" data-sidebar-close></div>
 
 <aside class="sidebar" id="sidebar" aria-label="Menú">
-  <div class="sidebar-cabecera">
-    <button type="button" class="btn-circulo sidebar-cerrar" data-sidebar-close aria-label="Cerrar menú">
+  <div class="sidebar-header">
+    <button type="button" class="btn-circle sidebar-close-btn" data-sidebar-close aria-label="Cerrar menú">
       <?= icon('chevron-left', 18) ?>
     </button>
     <h2>Ajustes</h2>
-    <span class="btn-circulo-espacio" aria-hidden="true"></span>
+    <span class="btn-circle-spacer" aria-hidden="true"></span>
   </div>
 
-  <div class="sidebar-cuerpo">
-    <a href="#" class="perfil-tarjeta">
-      <span class="avatar"><?= e(initials($user['nombre'])) ?></span>
-      <span class="perfil-texto">
-        <strong><?= e($user['nombre']) ?></strong>
-        <small><?= e($user['rol']) ?></small>
+  <div class="sidebar-body">
+    <a href="#" class="profile-card">
+      <span class="avatar"><?= e(initials($user['name'])) ?></span>
+      <span class="profile-text">
+        <strong><?= e($user['name']) ?></strong>
+        <small><?= e($user['role']) ?></small>
       </span>
-      <?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <?= icon('chevron-right', 16, 'row-arrow') ?>
     </a>
 
-    <p class="seccion-titulo">Navegación</p>
-    <nav class="grupo">
+    <p class="section-title">Navegación</p>
+    <nav class="group">
       <?php foreach (NAV_ITEMS as $key => [$label, $iconName, $href]): ?>
-        <a href="<?= e($href) ?>" class="fila<?= $key === $activeNav ? ' activa' : '' ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>>
-          <?= icon($iconName, 18, 'fila-icono') ?>
-          <span class="fila-texto"><?= e($label) ?></span>
-          <?= icon('chevron-right', 16, 'fila-flecha') ?>
+        <a href="<?= e($href) ?>" class="row<?= $key === $activeNav ? ' active' : '' ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>>
+          <?= icon($iconName, 18, 'row-icon') ?>
+          <span class="row-label"><?= e($label) ?></span>
+          <?= icon('chevron-right', 16, 'row-arrow') ?>
         </a>
       <?php endforeach; ?>
     </nav>
 
-    <p class="seccion-titulo">Otros ajustes</p>
-    <div class="grupo">
-      <a href="#" class="fila">
-        <?= icon('user', 18, 'fila-icono') ?><span class="fila-texto">Datos del perfil</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+    <p class="section-title">Otros ajustes</p>
+    <div class="group">
+      <a href="#" class="row">
+        <?= icon('user', 18, 'row-icon') ?><span class="row-label">Datos del perfil</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="#" class="fila">
-        <?= icon('lock', 18, 'fila-icono') ?><span class="fila-texto">Contraseña</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <a href="#" class="row">
+        <?= icon('lock', 18, 'row-icon') ?><span class="row-label">Contraseña</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="#" class="fila">
-        <?= icon('bell', 18, 'fila-icono') ?><span class="fila-texto">Notificaciones</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <a href="#" class="row">
+        <?= icon('bell', 18, 'row-icon') ?><span class="row-label">Notificaciones</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <button type="button" class="fila" data-theme-toggle role="switch" aria-checked="true">
-        <?= icon('moon', 18, 'fila-icono icono-tema-oscuro') ?><?= icon('sun', 18, 'fila-icono icono-tema-claro') ?><span class="fila-texto">Modo oscuro</span><span class="switch" aria-hidden="true"></span>
+      <button type="button" class="row" data-theme-toggle role="switch" aria-checked="true">
+        <?= icon('moon', 18, 'row-icon theme-icon-dark') ?><?= icon('sun', 18, 'row-icon theme-icon-light') ?><span class="row-label">Modo oscuro</span><span class="switch" aria-hidden="true"></span>
       </button>
     </div>
 
-    <div class="grupo">
-      <button type="button" class="fila" data-pwa-install hidden>
-        <?= icon('download', 18, 'fila-icono') ?><span class="fila-texto">Instalar app</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+    <div class="group">
+      <button type="button" class="row" data-pwa-install hidden>
+        <?= icon('download', 18, 'row-icon') ?><span class="row-label">Instalar app</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </button>
-      <a href="#" class="fila">
-        <?= icon('info', 18, 'fila-icono') ?><span class="fila-texto">Acerca de la aplicación</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <a href="#" class="row">
+        <?= icon('info', 18, 'row-icon') ?><span class="row-label">Acerca de la aplicación</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="#" class="fila">
-        <?= icon('message-square', 18, 'fila-icono') ?><span class="fila-texto">Ayuda / FAQ</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <a href="#" class="row">
+        <?= icon('message-square', 18, 'row-icon') ?><span class="row-label">Ayuda / FAQ</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="login.php" class="fila fila--peligro">
-        <?= icon('log-out', 18, 'fila-icono') ?><span class="fila-texto">Cerrar sesión</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
+      <a href="login.php" class="row row--danger">
+        <?= icon('log-out', 18, 'row-icon') ?><span class="row-label">Cerrar sesión</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
     </div>
 
@@ -91,4 +91,4 @@ require __DIR__ . '/head.php';
   </div>
 </aside>
 
-<main class="contenido">
+<main class="content">

@@ -1,6 +1,6 @@
 /**
- * Registra el service worker y avisa cuando hay una version nueva.
- * La version nueva queda en espera hasta que el usuario toca "Actualizar".
+ * Registers the service worker and announces new versions.
+ * A new version waits until the user taps "Actualizar" (update).
  */
 (function () {
   'use strict';
@@ -8,8 +8,8 @@
   if (!('serviceWorker' in navigator)) return;
 
   var refreshing = false;
-  // En la primera visita no hay SW controlando; cuando el nuevo toma el
-  // control (clients.claim) no hay que recargar: no es una actualizacion.
+  // On the first visit no SW controls the page; when the new one takes
+  // control (clients.claim) there is no need to reload: it is not an update.
   var hadController = !!navigator.serviceWorker.controller;
 
   function showUpdateToast(worker) {
@@ -21,7 +21,7 @@
     toast.setAttribute('role', 'status');
     toast.innerHTML =
       '<span>Hay una nueva versión disponible.</span>' +
-      '<button type="button" class="btn btn--primario">Actualizar</button>';
+      '<button type="button" class="btn btn--primary">Actualizar</button>';
 
     toast.querySelector('button').addEventListener('click', function () {
       worker.postMessage({ type: 'SKIP_WAITING' });
@@ -32,7 +32,7 @@
 
   function watchInstalling(worker) {
     worker.addEventListener('statechange', function () {
-      // Solo es "actualizacion" si ya habia un SW controlando la pagina.
+      // It is only an "update" if a SW was already controlling the page.
       if (worker.state === 'installed' && navigator.serviceWorker.controller) {
         showUpdateToast(worker);
       }
@@ -49,7 +49,7 @@
         if (reg.installing) watchInstalling(reg.installing);
       });
 
-      // Revisar actualizaciones al volver a la app (util en PWA instalada).
+      // Check for updates when returning to the app (useful when installed).
       document.addEventListener('visibilitychange', function () {
         if (document.visibilityState === 'visible') reg.update();
       });

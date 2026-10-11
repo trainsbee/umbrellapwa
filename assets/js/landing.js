@@ -1,17 +1,17 @@
-// Landing: cabecera con fondo al bajar, aparicion de secciones, boton fijo
-// de instalar y accion de los botones "Instalar app".
+// Landing page: header background on scroll, section reveal, sticky install
+// bar and the behavior of the "Instalar app" buttons.
 (function () {
   'use strict';
 
-  var header = document.querySelector('.landing-cabecera');
+  var header = document.querySelector('.landing-header');
   if (header) {
-    var onScroll = function () { header.classList.toggle('con-fondo', window.scrollY > 8); };
+    var onScroll = function () { header.classList.toggle('is-scrolled', window.scrollY > 8); };
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
   }
 
-  // Aparicion suave al entrar en pantalla
-  var items = document.querySelectorAll('.revelar');
+  // Fade sections in as they enter the viewport
+  var items = document.querySelectorAll('.reveal');
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     items.forEach(function (el) { el.classList.add('visible'); });
   } else {
@@ -25,10 +25,10 @@
     items.forEach(function (el) { revealer.observe(el); });
   }
 
-  // Boton fijo: visible cuando el boton principal ya no esta en pantalla,
-  // salvo en la seccion final (que ya tiene su propio boton).
-  var bar = document.querySelector('[data-landing-fijo]');
-  var heroBtn = document.getElementById('instalarHeroe');
+  // Sticky bar: visible once the hero button is off screen, except over the
+  // final section (which has its own button).
+  var bar = document.querySelector('[data-landing-sticky]');
+  var heroBtn = document.getElementById('heroInstall');
   var finalSection = document.querySelector('.landing-final');
   if (bar && heroBtn && 'IntersectionObserver' in window) {
     var heroVisible = true;
@@ -51,9 +51,9 @@
     }
   }
 
-  // Instalar: abre la hoja de instalacion de la plataforma; si el navegador
-  // no permite instalar, explica que hacer.
-  var note = document.querySelector('[data-landing-nota]');
+  // Install: opens the platform's install sheet; if the browser cannot
+  // install apps, explain what to do.
+  var note = document.querySelector('[data-landing-note]');
   document.addEventListener('click', function (e) {
     if (!e.target.closest('[data-landing-install]')) return;
     var api = window.pwaInstall;
@@ -66,18 +66,19 @@
     }
   });
 
-  // Panel en vivo: cada pocos segundos entra un evento nuevo (ilustrativo).
+  // Live panel: every few seconds a new (illustrative) event comes in.
   var feed = document.querySelector('[data-landing-feed]');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (feed && !reduced) {
-    var TIPOS = [
+    // [icon, type, title, details, action] — visible text stays in Spanish
+    var EVENT_TYPES = [
       ['user-plus', 'lead', 'Nuevo lead', ['Formulario web', 'Campaña de referidos', 'Llamada entrante', 'Landing de producto'], 'Asignar'],
-      ['edit-3', 'firmando', 'Cliente firmando', ['en proceso'], 'Seguir'],
-      ['check-circle', 'firmado', 'Cliente firmó', ['completado'], 'Ver'],
+      ['edit-3', 'signing', 'Cliente firmando', ['en proceso'], 'Seguir'],
+      ['check-circle', 'signed', 'Cliente firmó', ['completado'], 'Ver'],
       ['shield', 'compliance', 'Compliance completado', ['Verificación aprobada'], 'Revisar'],
     ];
-    var NOMBRES = ['Andrea M.', 'Carlos R.', 'Lucía P.', 'Jorge A.', 'Sofía V.', 'Daniel H.', 'Valeria T.', 'Miguel S.'];
-    var contrato = 4822;
+    var NAMES = ['Andrea M.', 'Carlos R.', 'Lucía P.', 'Jorge A.', 'Sofía V.', 'Daniel H.', 'Valeria T.', 'Miguel S.'];
+    var contractNumber = 4822;
     var pick = function (list) { return list[Math.floor(Math.random() * list.length)]; };
 
     var stamp = function (li) { li.setAttribute('data-ts', String(Date.now())); };
@@ -86,19 +87,19 @@
     var refreshTimes = function () {
       feed.querySelectorAll('li').forEach(function (li) {
         var secs = Math.round((Date.now() - Number(li.getAttribute('data-ts'))) / 1000);
-        li.querySelector('.landing-evento-hora').textContent = secs < 3 ? 'ahora' : (secs < 60 ? 'hace ' + secs + ' s' : 'hace ' + Math.round(secs / 60) + ' min');
+        li.querySelector('.landing-event-time').textContent = secs < 3 ? 'ahora' : (secs < 60 ? 'hace ' + secs + ' s' : 'hace ' + Math.round(secs / 60) + ' min');
       });
     };
 
     var addEvent = function () {
-      var t = pick(TIPOS);
-      var detalle = t[1] === 'lead' ? pick(NOMBRES) + ' · ' + pick(t[3])
-        : (t[1] === 'compliance' ? t[3][0] + ' · #' + (contrato - 3) : 'Contrato #' + (contrato++) + ' · ' + t[3][0]);
+      var t = pick(EVENT_TYPES);
+      var details = t[1] === 'lead' ? pick(NAMES) + ' · ' + pick(t[3])
+        : (t[1] === 'compliance' ? t[3][0] + ' · #' + (contractNumber - 3) : 'Contrato #' + (contractNumber++) + ' · ' + t[3][0]);
       var li = document.createElement('li');
-      li.className = 'landing-evento evento-' + t[1];
-      li.innerHTML = '<span class="landing-evento-icono"><i data-feather="' + t[0] + '" width="15" height="15"></i></span>' +
-        '<span class="landing-evento-texto"><strong>' + t[2] + '</strong><small>' + detalle + '</small></span>' +
-        '<span class="landing-evento-lado"><span class="landing-evento-hora">ahora</span><span class="landing-evento-accion">' + t[4] + '</span></span>';
+      li.className = 'landing-event event-' + t[1];
+      li.innerHTML = '<span class="landing-event-icon"><i data-feather="' + t[0] + '" width="15" height="15"></i></span>' +
+        '<span class="landing-event-text"><strong>' + t[2] + '</strong><small>' + details + '</small></span>' +
+        '<span class="landing-event-side"><span class="landing-event-time">ahora</span><span class="landing-event-action">' + t[4] + '</span></span>';
       stamp(li);
       feed.insertBefore(li, feed.firstChild);
       if (window.feather) window.feather.replace();

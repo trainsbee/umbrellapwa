@@ -2,11 +2,11 @@
 declare(strict_types=1);
 
 /**
- * Hoja "Instalar app". La controla assets/js/pwa/install.js, que muestra
- * solo la seccion de la plataforma detectada:
+ * "Install app" sheet. Driven by assets/js/pwa/install.js, which shows only
+ * the section for the detected platform:
  *   prompt     -> Chrome / Edge / Samsung (Android, Windows, macOS, ChromeOS)
- *   ios        -> iPhone / iPad (Safari y otros navegadores en iOS)
- *   mac-safari -> Safari en macOS (Agregar al Dock)
+ *   ios        -> iPhone / iPad (Safari and other iOS browsers)
+ *   mac-safari -> Safari on macOS (Add to Dock)
  */
 ?>
 <div class="install-sheet" id="installSheet" role="dialog" aria-modal="true" aria-labelledby="installSheetTitle" hidden>
@@ -22,7 +22,7 @@ declare(strict_types=1);
     <div data-install-platform="prompt" hidden>
       <div class="install-sheet-actions">
         <button type="button" class="btn" data-install-dismiss>Ahora no</button>
-        <button type="button" class="btn btn--primario" data-install-confirm>Instalar</button>
+        <button type="button" class="btn btn--primary" data-install-confirm>Instalar</button>
       </div>
     </div>
 
@@ -33,7 +33,7 @@ declare(strict_types=1);
         <li>Toca <strong>"Agregar"</strong>.</li>
       </ol>
       <div class="install-sheet-actions">
-        <button type="button" class="btn btn--primario" data-install-dismiss>Entendido</button>
+        <button type="button" class="btn btn--primary" data-install-dismiss>Entendido</button>
       </div>
     </div>
 
@@ -43,7 +43,7 @@ declare(strict_types=1);
         <li>Elige <strong>"Agregar al Dock"</strong>.</li>
       </ol>
       <div class="install-sheet-actions">
-        <button type="button" class="btn btn--primario" data-install-dismiss>Entendido</button>
+        <button type="button" class="btn btn--primary" data-install-dismiss>Entendido</button>
       </div>
     </div>
   </div>

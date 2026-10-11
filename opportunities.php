@@ -7,7 +7,7 @@ $pageTitle = 'Oportunidades';
 $activeNav = 'opportunities';
 require __DIR__ . '/includes/shell-top.php';
 ?>
-<section class="vacio">
+<section class="empty-state">
   <?= icon('users', 22) ?>
   <h2>Oportunidades</h2>
   <p>Aquí irán las oportunidades.</p>

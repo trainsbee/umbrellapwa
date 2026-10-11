@@ -2,13 +2,13 @@
 declare(strict_types=1);
 
 /**
- * Graficas de lineas en SVG (decorativas, para la landing).
- * line_chart_paths() convierte una serie de valores en una curva suave
- * (Catmull-Rom -> Bezier) y su area rellena.
+ * SVG line charts (decorative, used by the landing page).
+ * line_chart_paths() turns a series of values into a smooth curve
+ * (Catmull-Rom -> Bezier) plus its filled area.
  */
 
 /**
- * @param float[] $values valores de 0 a 100
+ * @param float[] $values values from 0 to 100
  * @return array{line: string, area: string, end: array{0: float, 1: float}}
  */
 function line_chart_paths(array $values, float $width, float $height, float $padY = 12): array

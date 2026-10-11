@@ -1,17 +1,17 @@
 /**
- * Flujo de instalacion de la PWA en todas las plataformas.
+ * PWA install flow for every platform.
  *
- *  - Chrome / Edge / Samsung Internet: usan el evento beforeinstallprompt
- *    y el boton "Instalar" abre el dialogo nativo.
- *  - iPhone / iPad: no hay dialogo nativo; se muestran instrucciones
- *    (Compartir -> Agregar a inicio).
- *  - Safari en macOS: instrucciones (Archivo -> Agregar al Dock).
+ *  - Chrome / Edge / Samsung Internet: use the beforeinstallprompt event and
+ *    the "Install" button opens the native dialog.
+ *  - iPhone / iPad: there is no native dialog; instructions are shown
+ *    (Share -> Add to Home Screen).
+ *  - Safari on macOS: instructions (File -> Add to Dock).
  *
- * Cualquier elemento con [data-pwa-install] abre la hoja manualmente y
- * se muestra solo cuando la instalacion es posible.
+ * Any [data-pwa-install] element opens the sheet manually and is only shown
+ * when installing is possible.
  *
- * <body data-install-auto="off"> evita que la hoja se abra sola (la landing
- * tiene sus propios botones). API para otras paginas: window.pwaInstall.
+ * <body data-install-auto="off"> stops the sheet from opening by itself (the
+ * landing page has its own buttons). API for other pages: window.pwaInstall.
  */
 (function () {
   'use strict';
@@ -31,7 +31,7 @@
 
   function detectManualPlatform() {
     var ua = navigator.userAgent;
-    // iPadOS 13+ se identifica como Mac, pero tiene pantalla tactil.
+    // iPadOS 13+ reports itself as a Mac, but it has a touch screen.
     var isIOS = /iphone|ipad|ipod/i.test(ua) ||
       (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
     if (isIOS) return 'ios';
@@ -134,7 +134,7 @@
       });
     }
 
-    // Clic fuera del panel o tecla Escape cierran la hoja.
+    // Clicking outside the panel or pressing Escape closes the sheet.
     el.addEventListener('click', function (e) {
       if (e.target === el) closeSheet(true);
     });

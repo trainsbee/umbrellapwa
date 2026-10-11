@@ -7,7 +7,7 @@ $pageTitle = 'Inicio';
 $activeNav = 'home';
 require __DIR__ . '/includes/shell-top.php';
 ?>
-<section class="vacio">
+<section class="empty-state">
   <?= icon('home', 22) ?>
   <h2>Inicio</h2>
   <p>Aquí irá el resumen de la app.</p>

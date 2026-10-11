@@ -1,11 +1,11 @@
-// Punto de entrada del JS de la app.
+// App JavaScript entry point.
 (function () {
   'use strict';
 
-  // Iconos: <i data-feather="nombre"> -> SVG (ver includes/icons.php)
+  // Icons: <i data-feather="name"> -> SVG (see includes/icons.php)
   if (window.feather) window.feather.replace();
 
-  // Mostrar / ocultar contrasena: <button data-toggle-password="idDelInput">
+  // Show / hide password: <button data-toggle-password="inputId">
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('[data-toggle-password]');
     if (!btn) return;
@@ -13,11 +13,11 @@
     if (!input) return;
     var visible = input.type === 'password';
     input.type = visible ? 'text' : 'password';
-    btn.classList.toggle('es-visible', visible);
+    btn.classList.toggle('is-visible', visible);
     btn.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
   });
 
-  // Tema claro / oscuro: cualquier [data-theme-toggle] lo cambia.
+  // Light / dark theme: any [data-theme-toggle] switches it.
   var THEME_KEY = 'umbrella-theme';
   var THEME_COLORS = { dark: '#0f1012', light: '#f6f6f7' };
 
@@ -49,21 +49,21 @@
     el.setAttribute('aria-checked', currentTheme() === 'dark' ? 'true' : 'false');
   });
 
-  // Menu lateral: [data-sidebar-open] lo abre; [data-sidebar-close], el
-  // fondo oscuro y la tecla Escape lo cierran.
+  // Sidebar: [data-sidebar-open] opens it; [data-sidebar-close], the
+  // backdrop and the Escape key close it.
   var root = document.documentElement;
   var lastFocus = null;
 
   function setSidebar(open) {
     var sidebar = document.getElementById('sidebar');
     if (!sidebar) return;
-    root.classList.toggle('sidebar-abierto', open);
+    root.classList.toggle('sidebar-is-open', open);
     document.querySelectorAll('[data-sidebar-open]').forEach(function (el) {
       el.setAttribute('aria-expanded', open ? 'true' : 'false');
     });
     if (open) {
       lastFocus = document.activeElement;
-      var closeBtn = sidebar.querySelector('.sidebar-cerrar');
+      var closeBtn = sidebar.querySelector('.sidebar-close-btn');
       if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 50);
     } else if (lastFocus) {
       lastFocus.focus();
@@ -76,17 +76,17 @@
     if (e.target.closest('[data-sidebar-close]')) setSidebar(false);
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && root.classList.contains('sidebar-abierto')) setSidebar(false);
+    if (e.key === 'Escape' && root.classList.contains('sidebar-is-open')) setSidebar(false);
   });
 
-  // Aviso cuando se pierde la conexion con la app abierta.
+  // Notice shown when the connection drops while the app is open.
   function setOfflineBanner(offline) {
-    var banner = document.getElementById('avisoConexion');
+    var banner = document.getElementById('connectionNotice');
     if (!offline) { if (banner) banner.remove(); return; }
-    if (banner || document.querySelector('.vacio--offline')) return;
+    if (banner || document.querySelector('.empty-state--offline')) return;
     banner = document.createElement('div');
-    banner.id = 'avisoConexion';
-    banner.className = 'aviso-conexion';
+    banner.id = 'connectionNotice';
+    banner.className = 'connection-notice';
     banner.setAttribute('role', 'status');
     banner.innerHTML = '<i data-feather="wifi-off" width="14" height="14"></i><span>Sin conexión. Conéctate a internet para ver los datos.</span>';
     document.body.appendChild(banner);
