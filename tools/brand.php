@@ -2,14 +2,15 @@
 declare(strict_types=1);
 
 /**
- * Dibujo del logo de UmbrellaApp con GD (carita: dos ojos + sonrisa).
+ * Dibujo del logo de UmbrellaApp con GD: el paraguas del icono
+ * 'logo' de includes/icons.php, trazado en color acento sobre fondo oscuro.
+ *   <path d="M23 12a11 11 0 0 0-22 0"/>   (cupula)
+ *   <path d="M12 12v7a2 2 0 0 0 4 0"/>    (baston y mango)
  * Lo usan generate-icons.php y generate-splash.php.
- * Coordenadas en una cuadricula de 512x512.
  */
 
-const BRAND_BG    = [0x1C, 0x1C, 0x1C];
-const BRAND_EYES  = [0xEB, 0xEB, 0xEB];
-const BRAND_SMILE = [0x7C, 0x5C, 0xFC];
+const BRAND_BG     = [0x0F, 0x10, 0x12];
+const BRAND_STROKE = [0x7C, 0x74, 0xFF];
 
 /** Color GD a partir de [r, g, b]. */
 function brand_color(GdImage $img, array $rgb): int
@@ -18,31 +19,35 @@ function brand_color(GdImage $img, array $rgb): int
 }
 
 /**
- * Dibuja la carita dentro de un cuadro de $size px con esquina en ($ox, $oy).
+ * Dibuja el paraguas centrado en un cuadro de $size px con esquina en ($ox, $oy).
+ * Coordenadas del icono en una cuadricula de 24x24 (trazo de 2 unidades).
  */
-function brand_draw_face(GdImage $img, float $ox, float $oy, float $size): void
+function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size): void
 {
-    $s = $size / 512;
-    $p = fn (float $v): int => (int) round($v * $s);
+    $u = $size / 24;
+    // El dibujo ocupa y de 0 a 22: se baja 1 unidad para centrarlo.
+    $x = fn (float $v): int => (int) round($ox + $v * $u);
+    $y = fn (float $v): int => (int) round($oy + ($v + 1) * $u);
+    $d = fn (float $v): int => (int) round($v * $u);
+
     $bg = brand_color($img, BRAND_BG);
-    $eyes = brand_color($img, BRAND_EYES);
-    $smile = brand_color($img, BRAND_SMILE);
+    $ink = brand_color($img, BRAND_STROKE);
+    $w = 2; // grosor del trazo
 
-    // Ojos
-    imagefilledrectangle($img, (int) $ox + $p(125), (int) $oy + $p(165), (int) $ox + $p(187), (int) $oy + $p(270), $eyes);
-    imagefilledrectangle($img, (int) $ox + $p(325), (int) $oy + $p(165), (int) $ox + $p(387), (int) $oy + $p(270), $eyes);
+    // Cupula: media circunferencia superior, centro (12,12), radio 11
+    imagefilledarc($img, $x(12), $y(12), $d(2 * (11 + $w / 2)), $d(2 * (11 + $w / 2)), 180, 360, $ink, IMG_ARC_PIE);
+    imagefilledarc($img, $x(12), $y(12), $d(2 * (11 - $w / 2)), $d(2 * (11 - $w / 2)), 180, 360, $bg, IMG_ARC_PIE);
 
-    // Sonrisa: arco de 10 a 170 grados con puntas redondeadas
-    $cx = $ox + $p(256);
-    $cy = $oy + $p(307);
-    $r = 120;
-    $half = 31;
-    imagefilledarc($img, (int) $cx, (int) $cy, $p(($r + $half) * 2), $p(($r + $half) * 2), 10, 170, $smile, IMG_ARC_PIE);
-    imagefilledarc($img, (int) $cx, (int) $cy, $p(($r - $half) * 2), $p(($r - $half) * 2), 0, 180, $bg, IMG_ARC_PIE);
-    foreach ([10, 170] as $deg) {
-        $ex = $cx + $p($r * cos(deg2rad($deg)));
-        $ey = $cy + $p($r * sin(deg2rad($deg)));
-        imagefilledellipse($img, (int) $ex, (int) $ey, $p($half * 2), $p($half * 2), $smile);
+    // Baston: de (12,12) a (12,19)
+    imagefilledrectangle($img, $x(12 - $w / 2), $y(12), $x(12 + $w / 2), $y(19), $ink);
+
+    // Mango: media circunferencia inferior, centro (14,19), radio 2
+    imagefilledarc($img, $x(14), $y(19), $d(2 * (2 + $w / 2)), $d(2 * (2 + $w / 2)), 0, 180, $ink, IMG_ARC_PIE);
+    imagefilledarc($img, $x(14), $y(19), $d(2 * (2 - $w / 2)), $d(2 * (2 - $w / 2)), 0, 180, $bg, IMG_ARC_PIE);
+
+    // Puntas redondeadas
+    foreach ([[1, 12], [23, 12], [12, 12], [12, 19], [16, 19]] as [$px, $py]) {
+        imagefilledellipse($img, $x($px), $y($py), $d($w), $d($w), $ink);
     }
 }
 
@@ -59,8 +64,8 @@ function brand_rounded_rect(GdImage $img, int $x1, int $y1, int $x2, int $y2, in
 /**
  * Genera un icono cuadrado de $size px.
  *  'any'      -> cuadro redondeado con esquinas transparentes
- *  'full'     -> fondo completo (Apple / tiles), logo a tamano normal
- *  'maskable' -> fondo completo, logo reducido a la zona segura (80%)
+ *  'full'     -> fondo completo (Apple / tiles / splash)
+ *  'maskable' -> fondo completo, logo dentro de la zona segura de Android
  * Dibuja a 4x y reduce para obtener bordes suaves.
  */
 function brand_icon(int $size, string $mode): GdImage
@@ -76,15 +81,12 @@ function brand_icon(int $size, string $mode): GdImage
     $bg = brand_color($canvas, BRAND_BG);
     if ($mode === 'any') {
         brand_rounded_rect($canvas, 0, 0, $big - 1, $big - 1, (int) ($big * 0.1875), $bg);
-        brand_draw_face($canvas, 0, 0, $big);
-    } elseif ($mode === 'maskable') {
-        imagefilledrectangle($canvas, 0, 0, $big - 1, $big - 1, $bg);
-        $inner = $big * 0.8;
-        brand_draw_face($canvas, ($big - $inner) / 2, ($big - $inner) / 2, $inner);
     } else {
         imagefilledrectangle($canvas, 0, 0, $big - 1, $big - 1, $bg);
-        brand_draw_face($canvas, 0, 0, $big);
     }
+
+    $logo = $big * ($mode === 'maskable' ? 0.5 : 0.62);
+    brand_draw_logo($canvas, ($big - $logo) / 2, ($big - $logo) / 2, $logo);
 
     $out = imagecreatetruecolor($size, $size);
     imagealphablending($out, false);

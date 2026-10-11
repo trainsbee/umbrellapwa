@@ -10,12 +10,12 @@ declare(strict_types=1);
 const APP_NAME        = 'UmbrellaApp';
 const APP_SHORT_NAME  = 'Umbrella';
 const APP_DESCRIPTION = 'UmbrellaApp - gestion interna';
-const APP_VERSION     = '0.1.0';
+const APP_VERSION     = '0.2.0';
 const APP_LANG        = 'es';
 
 // Colores de marca (deben coincidir con manifest.webmanifest)
-const THEME_COLOR      = '#1C1C1C';
-const BACKGROUND_COLOR = '#1C1C1C';
+const THEME_COLOR      = '#0f1012';
+const BACKGROUND_COLOR = '#0f1012';
 
 require_once __DIR__ . '/icons.php';
 
