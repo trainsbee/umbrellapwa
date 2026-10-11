@@ -13,7 +13,7 @@
   --borde: rgba(255, 255, 255, .07);
   --borde-2: rgba(255, 255, 255, .12);
   --borde-3: rgba(255, 255, 255, .18);
-  --borde-sidebar: rgba(255, 255, 255, .12);
+  --borde-sidebar: rgba(255, 255, 255, .16);
   --texto: #e8eaed;
   --suave: #9aa0a6;
   --tenue: #6b7078;
@@ -51,7 +51,7 @@
   --borde: rgba(16, 24, 40, .08);
   --borde-2: rgba(16, 24, 40, .13);
   --borde-3: rgba(16, 24, 40, .22);
-  --borde-sidebar: #d9dbe0;
+  --borde-sidebar: #c9ccd2;
   --texto: #17181a;
   --suave: #5f646d;
   --tenue: #9aa0a6;
@@ -362,12 +362,13 @@ body.con-shell { padding: 0; }
 
 .contenido { padding: 8px calc(16px + var(--safe-right)) 24px calc(16px + var(--safe-left)); }
 
-/* Menu lateral (en movil ocupa la pantalla, como una vista de ajustes) */
+/* Menu lateral. En tablet flota sobre el contenido (fondo --panel para
+   contrastar con el vidrio); en celular ocupa toda la pantalla. */
 .sidebar {
   position: fixed; top: 0; bottom: 0; left: 0; z-index: 900;
-  width: min(100%, 420px);
+  width: 420px;
   display: flex; flex-direction: column;
-  background: var(--fondo);
+  background: var(--panel);
   border-right: 1px solid var(--borde-sidebar);
   transform: translateX(-100%);
   visibility: hidden;
@@ -493,12 +494,16 @@ html.sidebar-abierto .sidebar-fondo { opacity: 1; pointer-events: auto; }
 .vacio h2 { margin: 6px 0 0; font-size: 15px; font-weight: 600; color: var(--texto); }
 .vacio p { margin: 0; font-size: 13px; }
 
+/* Celular: pantalla completa, como una vista de ajustes */
+@media (max-width: 520px) {
+  .sidebar { width: 100%; border-right: 0; background: var(--fondo); }
+}
+
 /* Escritorio: menu fijo a la izquierda */
 @media (min-width: 1024px) {
   .sidebar {
     width: var(--sidebar-w);
     transform: none; visibility: visible;
-    background: var(--panel);
   }
   .sidebar-fondo, .sidebar-cerrar, .topbar-menu { display: none; }
   .sidebar-cabecera { grid-template-columns: 1fr; }
