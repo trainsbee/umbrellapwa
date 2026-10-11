@@ -7,14 +7,14 @@ declare(strict_types=1);
  *   $pageTitle (string) titulo de la pagina
  */
 
-$pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
+$docTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 ?>
 <!DOCTYPE html>
 <html lang="<?= e(APP_LANG) ?>">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title><?= e($pageTitle) ?></title>
+<title><?= e($docTitle) ?></title>
 <meta name="description" content="<?= e(APP_DESCRIPTION) ?>">
 
 <!-- PWA: manifest y color de la barra del sistema -->
@@ -52,4 +52,4 @@ $pageTitle = isset($pageTitle) ? $pageTitle . ' - ' . APP_NAME : APP_NAME;
 
 <link rel="stylesheet" href="<?= e(asset('assets/css/app.css')) ?>">
 </head>
-<body>
+<body<?= !empty($bodyClass) ? ' class="' . e($bodyClass) . '"' : '' ?>>

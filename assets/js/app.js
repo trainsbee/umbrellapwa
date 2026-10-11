@@ -48,4 +48,34 @@
   document.querySelectorAll('[data-theme-toggle]').forEach(function (el) {
     el.setAttribute('aria-checked', currentTheme() === 'dark' ? 'true' : 'false');
   });
+
+  // Menu lateral: [data-sidebar-open] lo abre; [data-sidebar-close], el
+  // fondo oscuro y la tecla Escape lo cierran.
+  var root = document.documentElement;
+  var lastFocus = null;
+
+  function setSidebar(open) {
+    var sidebar = document.getElementById('sidebar');
+    if (!sidebar) return;
+    root.classList.toggle('sidebar-abierto', open);
+    document.querySelectorAll('[data-sidebar-open]').forEach(function (el) {
+      el.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    if (open) {
+      lastFocus = document.activeElement;
+      var closeBtn = sidebar.querySelector('.sidebar-cerrar');
+      if (closeBtn) setTimeout(function () { closeBtn.focus(); }, 50);
+    } else if (lastFocus) {
+      lastFocus.focus();
+      lastFocus = null;
+    }
+  }
+
+  document.addEventListener('click', function (e) {
+    if (e.target.closest('[data-sidebar-open]')) { setSidebar(true); return; }
+    if (e.target.closest('[data-sidebar-close]')) setSidebar(false);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && root.classList.contains('sidebar-abierto')) setSidebar(false);
+  });
 })();
