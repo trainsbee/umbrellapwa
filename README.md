@@ -77,3 +77,24 @@ php tools/generate-splash.php
 Nunca pongas API keys ni contrasenas en archivos versionados. Usa
 `includes/config.local.php` (esta en `.gitignore`); `config.php` lo carga
 automaticamente si existe.
+
+## Produccion
+
+- URL: <https://pwa.umbrellasync.com>
+- VPS Hostinger con aaPanel + nginx, PHP 8.4. Sitio en `/www/wwwroot/pwa.umbrellasync.com`
+  (es un clon de este repo; dueno de los archivos: `www`).
+- SSL: Let's Encrypt desde aaPanel (se renueva solo).
+- nginx ignora el `.htaccess`. Sus reglas equivalentes estan en
+  [`deploy/nginx-pwa.conf`](deploy/nginx-pwa.conf), instalado en
+  `/www/server/panel/vhost/nginx/extension/pwa.umbrellasync.com/pwa.conf`.
+  Si lo cambias, copialo al servidor y ejecuta `nginx -t && nginx -s reload`.
+
+### Desplegar
+
+Haz push a `main` y luego:
+
+```bash
+ssh root@<VPS> 'cd /www/wwwroot/pwa.umbrellasync.com && git pull --ff-only && chown -R www:www .git assets includes tools *.php *.html sw.js manifest.webmanifest'
+```
+
+Recuerda subir `APP_VERSION` y `CACHE_VERSION` para que los usuarios reciban la actualizacion.
