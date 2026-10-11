@@ -22,7 +22,7 @@ local certificate with `mkcert`.
 
 ```
 umbrellapwa/
-├── index.php               Public landing page (install the app); the installed app opens login.php
+├── index.php               Public landing page: install the app and everything Umbrella can do; the installed app opens login.php
 ├── login.php               Sign in (visual base; for now it goes straight to home.php); links back to the landing page
 ├── home.php, sales.php, opportunities.php, reports.php   App sections
 ├── manifest.webmanifest    Web App Manifest (name, icons, colors)
