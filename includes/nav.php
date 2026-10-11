@@ -6,10 +6,10 @@ declare(strict_types=1);
  * de navegacion inferior. Clave => [titulo, icono Feather, archivo].
  */
 const NAV_ITEMS = [
-    'inicio'        => ['Inicio',        'home',        'inicio.php'],
-    'ventas'        => ['Ventas',        'trending-up', 'ventas.php'],
-    'oportunidades' => ['Oportunidades', 'users',       'oportunidades.php'],
-    'reportes'      => ['Reportes',      'bar-chart-2', 'reportes.php'],
+    'home'          => ['Inicio',        'home',        'home.php'],
+    'sales'         => ['Ventas',        'trending-up', 'sales.php'],
+    'opportunities' => ['Oportunidades', 'users',       'opportunities.php'],
+    'reports'       => ['Reportes',      'bar-chart-2', 'reports.php'],
 ];
 
 // Usuario de muestra hasta conectar el login con Supabase.

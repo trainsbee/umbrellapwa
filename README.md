@@ -21,8 +21,8 @@ certificado local con `mkcert`.
 ```
 umbrellapwa/
 ├── index.php               Entrada: redirige al login
-├── login.php               Login (base visual; por ahora entra directo a Inicio)
-├── inicio.php, ventas.php, oportunidades.php, reportes.php   Secciones
+├── login.php               Login (base visual; por ahora entra directo a home.php)
+├── home.php, sales.php, opportunities.php, reports.php   Secciones
 ├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
 ├── sw.js                   Service worker (cache y modo offline)
 ├── offline.php             Vista sin conexion (menu y modo oscuro, sin datos)

@@ -8,7 +8,7 @@ require_once __DIR__ . '/includes/config.php';
 $email = '';
 $error = null;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    header('Location: inicio.php');
+    header('Location: home.php');
     exit;
 }
 

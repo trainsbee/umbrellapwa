@@ -23,7 +23,7 @@ require __DIR__ . '/includes/shell-top.php';
 </section>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var page = location.pathname.split('/').pop() || 'inicio.php';
+    var page = location.pathname.split('/').pop() || 'home.php';
     document.querySelectorAll('.bottomnav-item[href], .sidebar .fila[href]').forEach(function (link) {
       if (link.getAttribute('href') !== page) return;
       link.classList.add('activa');
