@@ -11,7 +11,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/charts.php';
 
-$pageTitle = 'Tu operación, en tiempo real';
+$pageTitle = 'Toda tu operación, en la palma de tu mano';
 $pageCss = ['assets/css/landing.css'];
 $bodyClass = 'landing';
 $bodyAttrs = ['data-install-auto' => 'off'];
@@ -33,11 +33,12 @@ $repSeries = [
     'no-cerradas' => [48, 44, 46, 40, 37, 39, 33, 29, 31, 24],
 ];
 
+// Cada evento llega con su accion lista para ejecutarse
 $feed = [
-    ['user-plus',    'lead',       'Nuevo lead',            'Andrea M. · Formulario web'],
-    ['edit-3',       'firmando',   'Cliente firmando',      'Contrato #4821 · en proceso'],
-    ['check-circle', 'firmado',    'Cliente firmó',         'Contrato #4817 · completado'],
-    ['shield',       'compliance', 'Compliance completado', 'Verificación aprobada · #4809'],
+    ['user-plus',    'lead',       'Nuevo lead',            'Andrea M. · Formulario web',    'Asignar'],
+    ['edit-3',       'firmando',   'Cliente firmando',      'Contrato #4821 · en proceso',   'Seguir'],
+    ['check-circle', 'firmado',    'Cliente firmó',         'Contrato #4817 · completado',   'Ver'],
+    ['shield',       'compliance', 'Compliance completado', 'Verificación aprobada · #4809', 'Revisar'],
 ];
 
 require __DIR__ . '/includes/head.php';
@@ -56,7 +57,7 @@ require __DIR__ . '/includes/head.php';
       <a href="#tiempo-real">Tiempo real</a>
       <a href="#notificaciones">Notificaciones</a>
       <a href="#reporteria">Reportería</a>
-      <a href="#seguridad">Seguridad</a>
+      <a href="#tecnologia">Tecnología</a>
     </nav>
     <a class="btn" href="login.php">Iniciar sesión</a>
   </div>
@@ -65,12 +66,13 @@ require __DIR__ . '/includes/head.php';
 <main>
   <!-- ============================ PRIMERA VISTA ============================ -->
   <section class="landing-heroe">
-    <div class="landing-resplandor" aria-hidden="true"></div>
+    <div class="landing-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="landing-rejilla" aria-hidden="true"></div>
     <div class="landing-contenedor landing-heroe-texto">
       <span class="landing-icono-app revelar"><?= icon('logo', 34) ?></span>
       <span class="landing-etiqueta revelar"><i class="landing-punto-vivo"></i> En tiempo real<span class="landing-ocultar-chico">· Ecosistema Umbrella</span></span>
-      <h1 class="revelar">Cada lead. Cada firma.<br><span class="landing-degradado">En el instante.</span></h1>
-      <p class="landing-bajada revelar">Leads, contratos, compliance y reportería avanzada en una sola app. Te avisa en el momento exacto en que algo sucede, en cualquier dispositivo, a cualquier escala.</p>
+      <h1 class="revelar">Toda tu operación.<br><span class="landing-degradado">En la palma de tu mano.</span></h1>
+      <p class="landing-bajada revelar">Leads, firmas, compliance y reportería en una sola app que te avisa en el instante y te deja actuar en el momento. Hecha para equipos que no pueden esperar al final del día.</p>
       <div class="landing-acciones revelar">
         <button type="button" class="btn btn--primario btn--grande" data-landing-install id="instalarHeroe">
           <?= icon('download', 16) ?> Instalar app
@@ -78,6 +80,9 @@ require __DIR__ . '/includes/head.php';
         <p class="landing-nota" data-landing-nota hidden></p>
         <a class="enlace-suave" href="login.php">o continúa en el navegador</a>
       </div>
+      <a class="landing-respaldo revelar" href="https://trainsbee.com" target="_blank" rel="noopener">
+        <?= icon('shield', 13) ?> Infraestructura respaldada por <strong>Trainsbee</strong>
+      </a>
     </div>
 
     <a class="landing-descubre" href="#tiempo-real" aria-label="Descubre lo que ofrece">
@@ -91,8 +96,8 @@ require __DIR__ . '/includes/head.php';
     <div class="landing-contenedor">
       <div class="landing-encabezado revelar">
         <span class="landing-sobretitulo">En tiempo real</span>
-        <h2>Lo sabes en el momento en que pasa.<br><span class="landing-tenue">No al final del día.</span></h2>
-        <p class="landing-bajada">Cada evento de tu operación viaja al instante a las personas correctas: el lead que acaba de entrar, el cliente que está firmando, la verificación que se aprobó.</p>
+        <h2>Lo que pasa, lo sabes.<br><span class="landing-tenue">Lo que importa, lo resuelves.</span></h2>
+        <p class="landing-bajada">Cada evento de tu operación llega en el momento exacto a la persona correcta, con la acción lista para ejecutarse: asignar un lead, acompañar una firma, cerrar una verificación. Sin cambiar de pantalla.</p>
       </div>
 
       <div class="landing-vivo revelar" aria-hidden="true">
@@ -130,11 +135,11 @@ require __DIR__ . '/includes/head.php';
           </div>
 
           <ul class="landing-feed" data-landing-feed>
-            <?php foreach ($feed as [$ic, $tipo, $titulo, $detalle]): ?>
+            <?php foreach ($feed as [$ic, $tipo, $titulo, $detalle, $accion]): ?>
               <li class="landing-evento evento-<?= $tipo ?>">
                 <span class="landing-evento-icono"><?= icon($ic, 15) ?></span>
                 <span class="landing-evento-texto"><strong><?= e($titulo) ?></strong><small><?= e($detalle) ?></small></span>
-                <span class="landing-evento-hora">ahora</span>
+                <span class="landing-evento-lado"><span class="landing-evento-hora">ahora</span><span class="landing-evento-accion"><?= e($accion) ?></span></span>
               </li>
             <?php endforeach; ?>
           </ul>
@@ -148,15 +153,15 @@ require __DIR__ . '/includes/head.php';
     <div class="landing-contenedor">
       <div class="landing-encabezado revelar">
         <span class="landing-sobretitulo">Notificaciones push</span>
-        <h2>Tu operación te habla.<br><span class="landing-tenue">Aunque la app esté cerrada.</span></h2>
-        <p class="landing-bajada">Notificaciones nativas en el teléfono y el escritorio para los momentos que mueven el negocio. Cada persona recibe solo lo que le corresponde.</p>
+        <h2>Una notificación.<br><span class="landing-tenue">Una decisión.</span></h2>
+        <p class="landing-bajada">Avisos push nativos en el teléfono y el escritorio, incluso con la app cerrada. Cada persona recibe solo lo que le corresponde y actúa desde el mismo aviso.</p>
       </div>
       <div class="landing-eventos">
         <?php foreach ([
-            ['user-plus',    'lead',       'Nuevo lead',            'Entra un prospecto y el asesor indicado lo sabe al segundo, con sus datos listos para el primer contacto.'],
-            ['edit-3',       'firmando',   'Cliente firmando',      'Sigue la firma mientras sucede y acompaña al cliente en el momento justo.'],
-            ['check-circle', 'firmado',    'Cliente firmado',       'El contrato se completa y todo el equipo involucrado recibe la confirmación.'],
-            ['shield',       'compliance', 'Compliance completado', 'Cada verificación aprobada queda registrada y notificada, sin perseguir a nadie.'],
+            ['user-plus',    'lead',       'Nuevo lead',            'El prospecto llega y el asesor indicado lo tiene al segundo, con todo listo para el primer contacto.'],
+            ['edit-3',       'firmando',   'Cliente firmando',      'Acompaña la firma mientras sucede. Si algo se detiene, lo sabes antes de que se enfríe.'],
+            ['check-circle', 'firmado',    'Cliente firmado',       'Contrato completado y confirmado para todo el equipo involucrado, sin correos de ida y vuelta.'],
+            ['shield',       'compliance', 'Compliance completado', 'Cada verificación aprobada queda registrada y notificada. Nadie tiene que preguntar.'],
         ] as [$ic, $tipo, $titulo, $texto]): ?>
           <article class="landing-tarjeta evento-<?= $tipo ?> revelar">
             <span class="landing-tarjeta-icono"><?= icon($ic, 18) ?></span>
@@ -173,14 +178,14 @@ require __DIR__ . '/includes/head.php';
     <div class="landing-contenedor">
       <div class="landing-encabezado revelar">
         <span class="landing-sobretitulo">Reportería avanzada</span>
-        <h2>Decisiones con datos.<br><span class="landing-tenue">No con intuición.</span></h2>
+        <h2>Claridad para decidir.<br><span class="landing-tenue">Con datos, no con intuición.</span></h2>
       </div>
 
       <div class="landing-bento">
         <article class="landing-tarjeta landing-tarjeta--grande revelar">
           <span class="landing-tarjeta-icono"><?= icon('activity', 18) ?></span>
           <h3>Ventas cerradas y no cerradas</h3>
-          <p>Compara lo que se ganó con lo que se perdió, entiende por qué y corrige el rumbo mientras todavía importa.</p>
+          <p>Lo que se ganó, lo que se perdió y por qué. Corrige el rumbo mientras todavía importa.</p>
           <div class="landing-mini-grafica" aria-hidden="true">
             <div class="landing-leyenda">
               <span class="serie-cerradas">Cerradas</span>
@@ -226,20 +231,22 @@ require __DIR__ . '/includes/head.php';
     </div>
   </section>
 
-  <!-- ================================ ESCALA ================================ -->
-  <section class="landing-seccion landing-seccion--alterna" id="escala">
+  <!-- ========================== TECNOLOGIA TRAINSBEE ========================== -->
+  <section class="landing-seccion landing-seccion--alterna landing-tecnologia" id="tecnologia">
     <div class="landing-contenedor">
       <div class="landing-encabezado landing-centrado revelar">
-        <span class="landing-sobretitulo">Infraestructura</span>
-        <h2>Construida para escalar.<br><span class="landing-tenue">En tiempo real, sin pausas.</span></h2>
-        <p class="landing-bajada">Una arquitectura orientada a eventos sobre tecnología de punta: lo que ocurre en tu operación se procesa y se entrega al instante, sea un equipo de diez personas o una operación de miles.</p>
+        <span class="landing-sobretitulo">Tecnología Trainsbee</span>
+        <h2>Infraestructura de nivel empresarial.<br><span class="landing-tenue">Lista para operar a gran escala.</span></h2>
+        <p class="landing-bajada">Umbrella corre sobre la plataforma de Trainsbee: infraestructura privada y a la medida, construida con frameworks y librerías de primer nivel, automatización con bots y una arquitectura orientada a eventos que procesa cada acción en tiempo real.</p>
       </div>
       <div class="landing-pilares">
         <?php foreach ([
-            ['zap',        'Eventos al instante',     'Cada lead, firma o verificación se propaga a los dispositivos autorizados en el momento en que ocurre.'],
-            ['layers',     'Escala horizontal',       'La plataforma crece con tu operación: más usuarios, más equipos y más volumen sin cambiar de herramienta.'],
-            ['server',     'Infraestructura privada', 'Servidores dedicados y aislados para tu empresa. Tus datos no se comparten con nadie.'],
-            ['refresh-cw', 'Siempre actualizada',     'Cada mejora llega sola a todos los dispositivos, sin descargas ni versiones viejas.'],
+            ['server',     'Infraestructura privada',   'Servidores dedicados y aislados para cada operación. Tus datos no se comparten con nadie.'],
+            ['zap',        'Arquitectura en tiempo real', 'Orientada a eventos: cada lead, firma o verificación se procesa y se entrega en el momento en que ocurre.'],
+            ['cpu',        'Automatización con bots',   'Bots que trabajan en segundo plano a gran escala: asignan, verifican, notifican y mantienen todo en orden.'],
+            ['code',       'Frameworks de primer nivel', 'Construida con las herramientas, frameworks y librerías que usan los equipos de ingeniería más exigentes.'],
+            ['layers',     'Escala sin límites',        'De un equipo de diez a una operación de miles, sin cambiar de herramienta ni de forma de trabajar.'],
+            ['refresh-cw', 'Siempre actualizada',       'Cada mejora llega sola a todos los dispositivos. Sin descargas, sin versiones viejas.'],
         ] as [$ic, $titulo, $texto]): ?>
           <article class="landing-tarjeta revelar">
             <span class="landing-tarjeta-icono"><?= icon($ic, 18) ?></span>
@@ -247,6 +254,9 @@ require __DIR__ . '/includes/head.php';
             <p><?= e($texto) ?></p>
           </article>
         <?php endforeach; ?>
+      </div>
+      <div class="landing-centrado revelar">
+        <a class="landing-enlace-trainsbee" href="https://trainsbee.com" target="_blank" rel="noopener">Conoce la plataforma Trainsbee <?= icon('arrow-up-right', 14) ?></a>
       </div>
     </div>
   </section>
@@ -257,7 +267,7 @@ require __DIR__ . '/includes/head.php';
       <div class="landing-encabezado revelar">
         <span class="landing-sobretitulo">Diseñada para el día a día</span>
         <h2>Simple por fuera.<br><span class="landing-tenue">Completa por dentro.</span></h2>
-        <p class="landing-bajada">Una navegación pensada para el pulgar, un menú que lo tiene todo a un toque y una interfaz que se adapta a tu pantalla, del teléfono al escritorio. Abre al instante desde tu pantalla de inicio, sin tiendas de apps.</p>
+        <p class="landing-bajada">Pensada para el pulgar y para el escritorio. Todo a un toque, nada que aprender. Se abre al instante desde tu pantalla de inicio, sin pasar por una tienda de apps.</p>
       </div>
 
       <div class="landing-telefono revelar" aria-hidden="true">
@@ -304,7 +314,7 @@ require __DIR__ . '/includes/head.php';
       <div class="landing-encabezado revelar">
         <span class="landing-sobretitulo">Seguridad</span>
         <h2>Tus datos,<br><span class="landing-tenue">donde deben estar.</span></h2>
-        <p class="landing-bajada">La información vive en servidores privados, no en el teléfono. Si pierdes el dispositivo, tus datos no se van con él.</p>
+        <p class="landing-bajada">La información vive en servidores privados, nunca en el teléfono. Si pierdes el dispositivo, tus datos se quedan donde deben estar.</p>
       </div>
       <ul class="landing-lista">
         <?php foreach ([
@@ -326,8 +336,8 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-seccion landing-seccion--alterna landing-final">
     <div class="landing-contenedor landing-centrado revelar">
       <span class="landing-icono-app"><?= icon('logo', 30) ?></span>
-      <h2>Tu operación, <span class="landing-degradado">en tiempo real.</span></h2>
-      <p class="landing-bajada">Instálala una vez y entérate de todo en el momento en que sucede.</p>
+      <h2>Umbrella, <span class="landing-degradado">siempre contigo.</span></h2>
+      <p class="landing-bajada">Instálala en segundos. Entérate de todo y actúa al instante, estés donde estés.</p>
       <div class="landing-acciones">
         <button type="button" class="btn btn--primario btn--grande" data-landing-install><?= icon('download', 16) ?> Instalar app</button>
       </div>
@@ -338,7 +348,7 @@ require __DIR__ . '/includes/head.php';
 <footer class="landing-pie">
   <div class="landing-contenedor">
     <div class="landing-trainsbee revelar">
-      <span class="landing-sobretitulo">Tecnología</span>
+      <span class="landing-sobretitulo">Respaldado por</span>
       <p class="landing-trainsbee-titulo">Desarrollado con tecnología de <a href="https://trainsbee.com" target="_blank" rel="noopener">Trainsbee</a></p>
       <p class="landing-trainsbee-texto">Infraestructura personalizada y privada para empresas, operaciones y particulares a gran escala.</p>
       <a class="enlace-suave" href="https://trainsbee.com" target="_blank" rel="noopener">trainsbee.com <?= icon('arrow-up-right', 12) ?></a>
@@ -352,7 +362,7 @@ require __DIR__ . '/includes/head.php';
 
 <!-- Boton fijo: aparece al bajar, cuando el boton principal sale de la pantalla -->
 <div class="landing-fijo" data-landing-fijo aria-hidden="true">
-  <div class="landing-fijo-marca"><span class="landing-fijo-icono"><?= icon('logo', 18) ?></span><span><strong>UmbrellaApp</strong><small>Tu operación en tiempo real</small></span></div>
+  <div class="landing-fijo-marca"><span class="landing-fijo-icono"><?= icon('logo', 18) ?></span><span><strong>UmbrellaApp</strong><small>Tu operación, en tiempo real</small></span></div>
   <button type="button" class="btn btn--primario" data-landing-install tabindex="-1"><?= icon('download', 14) ?> Instalar app</button>
 </div>
 

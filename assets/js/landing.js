@@ -71,10 +71,10 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (feed && !reduced) {
     var TIPOS = [
-      ['user-plus', 'lead', 'Nuevo lead', ['Formulario web', 'Campaña de referidos', 'Llamada entrante', 'Landing de producto']],
-      ['edit-3', 'firmando', 'Cliente firmando', ['en proceso']],
-      ['check-circle', 'firmado', 'Cliente firmó', ['completado']],
-      ['shield', 'compliance', 'Compliance completado', ['Verificación aprobada']],
+      ['user-plus', 'lead', 'Nuevo lead', ['Formulario web', 'Campaña de referidos', 'Llamada entrante', 'Landing de producto'], 'Asignar'],
+      ['edit-3', 'firmando', 'Cliente firmando', ['en proceso'], 'Seguir'],
+      ['check-circle', 'firmado', 'Cliente firmó', ['completado'], 'Ver'],
+      ['shield', 'compliance', 'Compliance completado', ['Verificación aprobada'], 'Revisar'],
     ];
     var NOMBRES = ['Andrea M.', 'Carlos R.', 'Lucía P.', 'Jorge A.', 'Sofía V.', 'Daniel H.', 'Valeria T.', 'Miguel S.'];
     var contrato = 4822;
@@ -98,7 +98,7 @@
       li.className = 'landing-evento evento-' + t[1];
       li.innerHTML = '<span class="landing-evento-icono"><i data-feather="' + t[0] + '" width="15" height="15"></i></span>' +
         '<span class="landing-evento-texto"><strong>' + t[2] + '</strong><small>' + detalle + '</small></span>' +
-        '<span class="landing-evento-hora">ahora</span>';
+        '<span class="landing-evento-lado"><span class="landing-evento-hora">ahora</span><span class="landing-evento-accion">' + t[4] + '</span></span>';
       stamp(li);
       feed.insertBefore(li, feed.firstChild);
       if (window.feather) window.feather.replace();

@@ -53,14 +53,43 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
   text-align: center;
   overflow: hidden;
 }
-.landing-resplandor {
-  position: absolute; inset: -200px 0 auto; height: 900px;
-  background:
-    radial-gradient(600px 340px at 50% 30%, rgba(124, 116, 255, .28), transparent 70%),
-    radial-gradient(500px 300px at 70% 45%, rgba(79, 209, 197, .14), transparent 70%),
-    radial-gradient(500px 300px at 30% 45%, rgba(244, 63, 94, .10), transparent 70%);
-  filter: blur(10px);
-  pointer-events: none;
+/* Aurora: tres luces (morado, turquesa, rosa) que se mueven despacio */
+.landing-aurora { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+.landing-aurora i {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px);
+  opacity: .55;
+  will-change: transform;
+}
+.landing-aurora i:nth-child(1) {
+  width: 620px; height: 420px; left: 50%; top: 8%; margin-left: -310px;
+  background: rgba(124, 116, 255, .55);
+  animation: landing-aurora-1 18s ease-in-out infinite alternate;
+}
+.landing-aurora i:nth-child(2) {
+  width: 480px; height: 360px; left: 58%; top: 28%;
+  background: rgba(79, 209, 197, .32);
+  animation: landing-aurora-2 22s ease-in-out infinite alternate;
+}
+.landing-aurora i:nth-child(3) {
+  width: 440px; height: 340px; right: 58%; top: 30%;
+  background: rgba(244, 63, 94, .22);
+  animation: landing-aurora-3 20s ease-in-out infinite alternate;
+}
+@keyframes landing-aurora-1 { to { transform: translate(-8%, 10%) scale(1.15); } }
+@keyframes landing-aurora-2 { to { transform: translate(-22%, -12%) scale(.9); } }
+@keyframes landing-aurora-3 { to { transform: translate(20%, -8%) scale(1.1); } }
+:root[data-theme="light"] .landing-aurora i { opacity: .35; }
+
+/* Rejilla tenue que se desvanece hacia los bordes */
+.landing-rejilla {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(var(--borde) 1px, transparent 1px),
+    linear-gradient(90deg, var(--borde) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 55% at 50% 40%, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 55% at 50% 40%, #000 30%, transparent 75%);
 }
 .landing-heroe-texto { position: relative; display: flex; flex-direction: column; align-items: center; }
 .landing-icono-app {
@@ -80,17 +109,36 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
   border-radius: 999px;
 }
 .landing-heroe h1 { margin-top: 18px; font-size: clamp(40px, 8vw, 76px); font-weight: 700; }
+/* Degradado del titulo: lila, turquesa y un destello blanco que fluyen despacio */
 .landing-degradado {
-  background: linear-gradient(90deg, #fff 0%, var(--l-lila) 40%, var(--l-turquesa) 100%);
+  background: linear-gradient(90deg, var(--l-lila) 0%, var(--l-turquesa) 25%, #fff 50%, var(--l-turquesa) 75%, var(--l-lila) 100%);
+  background-size: 200% 100%;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: landing-fluir 8s linear infinite;
 }
+@keyframes landing-fluir { to { background-position: -200% 0; } }
+
+/* Respaldo de Trainsbee bajo el boton principal */
+.landing-respaldo {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: 28px; padding: 6px 12px;
+  font-size: 12px; color: var(--suave); text-decoration: none;
+  border: 1px solid var(--borde);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--panel) 60%, transparent);
+  transition: color .15s, border-color .15s;
+}
+.landing-respaldo .icon { color: var(--l-turquesa); }
+.landing-respaldo strong { font-weight: 600; color: var(--texto); }
+.landing-respaldo:hover { color: var(--texto); border-color: var(--borde-3); }
 .landing-bajada { margin: 18px auto 0; max-width: 560px; font-size: clamp(15px, 1.8vw, 18px); line-height: 1.6; color: var(--suave); }
 .landing-acciones { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 32px; }
 .landing-acciones .btn--grande { min-width: 220px; }
 .landing-nota { margin: 0; max-width: 320px; font-size: 13px; color: var(--suave); }
 
 :root[data-theme="light"] .landing-degradado {
-  background-image: linear-gradient(90deg, var(--texto) 0%, var(--acento) 45%, #14a396 100%);
+  background-image: linear-gradient(90deg, var(--acento) 0%, #14a396 25%, var(--acento) 50%, #14a396 75%, var(--acento) 100%);
 }
 
 /* Punto "en vivo" que late */
@@ -244,7 +292,15 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .landing-evento-texto { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .landing-evento-texto strong { font-size: 13px; font-weight: 600; }
 .landing-evento-texto small { font-size: 12px; color: var(--suave); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.landing-evento-hora { flex: none; font-size: 11px; color: var(--tenue); }
+.landing-evento-lado { flex: none; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.landing-evento-hora { font-size: 11px; color: var(--tenue); }
+.landing-evento-accion {
+  padding: 2px 8px;
+  font-size: 11px; font-weight: 600;
+  color: var(--evento);
+  border: 1px solid color-mix(in srgb, var(--evento) 40%, transparent);
+  border-radius: 6px;
+}
 
 /* Color de cada tipo de evento */
 .evento-lead       { --evento: var(--l-turquesa); }
@@ -253,7 +309,17 @@ html:has(body.landing) { scroll-behavior: smooth; scroll-padding-top: 72px; }
 .evento-compliance { --evento: var(--acento); }
 
 /* Tarjetas de notificaciones y pilares */
-.landing-eventos, .landing-pilares { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.landing-eventos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.landing-pilares { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.landing-tecnologia .landing-pilares { margin-bottom: 32px; }
+.landing-enlace-trainsbee {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 14px; font-weight: 500; color: var(--texto); text-decoration: none;
+  border-bottom: 1px solid var(--borde-3);
+  padding-bottom: 2px;
+  transition: border-color .15s, color .15s;
+}
+.landing-enlace-trainsbee:hover { color: var(--l-turquesa); border-color: var(--l-turquesa); }
 .landing-eventos .landing-tarjeta-icono {
   color: var(--evento);
   background: color-mix(in srgb, var(--evento) 12%, transparent);
@@ -365,7 +431,8 @@ body.landing .landing-pie { padding-bottom: calc(96px + var(--safe-bottom)); }
 .revelar.visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
   .revelar { opacity: 1; transform: none; transition: none; }
-  .landing-descubre .icon, .landing-punto-vivo::after, .landing-pulso, .landing-punto { animation: none !important; }
+  .landing-descubre .icon, .landing-punto-vivo::after, .landing-pulso, .landing-punto,
+  .landing-aurora i, .landing-degradado { animation: none !important; }
   .landing-linea { stroke-dashoffset: 0; animation: none !important; }
 }
 
