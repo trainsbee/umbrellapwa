@@ -20,13 +20,15 @@ certificado local con `mkcert`.
 
 ```
 umbrellapwa/
-├── index.php               Pagina de inicio
+├── index.php               Entrada: redirige al login
+├── login.php               Login (base visual, sin autenticacion aun)
 ├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
 ├── sw.js                   Service worker (cache y modo offline)
 ├── offline.html            Pagina que se muestra sin conexion
 ├── .htaccess               MIME, cache, compresion y seguridad
 ├── includes/               Partes PHP (bloqueado desde el navegador)
 │   ├── config.php          Nombre, version y colores de la app
+│   ├── icons.php           Iconos SVG: icon('nombre', tamano)
 │   ├── head.php            <head> con todos los meta tags PWA
 │   ├── footer.php          Scripts y cierre del documento
 │   ├── install-sheet.php   Hoja "Instalar app"
@@ -41,6 +43,15 @@ umbrellapwa/
 │   └── fonts/              Fuentes
 └── tools/                  Generadores (bloqueado desde el navegador)
 ```
+
+## Diseno
+
+- **Paleta**: la del ecosistema Umbrella (igual que Umbrella Streaming). Variables en `:root` de `assets/css/app.css`: `--fondo`, `--panel`, `--superficie`, `--superficie-2`, `--acento`, etc.
+- **Controles**: 28px de alto y 16px de padding lateral (tamanos estilo Supabase), radio de 6px.
+- **Botones**: `.btn`, `.btn--primario`, `.btn--peligro`, `.btn--fantasma`, `.btn--bloque`, `.btn--icono`. Acabado "raised": borde de 1px, brillo interior y hover con `brightness`.
+- **Campos**: `.campo` > `label` + `.input`. Con icono: envolver en `.input-grupo`.
+- **Iconos**: `<?= icon('mail') ?>`. Mismo trazo que el logo (stroke 2, puntas redondeadas). Se agregan en `includes/icons.php`.
+- **Logo**: el paraguas (`icon('logo')`). Los PNG se generan desde `tools/brand.php`.
 
 ## Soporte por plataforma
 
