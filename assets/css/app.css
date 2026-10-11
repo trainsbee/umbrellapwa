@@ -123,3 +123,109 @@ html.install-sheet-open { overflow: hidden; }
   border-radius: var(--radio-lg);
   box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
 }
+
+/* ==================================================================
+   Botones
+   Tamano estilo Supabase (28px). Acabado "raised": borde de 1px mas
+   oscuro que el relleno, brillo interior arriba y sombra sutil.
+   ================================================================== */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: var(--control-h);
+  padding: 0 var(--control-px);
+  font-size: var(--control-font);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--texto);
+  background: var(--superficie-2) linear-gradient(180deg, rgba(255, 255, 255, .04), rgba(255, 255, 255, 0));
+  border: 1px solid var(--borde-2);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-btn);
+  cursor: pointer;
+  user-select: none;
+  transition: filter .15s, border-color .15s, background-color .15s, box-shadow .15s, transform .05s;
+}
+.btn:hover { border-color: var(--borde-3); filter: brightness(1.08); }
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible { outline: none; box-shadow: var(--anillo); }
+.btn:disabled { opacity: .5; cursor: not-allowed; filter: none; transform: none; }
+.btn .icon { width: 14px; height: 14px; flex: none; }
+
+.btn--primario {
+  color: #fff;
+  background-color: var(--acento);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0));
+  border-color: var(--acento-borde);
+  box-shadow: 0 1px 2px rgba(124, 116, 255, .35), inset 0 1px 0 rgba(255, 255, 255, .22);
+}
+.btn--primario:hover { border-color: var(--acento-borde); filter: brightness(1.06); }
+
+.btn--peligro {
+  color: #fff;
+  background-color: var(--rojo);
+  background-image: linear-gradient(180deg, rgba(255, 255, 255, .12), rgba(255, 255, 255, 0));
+  border-color: #c5301f;
+  box-shadow: 0 1px 2px rgba(234, 67, 53, .3), inset 0 1px 0 rgba(255, 255, 255, .2);
+}
+.btn--peligro:hover { border-color: #c5301f; filter: brightness(1.06); }
+
+.btn--fantasma {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  color: var(--suave);
+}
+.btn--fantasma:hover { background: var(--superficie); border-color: var(--borde-2); color: var(--texto); filter: none; }
+
+.btn--bloque { width: 100%; }
+.btn--icono { width: var(--control-h); padding: 0; }
+
+.btn[data-cargando] { pointer-events: none; }
+.btn[data-cargando]::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, .35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar .6s linear infinite;
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+
+/* ==================================================================
+   Campos de formulario
+   ================================================================== */
+
+.campo { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; min-width: 0; }
+.campo label { font-size: 12px; font-weight: 500; color: var(--suave); }
+
+.input {
+  width: 100%;
+  height: var(--control-h);
+  padding: 0 var(--control-px);
+  font-size: var(--control-font);
+  color: var(--texto);
+  background: var(--superficie);
+  border: 1px solid var(--borde-2);
+  border-radius: var(--radio);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, .25);
+  transition: border-color .15s, box-shadow .15s;
+}
+.input::placeholder { color: var(--tenue); }
+.input:hover { border-color: var(--borde-3); }
+.input:focus { outline: none; border-color: var(--acento); box-shadow: var(--anillo); }
+.input:disabled, .input[readonly] { background: var(--panel); color: var(--tenue); }
+.input.is-invalid { border-color: var(--rojo); box-shadow: 0 0 0 3px rgba(234, 67, 53, .18); }
+
+/* Autocompletado de Chrome/Safari: mantener la paleta oscura */
+.input:-webkit-autofill {
+  -webkit-text-fill-color: var(--texto);
+  -webkit-box-shadow: 0 0 0 40px var(--superficie) inset;
+  caret-color: var(--texto);
+}

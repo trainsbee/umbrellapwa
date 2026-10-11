@@ -18,7 +18,7 @@
     toast.setAttribute('role', 'status');
     toast.innerHTML =
       '<span>Hay una nueva version disponible.</span>' +
-      '<button type="button" class="pwa-toast-btn">Actualizar</button>';
+      '<button type="button" class="btn btn--primario">Actualizar</button>';
 
     toast.querySelector('button').addEventListener('click', function () {
       worker.postMessage({ type: 'SKIP_WAITING' });

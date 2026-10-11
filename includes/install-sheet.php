@@ -21,8 +21,8 @@ declare(strict_types=1);
 
     <div data-install-platform="prompt" hidden>
       <div class="install-sheet-actions">
-        <button type="button" class="btn-secondary" data-install-dismiss>Ahora no</button>
-        <button type="button" class="btn-primary" data-install-confirm>Instalar</button>
+        <button type="button" class="btn" data-install-dismiss>Ahora no</button>
+        <button type="button" class="btn btn--primario" data-install-confirm>Instalar</button>
       </div>
     </div>
 
@@ -33,7 +33,7 @@ declare(strict_types=1);
         <li>Toca <strong>"Agregar"</strong>.</li>
       </ol>
       <div class="install-sheet-actions">
-        <button type="button" class="btn-primary" data-install-dismiss>Entendido</button>
+        <button type="button" class="btn btn--primario" data-install-dismiss>Entendido</button>
       </div>
     </div>
 
@@ -43,7 +43,7 @@ declare(strict_types=1);
         <li>Elige <strong>"Agregar al Dock"</strong>.</li>
       </ol>
       <div class="install-sheet-actions">
-        <button type="button" class="btn-primary" data-install-dismiss>Entendido</button>
+        <button type="button" class="btn btn--primario" data-install-dismiss>Entendido</button>
       </div>
     </div>
   </div>
