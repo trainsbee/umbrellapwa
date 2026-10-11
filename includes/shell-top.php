@@ -68,7 +68,7 @@ require __DIR__ . '/head.php';
         <?= icon('bell', 18, 'fila-icono') ?><span class="fila-texto">Notificaciones</span><?= icon('chevron-right', 16, 'fila-flecha') ?>
       </a>
       <button type="button" class="fila" data-theme-toggle role="switch" aria-checked="true">
-        <?= icon('moon', 18, 'fila-icono') ?><span class="fila-texto">Modo oscuro</span><span class="switch" aria-hidden="true"></span>
+        <?= icon('moon', 18, 'fila-icono icono-tema-oscuro') ?><?= icon('sun', 18, 'fila-icono icono-tema-claro') ?><span class="fila-texto">Modo oscuro</span><span class="switch" aria-hidden="true"></span>
       </button>
     </div>
 

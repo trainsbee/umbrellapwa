@@ -379,6 +379,7 @@ body.con-shell { padding: 0; }
   width: min(100%, 420px);
   display: flex; flex-direction: column;
   background: var(--fondo);
+  border-right: 1px solid var(--borde-2);
   transform: translateX(-100%);
   visibility: hidden;
   transition: transform .28s cubic-bezier(.32, .72, 0, 1), visibility 0s linear .28s;
@@ -386,13 +387,17 @@ body.con-shell { padding: 0; }
 html.sidebar-abierto .sidebar { transform: none; visibility: visible; transition: transform .28s cubic-bezier(.32, .72, 0, 1); }
 html.sidebar-abierto { overflow: hidden; }
 
+/* Fondo del menu: efecto vidrio (oscurece y desenfoca lo de atras) */
 .sidebar-fondo {
   position: fixed; inset: 0; z-index: 899;
-  background: rgba(0, 0, 0, .5);
+  background: rgba(0, 0, 0, .35);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
   opacity: 0; pointer-events: none;
   transition: opacity .28s;
 }
 html.sidebar-abierto .sidebar-fondo { opacity: 1; pointer-events: auto; }
+:root[data-theme="light"] .sidebar-fondo { background: rgba(16, 24, 40, .16); }
 
 .sidebar-cabecera {
   display: grid; grid-template-columns: 36px 1fr 36px; align-items: center; gap: 12px;
@@ -482,6 +487,11 @@ html.sidebar-abierto .sidebar-fondo { opacity: 1; pointer-events: auto; }
 }
 [aria-checked="true"] > .switch::after { transform: translateX(13px); }
 
+/* Icono del tema: luna en oscuro, sol en claro */
+.icono-tema-claro { display: none !important; }
+:root[data-theme="light"] .icono-tema-oscuro { display: none !important; }
+:root[data-theme="light"] .icono-tema-claro { display: inline-block !important; }
+
 .sidebar-version { margin: 20px 0 0; text-align: center; font-size: 12px; color: var(--tenue); }
 
 /* Estado vacio */
@@ -498,7 +508,6 @@ html.sidebar-abierto .sidebar-fondo { opacity: 1; pointer-events: auto; }
   .sidebar {
     width: var(--sidebar-w);
     transform: none; visibility: visible;
-    border-right: 1px solid var(--borde);
     background: var(--panel);
   }
   .sidebar-fondo, .sidebar-cerrar, .topbar-menu { display: none; }
