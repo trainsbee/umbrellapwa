@@ -13,6 +13,7 @@
   --borde: rgba(255, 255, 255, .07);
   --borde-2: rgba(255, 255, 255, .12);
   --borde-3: rgba(255, 255, 255, .18);
+  --borde-sidebar: rgba(255, 255, 255, .12);
   --texto: #e8eaed;
   --suave: #9aa0a6;
   --tenue: #6b7078;
@@ -51,6 +52,7 @@
   --borde: rgba(16, 24, 40, .08);
   --borde-2: rgba(16, 24, 40, .13);
   --borde-3: rgba(16, 24, 40, .22);
+  --borde-sidebar: #d9dbe0;
   --texto: #17181a;
   --suave: #5f646d;
   --tenue: #9aa0a6;
@@ -379,12 +381,16 @@ body.con-shell { padding: 0; }
   width: min(100%, 420px);
   display: flex; flex-direction: column;
   background: var(--fondo);
-  border-right: 1px solid var(--borde-2);
+  border-right: 1px solid var(--borde-sidebar);
   transform: translateX(-100%);
   visibility: hidden;
   transition: transform .28s cubic-bezier(.32, .72, 0, 1), visibility 0s linear .28s;
 }
-html.sidebar-abierto .sidebar { transform: none; visibility: visible; transition: transform .28s cubic-bezier(.32, .72, 0, 1); }
+html.sidebar-abierto .sidebar {
+  transform: none; visibility: visible;
+  box-shadow: 8px 0 32px rgba(0, 0, 0, .18);
+  transition: transform .28s cubic-bezier(.32, .72, 0, 1);
+}
 html.sidebar-abierto { overflow: hidden; }
 
 /* Fondo del menu: efecto vidrio (oscurece y desenfoca lo de atras) */
@@ -508,6 +514,7 @@ html.sidebar-abierto .sidebar-fondo { opacity: 1; pointer-events: auto; }
   .sidebar {
     width: var(--sidebar-w);
     transform: none; visibility: visible;
+    box-shadow: none;
     background: var(--panel);
   }
   .sidebar-fondo, .sidebar-cerrar, .topbar-menu { display: none; }
