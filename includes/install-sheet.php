@@ -28,7 +28,7 @@ declare(strict_types=1);
 
     <div data-install-platform="ios" hidden>
       <ol class="install-steps">
-        <li>Toca el boton <strong>Compartir</strong> <span aria-hidden="true">&#x2B06;&#xFE0E;</span> en la barra del navegador.</li>
+        <li>Toca el botón <strong>Compartir</strong> <span aria-hidden="true">&#x2B06;&#xFE0E;</span> en la barra del navegador.</li>
         <li>Elige <strong>"Agregar a inicio"</strong>.</li>
         <li>Toca <strong>"Agregar"</strong>.</li>
       </ol>
@@ -39,7 +39,7 @@ declare(strict_types=1);
 
     <div data-install-platform="mac-safari" hidden>
       <ol class="install-steps">
-        <li>En la barra de menu abre <strong>Archivo</strong>.</li>
+        <li>En la barra de menú abre <strong>Archivo</strong>.</li>
         <li>Elige <strong>"Agregar al Dock"</strong>.</li>
       </ol>
       <div class="install-sheet-actions">

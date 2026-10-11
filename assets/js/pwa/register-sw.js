@@ -17,7 +17,7 @@
     toast.className = 'pwa-toast';
     toast.setAttribute('role', 'status');
     toast.innerHTML =
-      '<span>Hay una nueva version disponible.</span>' +
+      '<span>Hay una nueva versión disponible.</span>' +
       '<button type="button" class="btn btn--primario">Actualizar</button>';
 
     toast.querySelector('button').addEventListener('click', function () {
