@@ -94,7 +94,7 @@ automaticamente si existe.
 Haz push a `main` y luego:
 
 ```bash
-ssh root@<VPS> 'cd /www/wwwroot/pwa.umbrellasync.com && git pull --ff-only && chown -R www:www .git assets includes tools *.php *.html sw.js manifest.webmanifest'
+ssh root@<VPS> 'cd /www/wwwroot/pwa.umbrellasync.com && git pull --ff-only && chown -R www:www .git assets includes tools deploy *.php *.html sw.js manifest.webmanifest'
 ```
 
 Recuerda subir `APP_VERSION` y `CACHE_VERSION` para que los usuarios reciban la actualizacion.
