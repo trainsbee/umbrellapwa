@@ -8,6 +8,9 @@
   if (!('serviceWorker' in navigator)) return;
 
   var refreshing = false;
+  // En la primera visita no hay SW controlando; cuando el nuevo toma el
+  // control (clients.claim) no hay que recargar: no es una actualizacion.
+  var hadController = !!navigator.serviceWorker.controller;
 
   function showUpdateToast(worker) {
     if (document.getElementById('pwaUpdateToast')) return;
@@ -56,6 +59,7 @@
   });
 
   navigator.serviceWorker.addEventListener('controllerchange', function () {
+    if (!hadController) { hadController = true; return; }
     if (refreshing) return;
     refreshing = true;
     window.location.reload();
