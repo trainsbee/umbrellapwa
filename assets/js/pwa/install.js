@@ -9,6 +9,9 @@
  *
  * Cualquier elemento con [data-pwa-install] abre la hoja manualmente y
  * se muestra solo cuando la instalacion es posible.
+ *
+ * <body data-install-auto="off"> evita que la hoja se abra sola (la landing
+ * tiene sus propios botones). API para otras paginas: window.pwaInstall.
  */
 (function () {
   'use strict';
@@ -82,10 +85,17 @@
   function setPlatform(value) {
     platform = value;
     setInstallButtonsVisible(!!platform);
-    if (platform && !recentlyDismissed()) {
+    var autoOff = document.body && document.body.getAttribute('data-install-auto') === 'off';
+    if (platform && !autoOff && !recentlyDismissed()) {
       setTimeout(openSheet, AUTO_SHOW_DELAY);
     }
   }
+
+  window.pwaInstall = {
+    isStandalone: isStandalone,
+    isAvailable: function () { return !!platform; },
+    open: function () { openSheet(); return !!platform; },
+  };
 
   if (isStandalone()) return;
 
