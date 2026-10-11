@@ -25,7 +25,7 @@ umbrellapwa/
 ├── inicio.php, ventas.php, oportunidades.php, reportes.php   Secciones
 ├── manifest.webmanifest    Web App Manifest (nombre, iconos, colores)
 ├── sw.js                   Service worker (cache y modo offline)
-├── offline.html            Pagina que se muestra sin conexion
+├── offline.php             Vista sin conexion (menu y modo oscuro, sin datos)
 ├── .htaccess               MIME, cache, compresion y seguridad
 ├── includes/               Partes PHP (bloqueado desde el navegador)
 │   ├── config.php          Nombre, version y colores de la app

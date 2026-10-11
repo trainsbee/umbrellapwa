@@ -43,7 +43,7 @@ DirectoryIndex index.php
     # El service worker y el manifest nunca se cachean en el navegador,
     # asi las actualizaciones llegan de inmediato. (Va despues de la regla
     # de assets para tener prioridad.)
-    <FilesMatch "^(sw\.js|manifest\.webmanifest|offline\.html)$">
+    <FilesMatch "^(sw\.js|manifest\.webmanifest)$">
         Header set Cache-Control "no-cache, no-store, must-revalidate"
     </FilesMatch>
 </IfModule>

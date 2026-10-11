@@ -78,4 +78,21 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && root.classList.contains('sidebar-abierto')) setSidebar(false);
   });
+
+  // Aviso cuando se pierde la conexion con la app abierta.
+  function setOfflineBanner(offline) {
+    var banner = document.getElementById('avisoConexion');
+    if (!offline) { if (banner) banner.remove(); return; }
+    if (banner || document.querySelector('.vacio--offline')) return;
+    banner = document.createElement('div');
+    banner.id = 'avisoConexion';
+    banner.className = 'aviso-conexion';
+    banner.setAttribute('role', 'status');
+    banner.innerHTML = '<i data-feather="wifi-off" width="14" height="14"></i><span>Sin conexión. Conéctate a internet para ver los datos.</span>';
+    document.body.appendChild(banner);
+    if (window.feather) window.feather.replace();
+  }
+  window.addEventListener('offline', function () { setOfflineBanner(true); });
+  window.addEventListener('online', function () { setOfflineBanner(false); });
+  if (!navigator.onLine) setOfflineBanner(true);
 })();

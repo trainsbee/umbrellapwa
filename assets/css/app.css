@@ -548,3 +548,19 @@ body.con-shell .pwa-toast { bottom: calc(var(--bottomnav-h) + 12px + var(--safe-
   body.con-shell .contenido { padding-bottom: 32px; }
   body.con-shell .pwa-toast { bottom: 16px; }
 }
+
+/* Sin conexion */
+.vacio--offline .btn { margin-top: 12px; }
+.aviso-conexion {
+  position: fixed; left: 50%; top: calc(8px + var(--safe-top)); z-index: 1200;
+  transform: translateX(-50%);
+  width: max-content; max-width: calc(100% - 32px);
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px; font-weight: 500; color: #fff;
+  background: var(--rojo);
+  border: 1px solid #c5301f;
+  border-radius: var(--radio-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .35);
+}
+body.con-shell .aviso-conexion { top: calc(var(--topbar-h) + var(--safe-top) + 4px); }

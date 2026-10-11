@@ -2,9 +2,9 @@
  * Service worker de UmbrellaApp.
  *
  * Estrategias:
- *  - Paginas (navegacion): red primero. Si no hay conexion -> offline.html.
- *    Las paginas PHP NO se guardan en cache para no dejar datos privados
- *    en el dispositivo.
+ *  - Paginas (navegacion): siempre de la red. Las paginas NO se guardan en
+ *    cache (ni datos privados ni versiones viejas). Sin conexion se muestra
+ *    offline.php: la estructura de la app con el aviso "Conectate a internet".
  *  - Assets con ?v= (css y js del HTML, ver asset() en config.php): la URL
  *    cambia cuando cambia el archivo, asi que se tratan como inmutables:
  *    cache si ya esta esa version exacta; si no, red (y se borran las
@@ -16,9 +16,9 @@
  * limpiar todo el cache.
  */
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
-const OFFLINE_URL = 'offline.html';
+const OFFLINE_URL = 'offline.php';
 
 const PRECACHE = [
   OFFLINE_URL,
@@ -84,14 +84,32 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+// La vista offline se renueva en segundo plano mientras hay conexion, para
+// que su estructura coincida con la version actual de la app.
+const OFFLINE_REFRESH_MS = 10 * 60 * 1000;
+let offlineRefreshedAt = 0;
+
 async function networkFirstPage(event) {
   try {
     const preloaded = await event.preloadResponse;
-    if (preloaded) return preloaded;
-    return await fetch(event.request);
+    const res = preloaded || await fetch(event.request);
+    if (Date.now() - offlineRefreshedAt > OFFLINE_REFRESH_MS) {
+      offlineRefreshedAt = Date.now();
+      event.waitUntil(refreshOffline());
+    }
+    return res;
   } catch (err) {
     const cache = await caches.open(STATIC_CACHE);
     return (await cache.match(OFFLINE_URL)) || Response.error();
+  }
+}
+
+async function refreshOffline() {
+  try {
+    const res = await fetch(OFFLINE_URL, { cache: 'reload' });
+    if (res.ok) await (await caches.open(STATIC_CACHE)).put(OFFLINE_URL, res);
+  } catch (err) {
+    // Sin conexion: se queda la copia anterior.
   }
 }
 
