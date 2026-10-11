@@ -1,18 +1,39 @@
 /* ==================================================================
    UmbrellaApp - estilos base
-   Solo lo minimo: variables, reset, areas seguras y componentes PWA
-   (hoja de instalacion y aviso de actualizacion). El diseno va despues.
+   Paleta del ecosistema Umbrella (misma que Umbrella Streaming).
+   Tamanos de controles al estilo Supabase: compactos, 28px de alto.
    ================================================================== */
 
 :root {
-  --color-bg: #1C1C1C;
-  --color-surface: #262626;
-  --color-text: #EBEBEB;
-  --color-muted: #9A9A9A;
-  --color-primary: #7C5CFC;
-  --color-on-primary: #FFFFFF;
-  --radius: 14px;
-  --font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  /* Paleta */
+  --fondo: #0f1012;
+  --panel: #16171a;
+  --superficie: #1c1d21;
+  --superficie-2: #24262b;
+  --borde: rgba(255, 255, 255, .07);
+  --borde-2: rgba(255, 255, 255, .12);
+  --borde-3: rgba(255, 255, 255, .18);
+  --texto: #e8eaed;
+  --suave: #9aa0a6;
+  --tenue: #6b7078;
+  --acento: #7c74ff;
+  --acento-borde: #5f56f0;
+  --rojo: #ea4335;
+  --verde: #34a853;
+  --ambar: #f9ab00;
+
+  /* Tamanos (estilo Supabase) */
+  --control-h: 28px;
+  --control-px: 16px;
+  --control-font: 13px;
+  --radio: 6px;
+  --radio-lg: 10px;
+
+  /* Efectos */
+  --anillo: 0 0 0 3px rgba(124, 116, 255, .28);
+  --sombra-btn: 0 1px 2px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .06);
+
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", sans-serif;
 
   /* Areas seguras: notch de iPhone, isla dinamica, barra de gestos */
   --safe-top: env(safe-area-inset-top, 0px);
@@ -35,32 +56,19 @@ body {
   margin: 0;
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--color-bg);
-  color: var(--color-text);
-  font-family: var(--font);
-  line-height: 1.5;
+  background: var(--fondo);
+  color: var(--texto);
+  font: 14px/1.45 var(--font);
+  -webkit-font-smoothing: antialiased;
   padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
   overscroll-behavior-y: none;
 }
 
 img, svg { display: block; max-width: 100%; }
-
-button { font: inherit; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--acento); }
 
 .app { padding: 24px 16px; }
-
-/* Botones */
-.btn-primary,
-.btn-secondary {
-  appearance: none;
-  border: 0;
-  border-radius: var(--radius);
-  padding: 12px 20px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
-.btn-secondary { background: var(--color-surface); color: var(--color-text); }
 
 /* Hoja de instalacion */
 html.install-sheet-open { overflow: hidden; }
@@ -72,26 +80,27 @@ html.install-sheet-open { overflow: hidden; }
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  background: rgba(0, 0, 0, .55);
+  background: rgba(0, 0, 0, .6);
 }
 .install-sheet-panel {
   width: 100%;
   max-width: 480px;
-  background: var(--color-surface);
-  border-radius: 20px 20px 0 0;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: 16px 16px 0 0;
   padding: 20px 20px calc(20px + var(--safe-bottom));
 }
 @media (min-width: 600px) {
   .install-sheet { align-items: center; }
-  .install-sheet-panel { border-radius: 20px; padding-bottom: 20px; }
+  .install-sheet-panel { border-radius: 16px; padding-bottom: 20px; }
 }
 .install-sheet-header { display: flex; gap: 14px; align-items: center; }
 .install-sheet-header img { border-radius: 12px; }
-.install-sheet-header h2 { margin: 0; font-size: 1.1rem; }
-.install-sheet-header p { margin: 2px 0 0; color: var(--color-muted); font-size: .9rem; }
-.install-steps { margin: 16px 0 0; padding-left: 20px; }
+.install-sheet-header h2 { margin: 0; font-size: 15px; font-weight: 600; }
+.install-sheet-header p { margin: 2px 0 0; color: var(--suave); font-size: 13px; }
+.install-steps { margin: 16px 0 0; padding-left: 20px; font-size: 13px; }
 .install-steps li { margin-bottom: 6px; }
-.install-sheet-actions { display: flex; gap: 10px; margin-top: 18px; }
+.install-sheet-actions { display: flex; gap: 8px; margin-top: 18px; }
 .install-sheet-actions > * { flex: 1; }
 
 /* Aviso de nueva version */
@@ -106,18 +115,11 @@ html.install-sheet-open { overflow: hidden; }
   align-items: center;
   width: max-content;
   max-width: calc(100% - 32px);
-  padding: 10px 10px 10px 16px;
-  background: var(--color-surface);
-  color: var(--color-text);
-  border-radius: var(--radius);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, .4);
-}
-.pwa-toast-btn {
-  border: 0;
-  border-radius: 10px;
-  padding: 8px 14px;
-  background: var(--color-primary);
-  color: var(--color-on-primary);
-  font-weight: 600;
-  cursor: pointer;
+  padding: 8px 8px 8px 14px;
+  background: var(--panel);
+  border: 1px solid var(--borde-2);
+  color: var(--texto);
+  font-size: 13px;
+  border-radius: var(--radio-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
 }
