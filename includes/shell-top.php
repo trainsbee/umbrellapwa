@@ -17,7 +17,7 @@ $bodyClass = 'has-shell';
 require __DIR__ . '/head.php';
 ?>
 <header class="topbar">
-  <button type="button" class="btn-circle topbar-menu" data-sidebar-open aria-controls="sidebar" aria-expanded="false" aria-label="Abrir menú">
+  <button type="button" class="btn-circle topbar-menu" data-sidebar-open aria-controls="sidebar" aria-expanded="false" aria-label="Open menu">
     <?= icon('menu', 18) ?>
   </button>
   <h1 class="topbar-title"><?= e($pageTitle) ?></h1>
@@ -26,12 +26,12 @@ require __DIR__ . '/head.php';
 
 <div class="sidebar-backdrop" data-sidebar-close></div>
 
-<aside class="sidebar" id="sidebar" aria-label="Menú">
+<aside class="sidebar" id="sidebar" aria-label="Menu">
   <div class="sidebar-header">
-    <button type="button" class="btn-circle sidebar-close-btn" data-sidebar-close aria-label="Cerrar menú">
+    <button type="button" class="btn-circle sidebar-close-btn" data-sidebar-close aria-label="Close menu">
       <?= icon('chevron-left', 18) ?>
     </button>
-    <h2>Ajustes</h2>
+    <h2>Settings</h2>
     <span class="btn-circle-spacer" aria-hidden="true"></span>
   </div>
 
@@ -45,7 +45,7 @@ require __DIR__ . '/head.php';
       <?= icon('chevron-right', 16, 'row-arrow') ?>
     </a>
 
-    <p class="section-title">Navegación</p>
+    <p class="section-title">Navigation</p>
     <nav class="group">
       <?php foreach (NAV_ITEMS as $key => [$label, $iconName, $href]): ?>
         <a href="<?= e($href) ?>" class="row<?= $key === $activeNav ? ' active' : '' ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>>
@@ -56,34 +56,34 @@ require __DIR__ . '/head.php';
       <?php endforeach; ?>
     </nav>
 
-    <p class="section-title">Otros ajustes</p>
+    <p class="section-title">Other settings</p>
     <div class="group">
       <a href="#" class="row">
-        <?= icon('user', 18, 'row-icon') ?><span class="row-label">Datos del perfil</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('user', 18, 'row-icon') ?><span class="row-label">Profile details</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <a href="#" class="row">
-        <?= icon('lock', 18, 'row-icon') ?><span class="row-label">Contraseña</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('lock', 18, 'row-icon') ?><span class="row-label">Password</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <a href="#" class="row">
-        <?= icon('bell', 18, 'row-icon') ?><span class="row-label">Notificaciones</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('bell', 18, 'row-icon') ?><span class="row-label">Notifications</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <button type="button" class="row" data-theme-toggle role="switch" aria-checked="true">
-        <?= icon('moon', 18, 'row-icon theme-icon-dark') ?><?= icon('sun', 18, 'row-icon theme-icon-light') ?><span class="row-label">Modo oscuro</span><span class="switch" aria-hidden="true"></span>
+        <?= icon('moon', 18, 'row-icon theme-icon-dark') ?><?= icon('sun', 18, 'row-icon theme-icon-light') ?><span class="row-label">Dark mode</span><span class="switch" aria-hidden="true"></span>
       </button>
     </div>
 
     <div class="group">
       <button type="button" class="row" data-pwa-install hidden>
-        <?= icon('download', 18, 'row-icon') ?><span class="row-label">Instalar app</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('download', 18, 'row-icon') ?><span class="row-label">Install app</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </button>
       <a href="#" class="row">
-        <?= icon('info', 18, 'row-icon') ?><span class="row-label">Acerca de la aplicación</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('info', 18, 'row-icon') ?><span class="row-label">About the app</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <a href="#" class="row">
-        <?= icon('message-square', 18, 'row-icon') ?><span class="row-label">Ayuda / FAQ</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('message-square', 18, 'row-icon') ?><span class="row-label">Help / FAQ</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <a href="login.php" class="row row--danger">
-        <?= icon('log-out', 18, 'row-icon') ?><span class="row-label">Cerrar sesión</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        <?= icon('log-out', 18, 'row-icon') ?><span class="row-label">Sign out</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
     </div>
 

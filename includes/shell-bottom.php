@@ -5,7 +5,7 @@ declare(strict_types=1);
 ?>
 </main>
 
-<nav class="bottomnav" aria-label="Navegación principal">
+<nav class="bottomnav" aria-label="Main navigation">
   <?php foreach (NAV_ITEMS as $key => [$label, $iconName, $href]): ?>
     <a href="<?= e($href) ?>" class="bottomnav-item<?= $key === $activeNav ? ' active' : '' ?>"<?= $key === $activeNav ? ' aria-current="page"' : '' ?>>
       <?= icon($iconName, 20) ?>
@@ -14,7 +14,7 @@ declare(strict_types=1);
   <?php endforeach; ?>
   <button type="button" class="bottomnav-item" data-sidebar-open aria-controls="sidebar" aria-expanded="false">
     <?= icon('menu', 20) ?>
-    <span>Menú</span>
+    <span>Menu</span>
   </button>
 </nav>
 <?php require __DIR__ . '/footer.php'; ?>

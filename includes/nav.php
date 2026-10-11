@@ -6,16 +6,16 @@ declare(strict_types=1);
  * Key => [label, Feather icon, file].
  */
 const NAV_ITEMS = [
-    'home'          => ['Inicio',        'home',        'home.php'],
-    'sales'         => ['Ventas',        'trending-up', 'sales.php'],
-    'opportunities' => ['Oportunidades', 'users',       'opportunities.php'],
-    'reports'       => ['Reportes',      'bar-chart-2', 'reports.php'],
+    'home'          => ['Home',          'home',        'home.php'],
+    'sales'         => ['Sales',         'trending-up', 'sales.php'],
+    'opportunities' => ['Opportunities', 'users',       'opportunities.php'],
+    'reports'       => ['Reports',       'bar-chart-2', 'reports.php'],
 ];
 
 // Sample user until the login is connected to Supabase.
-const DEMO_USER = ['name' => 'Usuario Umbrella', 'role' => 'Sin rol asignado'];
+const DEMO_USER = ['name' => 'Umbrella User', 'role' => 'No role assigned'];
 
-/** Avatar initials: "Usuario Umbrella" -> "UU". */
+/** Avatar initials: "Umbrella User" -> "UU". */
 function initials(string $name): string
 {
     $parts = preg_split('/\s+/', trim($name)) ?: [];

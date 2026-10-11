@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/config.php';
 
-$pageTitle = 'Sin conexión';
+$pageTitle = 'Offline';
 $activeNav = '';
 require __DIR__ . '/includes/shell-top.php';
 ?>
 <section class="empty-state empty-state--offline">
   <?= icon('wifi-off', 22) ?>
-  <h2>Sin conexión</h2>
-  <p>Conéctate a internet para ver los datos.</p>
-  <button type="button" class="btn btn--primary" data-retry><?= icon('refresh-cw', 14) ?> Reintentar</button>
+  <h2>You are offline</h2>
+  <p>Connect to the internet to see your data.</p>
+  <button type="button" class="btn btn--primary" data-retry><?= icon('refresh-cw', 14) ?> Try again</button>
 </section>
 <script>
   document.addEventListener('DOMContentLoaded', function () {

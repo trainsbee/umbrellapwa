@@ -14,7 +14,7 @@
     var visible = input.type === 'password';
     input.type = visible ? 'text' : 'password';
     btn.classList.toggle('is-visible', visible);
-    btn.setAttribute('aria-label', visible ? 'Ocultar contraseña' : 'Mostrar contraseña');
+    btn.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
   });
 
   // Light / dark theme: any [data-theme-toggle] switches it.
@@ -88,7 +88,7 @@
     banner.id = 'connectionNotice';
     banner.className = 'connection-notice';
     banner.setAttribute('role', 'status');
-    banner.innerHTML = '<i data-feather="wifi-off" width="14" height="14"></i><span>Sin conexión. Conéctate a internet para ver los datos.</span>';
+    banner.innerHTML = '<i data-feather="wifi-off" width="14" height="14"></i><span>You are offline. Connect to the internet to see your data.</span>';
     document.body.appendChild(banner);
     if (window.feather) window.feather.replace();
   }

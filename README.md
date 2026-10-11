@@ -2,7 +2,7 @@
 
 A PHP Progressive Web App (PWA), installable on iPhone, iPad, Android, Windows and macOS.
 
-Code (files, identifiers, comments) is written in English; user-facing text is in Spanish.
+Everything is in English: code, comments, documentation and the user interface.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ local certificate with `mkcert`.
 ```
 umbrellapwa/
 ├── index.php               Public landing page (install the app); the installed app opens login.php
-├── login.php               Login (visual base; for now it goes straight to home.php)
+├── login.php               Sign in (visual base; for now it goes straight to home.php); links back to the landing page
 ├── home.php, sales.php, opportunities.php, reports.php   App sections
 ├── manifest.webmanifest    Web App Manifest (name, icons, colors)
 ├── sw.js                   Service worker (caching and offline mode)
@@ -62,7 +62,7 @@ umbrellapwa/
 - **Buttons**: `.btn`, `.btn--primary`, `.btn--danger`, `.btn--ghost`, `.btn--block`, `.btn--icon`, `.btn--large`. Flat finish: 1px border, subtle gradient and a `brightness` hover. No shadows.
 - **Fields**: `.field` > `label` + `.input`. With an icon: wrap it in `.input-group`.
 - **Icons**: [Feather Icons](https://feathericons.com) 4.29.2, stored in `assets/js/vendor/` (works offline). In PHP `<?= icon('mail') ?>`, in HTML `<i data-feather="mail"></i>`.
-- **Themes**: dark (default) and light via `<html data-theme="light">`. The "Modo oscuro" switch in the sidebar toggles it and the browser remembers the choice.
+- **Themes**: dark (default) and light via `<html data-theme="light">`. The "Dark mode" switch in the sidebar toggles it and the browser remembers the choice.
 - **Layout**: top bar (circular button + centered title), settings-style sidebar (`.group` > `.row`) and a bottom bar on phones. On desktop (>= 1024px) the sidebar is pinned to the left.
 - **New section**: add it to `NAV_ITEMS` in `includes/nav.php` and create its file with `$pageTitle`, `$activeNav` and `shell-top.php` / `shell-bottom.php`.
 - **Logo**: the umbrella (`icon('logo')`). PNGs are generated from `tools/brand.php`.
@@ -84,8 +84,8 @@ umbrellapwa/
   next load (the service worker cannot serve the old one).
 - **PHP pages**: always fetched from the network; never cached.
 - **Files without `?v=`** (icons, manifest): refreshed in the background.
-- **`sw.js`**: if you change it, users see the **"Hay una nueva versión disponible"**
-  toast and it activates when they tap **Actualizar**. Only bump `CACHE_VERSION` when
+- **`sw.js`**: if you change it, users see the **"A new version is available"**
+  toast and it activates when they tap **Update**. Only bump `CACHE_VERSION` when
   you change the `PRECACHE` list or want to wipe the cache.
 - `APP_VERSION` in `includes/config.php` is only the number shown in the app.
 

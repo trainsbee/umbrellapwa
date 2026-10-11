@@ -1,6 +1,6 @@
 /**
  * Registers the service worker and announces new versions.
- * A new version waits until the user taps "Actualizar" (update).
+ * A new version waits until the user taps "Update".
  */
 (function () {
   'use strict';
@@ -20,8 +20,8 @@
     toast.className = 'pwa-toast';
     toast.setAttribute('role', 'status');
     toast.innerHTML =
-      '<span>Hay una nueva versión disponible.</span>' +
-      '<button type="button" class="btn btn--primary">Actualizar</button>';
+      '<span>A new version is available.</span>' +
+      '<button type="button" class="btn btn--primary">Update</button>';
 
     toast.querySelector('button').addEventListener('click', function () {
       worker.postMessage({ type: 'SKIP_WAITING' });

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/config.php';
 
-$pageTitle = 'Inicio';
+$pageTitle = 'Home';
 $activeNav = 'home';
 require __DIR__ . '/includes/shell-top.php';
 ?>
 <section class="empty-state">
   <?= icon('home', 22) ?>
-  <h2>Inicio</h2>
-  <p>Aquí irá el resumen de la app.</p>
+  <h2>Home</h2>
+  <p>Your operation overview will appear here.</p>
 </section>
 <?php require __DIR__ . '/includes/shell-bottom.php'; ?>

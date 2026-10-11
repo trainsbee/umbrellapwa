@@ -11,7 +11,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/config.php';
 require_once __DIR__ . '/includes/charts.php';
 
-$pageTitle = 'Toda tu operación, en la palma de tu mano';
+$pageTitle = 'Your entire operation, in the palm of your hand';
 $pageCss = ['assets/css/landing.css'];
 $bodyClass = 'landing';
 $bodyAttrs = ['data-install-auto' => 'off'];
@@ -35,10 +35,10 @@ $reportSeries = [
 
 // Every event arrives with its action ready to run: [icon, type, title, details, action]
 $feedEvents = [
-    ['user-plus',    'lead',       'Nuevo lead',            'Andrea M. · Formulario web',    'Asignar'],
-    ['edit-3',       'signing',    'Cliente firmando',      'Contrato #4821 · en proceso',   'Seguir'],
-    ['check-circle', 'signed',     'Cliente firmó',         'Contrato #4817 · completado',   'Ver'],
-    ['shield',       'compliance', 'Compliance completado', 'Verificación aprobada · #4809', 'Revisar'],
+    ['user-plus',    'lead',       'New lead',             'Andrea M. · Web form',            'Assign'],
+    ['edit-3',       'signing',    'Client signing',       'Contract #4821 · in progress',    'Follow'],
+    ['check-circle', 'signed',     'Client signed',        'Contract #4817 · completed',      'View'],
+    ['shield',       'compliance', 'Compliance completed', 'Verification approved · #4809',   'Review'],
 ];
 
 require __DIR__ . '/includes/head.php';
@@ -53,13 +53,13 @@ require __DIR__ . '/includes/head.php';
 <header class="landing-header">
   <div class="landing-container landing-header-row">
     <a class="landing-brand" href="./"><?= icon('logo', 22) ?><span>Umbrella</span></a>
-    <nav class="landing-menu" aria-label="Secciones">
-      <a href="#real-time">Tiempo real</a>
-      <a href="#notifications">Notificaciones</a>
-      <a href="#reporting">Reportería</a>
-      <a href="#technology">Tecnología</a>
+    <nav class="landing-menu" aria-label="Sections">
+      <a href="#real-time">Real time</a>
+      <a href="#notifications">Notifications</a>
+      <a href="#reporting">Reporting</a>
+      <a href="#technology">Technology</a>
     </nav>
-    <a class="btn" href="login.php">Iniciar sesión</a>
+    <a class="btn" href="login.php">Sign in</a>
   </div>
 </header>
 
@@ -70,24 +70,24 @@ require __DIR__ . '/includes/head.php';
     <div class="landing-grid" aria-hidden="true"></div>
     <div class="landing-container landing-hero-content">
       <span class="landing-app-icon reveal"><?= icon('logo', 34) ?></span>
-      <span class="landing-badge reveal"><i class="landing-live-dot"></i> En tiempo real<span class="landing-hide-small">· Ecosistema Umbrella</span></span>
-      <h1 class="reveal">Toda tu operación,<br><span class="landing-gradient">en la palma de tu mano.</span></h1>
-      <p class="landing-subtitle reveal">Controla tu operación desde cualquier lugar. Gestiona leads, firmas, compliance y reportería en una sola app, con notificaciones en tiempo real y herramientas diseñadas para actuar al instante.</p>
-      <p class="landing-subtitle landing-subtitle--small reveal">Construida con tecnologías modernas, frameworks de alto rendimiento y una arquitectura orientada a eventos, Umbrella une automatización, seguridad y escalabilidad para que el control de tu operación vaya siempre contigo.</p>
+      <span class="landing-badge reveal"><i class="landing-live-dot"></i> Real time<span class="landing-hide-small">· Umbrella ecosystem</span></span>
+      <h1 class="reveal">Your entire operation,<br><span class="landing-gradient">in the palm of your hand.</span></h1>
+      <p class="landing-subtitle reveal">Run your operation from anywhere. Manage leads, signatures, compliance and reporting in one app, with real-time notifications and tools built to act instantly.</p>
+      <p class="landing-subtitle landing-subtitle--small reveal">Built on modern technologies, high-performance frameworks and an event-driven architecture, Umbrella brings together automation, security and scale so control of your operation goes wherever you go.</p>
       <div class="landing-actions reveal">
         <button type="button" class="btn btn--primary btn--large" data-landing-install id="heroInstall">
-          <?= icon('download', 16) ?> Instalar app
+          <?= icon('download', 16) ?> Install app
         </button>
         <p class="landing-note" data-landing-note hidden></p>
-        <a class="link-subtle" href="login.php">o continúa en el navegador</a>
+        <a class="link-subtle" href="login.php">or continue in the browser</a>
       </div>
       <a class="landing-backed reveal" href="https://trainsbee.com" target="_blank" rel="noopener">
-        <?= icon('shield', 13) ?> Infraestructura respaldada por <strong>Trainsbee</strong>
+        <?= icon('shield', 13) ?> Infrastructure backed by <strong>Trainsbee</strong>
       </a>
     </div>
 
-    <a class="landing-discover" href="#real-time" aria-label="Descubre lo que ofrece">
-      <span>Descubre más</span>
+    <a class="landing-discover" href="#real-time" aria-label="Discover what Umbrella offers">
+      <span>Discover more</span>
       <?= icon('chevron-down', 18) ?>
     </a>
   </section>
@@ -96,21 +96,21 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section" id="real-time">
     <div class="landing-container">
       <div class="landing-heading reveal">
-        <span class="landing-eyebrow">En tiempo real</span>
-        <h2>Lo que pasa, lo sabes.<br><span class="landing-muted">Lo que importa, lo resuelves.</span></h2>
-        <p class="landing-subtitle">Cada evento de tu operación llega en el momento exacto a la persona correcta, con la acción lista para ejecutarse: asignar un lead, acompañar una firma, cerrar una verificación. Sin cambiar de pantalla.</p>
+        <span class="landing-eyebrow">Real time</span>
+        <h2>Know what happens.<br><span class="landing-muted">Act on what matters.</span></h2>
+        <p class="landing-subtitle">Every event in your operation reaches the right person at the exact moment, with the action ready to run: assign a lead, follow a signature, close a verification. Without switching screens.</p>
       </div>
 
       <div class="landing-live reveal" aria-hidden="true">
         <div class="landing-live-bar">
-          <span class="landing-live-title">Actividad de hoy</span>
-          <span class="landing-live-pill"><i class="landing-live-dot"></i> En vivo</span>
+          <span class="landing-live-title">Today's activity</span>
+          <span class="landing-live-pill"><i class="landing-live-dot"></i> Live</span>
         </div>
         <div class="landing-live-body">
           <div class="landing-live-chart">
             <div class="landing-legend">
               <span class="series-leads">Leads</span>
-              <span class="series-signatures">Firmas</span>
+              <span class="series-signatures">Signatures</span>
               <span class="series-compliance">Compliance</span>
             </div>
             <svg class="landing-chart" viewBox="0 0 <?= $liveWidth ?> <?= $liveHeight ?>" preserveAspectRatio="none">
@@ -132,7 +132,7 @@ require __DIR__ . '/includes/head.php';
                 <circle class="landing-dot series-<?= $key ?>" cx="<?= $chart['end'][0] - 4 ?>" cy="<?= $chart['end'][1] ?>" r="4"/>
               <?php endforeach; ?>
             </svg>
-            <div class="landing-axis"><span>8:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>Ahora</span></div>
+            <div class="landing-axis"><span>8 AM</span><span>11 AM</span><span>2 PM</span><span>5 PM</span><span>Now</span></div>
           </div>
 
           <ul class="landing-feed" data-landing-feed>
@@ -140,7 +140,7 @@ require __DIR__ . '/includes/head.php';
               <li class="landing-event event-<?= $type ?>">
                 <span class="landing-event-icon"><?= icon($iconName, 15) ?></span>
                 <span class="landing-event-text"><strong><?= e($title) ?></strong><small><?= e($details) ?></small></span>
-                <span class="landing-event-side"><span class="landing-event-time">ahora</span><span class="landing-event-action"><?= e($action) ?></span></span>
+                <span class="landing-event-side"><span class="landing-event-time">now</span><span class="landing-event-action"><?= e($action) ?></span></span>
               </li>
             <?php endforeach; ?>
           </ul>
@@ -153,16 +153,16 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section landing-section--alt" id="notifications">
     <div class="landing-container">
       <div class="landing-heading reveal">
-        <span class="landing-eyebrow">Notificaciones push</span>
-        <h2>Una notificación.<br><span class="landing-muted">Una decisión.</span></h2>
-        <p class="landing-subtitle">Avisos push nativos en el teléfono y el escritorio, incluso con la app cerrada. Cada persona recibe solo lo que le corresponde y actúa desde el mismo aviso.</p>
+        <span class="landing-eyebrow">Push notifications</span>
+        <h2>One notification.<br><span class="landing-muted">One decision.</span></h2>
+        <p class="landing-subtitle">Native push alerts on your phone and desktop, even when the app is closed. Everyone receives only what concerns them and acts right from the alert.</p>
       </div>
       <div class="landing-events">
         <?php foreach ([
-            ['user-plus',    'lead',       'Nuevo lead',            'El prospecto llega y el asesor indicado lo tiene al segundo, con todo listo para el primer contacto.'],
-            ['edit-3',       'signing',    'Cliente firmando',      'Acompaña la firma mientras sucede. Si algo se detiene, lo sabes antes de que se enfríe.'],
-            ['check-circle', 'signed',     'Cliente firmado',       'Contrato completado y confirmado para todo el equipo involucrado, sin correos de ida y vuelta.'],
-            ['shield',       'compliance', 'Compliance completado', 'Cada verificación aprobada queda registrada y notificada. Nadie tiene que preguntar.'],
+            ['user-plus',    'lead',       'New lead',             'A prospect comes in and the right advisor has it within seconds, ready for first contact.'],
+            ['edit-3',       'signing',    'Client signing',       'Follow the signature as it happens. If something stalls, you know before it goes cold.'],
+            ['check-circle', 'signed',     'Client signed',        'Contract completed and confirmed for everyone involved, with no back-and-forth emails.'],
+            ['shield',       'compliance', 'Compliance completed', 'Every approved verification is recorded and announced. Nobody has to ask.'],
         ] as [$iconName, $type, $title, $text]): ?>
           <article class="landing-card event-<?= $type ?> reveal">
             <span class="landing-card-icon"><?= icon($iconName, 18) ?></span>
@@ -178,19 +178,19 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section" id="reporting">
     <div class="landing-container">
       <div class="landing-heading reveal">
-        <span class="landing-eyebrow">Reportería avanzada</span>
-        <h2>Claridad para decidir.<br><span class="landing-muted">Con datos, no con intuición.</span></h2>
+        <span class="landing-eyebrow">Advanced reporting</span>
+        <h2>Clarity to decide.<br><span class="landing-muted">Driven by data, not intuition.</span></h2>
       </div>
 
       <div class="landing-bento">
         <article class="landing-card landing-card--large reveal">
           <span class="landing-card-icon"><?= icon('activity', 18) ?></span>
-          <h3>Ventas cerradas y no cerradas</h3>
-          <p>Lo que se ganó, lo que se perdió y por qué. Corrige el rumbo mientras todavía importa.</p>
+          <h3>Closed and lost sales</h3>
+          <p>What was won, what was lost and why. Course-correct while it still matters.</p>
           <div class="landing-mini-chart" aria-hidden="true">
             <div class="landing-legend">
-              <span class="series-closed">Cerradas</span>
-              <span class="series-lost">No cerradas</span>
+              <span class="series-closed">Closed</span>
+              <span class="series-lost">Lost</span>
             </div>
             <svg class="landing-chart" viewBox="0 0 <?= $reportWidth ?> <?= $reportHeight ?>" preserveAspectRatio="none">
               <?php foreach ([0.33, 0.66] as $guide): ?>
@@ -205,28 +205,28 @@ require __DIR__ . '/includes/head.php';
         </article>
         <article class="landing-card reveal">
           <span class="landing-card-icon"><?= icon('award', 18) ?></span>
-          <h3>Reportes de QA</h3>
-          <p>Evaluaciones de calidad por asesor y por llamada, con criterios claros y seguimiento en el tiempo.</p>
+          <h3>QA reports</h3>
+          <p>Quality evaluations by advisor and by call, with clear criteria and tracking over time.</p>
         </article>
         <article class="landing-card reveal">
           <span class="landing-card-icon"><?= icon('check-square', 18) ?></span>
-          <h3>Verificaciones</h3>
-          <p>Qué pasó compliance, qué está pendiente y qué necesita atención, en una sola vista.</p>
+          <h3>Verifications</h3>
+          <p>What passed compliance, what is pending and what needs attention, in a single view.</p>
         </article>
         <article class="landing-card reveal">
           <span class="landing-card-icon"><?= icon('filter', 18) ?></span>
-          <h3>Embudo completo</h3>
-          <p>Del lead a la firma: dónde avanza cada oportunidad y dónde se detiene.</p>
+          <h3>Full funnel</h3>
+          <p>From lead to signature: where each opportunity moves forward and where it stalls.</p>
         </article>
         <article class="landing-card reveal">
           <span class="landing-card-icon"><?= icon('users', 18) ?></span>
-          <h3>Desempeño por equipo</h3>
-          <p>Resultados por asesor, supervisor y equipo, comparables día a día.</p>
+          <h3>Team performance</h3>
+          <p>Results by advisor, supervisor and team, comparable day by day.</p>
         </article>
         <article class="landing-card reveal">
           <span class="landing-card-icon"><?= icon('clock', 18) ?></span>
-          <h3>Cierre del día</h3>
-          <p>El resumen que necesitas al terminar la jornada, listo sin abrir una hoja de cálculo.</p>
+          <h3>End-of-day close</h3>
+          <p>The summary you need when the day ends, ready without opening a spreadsheet.</p>
         </article>
       </div>
     </div>
@@ -236,18 +236,18 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section landing-section--alt landing-technology" id="technology">
     <div class="landing-container">
       <div class="landing-heading landing-center reveal">
-        <span class="landing-eyebrow">Tecnología Trainsbee</span>
-        <h2>Infraestructura de nivel empresarial.<br><span class="landing-muted">Lista para operar a gran escala.</span></h2>
-        <p class="landing-subtitle">Umbrella corre sobre la plataforma de Trainsbee: infraestructura privada y a la medida, construida con frameworks y librerías de primer nivel, automatización con bots y una arquitectura orientada a eventos que procesa cada acción en tiempo real.</p>
+        <span class="landing-eyebrow">Trainsbee technology</span>
+        <h2>Enterprise-grade infrastructure.<br><span class="landing-muted">Ready to operate at scale.</span></h2>
+        <p class="landing-subtitle">Umbrella runs on the Trainsbee platform: private, tailor-made infrastructure built with first-class frameworks and libraries, bot-driven automation and an event-driven architecture that processes every action in real time.</p>
       </div>
       <div class="landing-pillars">
         <?php foreach ([
-            ['server',     'Infraestructura privada',     'Servidores dedicados y aislados para cada operación. Tus datos no se comparten con nadie.'],
-            ['zap',        'Arquitectura en tiempo real', 'Orientada a eventos: cada lead, firma o verificación se procesa y se entrega en el momento en que ocurre.'],
-            ['cpu',        'Automatización con bots',     'Bots que trabajan en segundo plano a gran escala: asignan, verifican, notifican y mantienen todo en orden.'],
-            ['code',       'Frameworks de primer nivel',  'Construida con las herramientas, frameworks y librerías que usan los equipos de ingeniería más exigentes.'],
-            ['layers',     'Escala sin límites',          'De un equipo de diez a una operación de miles, sin cambiar de herramienta ni de forma de trabajar.'],
-            ['refresh-cw', 'Siempre actualizada',         'Cada mejora llega sola a todos los dispositivos. Sin descargas, sin versiones viejas.'],
+            ['server',     'Private infrastructure',  'Dedicated, isolated servers for every operation. Your data is never shared with anyone.'],
+            ['zap',        'Real-time architecture',  'Event-driven: every lead, signature or verification is processed and delivered the moment it happens.'],
+            ['cpu',        'Bot automation',          'Bots working in the background at scale: assigning, verifying, notifying and keeping everything in order.'],
+            ['code',       'First-class frameworks',  'Built with the tools, frameworks and libraries trusted by the most demanding engineering teams.'],
+            ['layers',     'Limitless scale',         'From a team of ten to an operation of thousands, without changing tools or the way you work.'],
+            ['refresh-cw', 'Always up to date',       'Every improvement reaches every device automatically. No downloads, no old versions.'],
         ] as [$iconName, $title, $text]): ?>
           <article class="landing-card reveal">
             <span class="landing-card-icon"><?= icon($iconName, 18) ?></span>
@@ -257,7 +257,7 @@ require __DIR__ . '/includes/head.php';
         <?php endforeach; ?>
       </div>
       <div class="landing-center reveal">
-        <a class="landing-trainsbee-link" href="https://trainsbee.com" target="_blank" rel="noopener">Conoce la plataforma Trainsbee <?= icon('arrow-up-right', 14) ?></a>
+        <a class="landing-trainsbee-link" href="https://trainsbee.com" target="_blank" rel="noopener">Discover the Trainsbee platform <?= icon('arrow-up-right', 14) ?></a>
       </div>
     </div>
   </section>
@@ -266,14 +266,14 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section">
     <div class="landing-container landing-two-columns">
       <div class="landing-heading reveal">
-        <span class="landing-eyebrow">Diseñada para el día a día</span>
-        <h2>Simple por fuera.<br><span class="landing-muted">Completa por dentro.</span></h2>
-        <p class="landing-subtitle">Pensada para el pulgar y para el escritorio. Todo a un toque, nada que aprender. Se abre al instante desde tu pantalla de inicio, sin pasar por una tienda de apps.</p>
+        <span class="landing-eyebrow">Designed for every day</span>
+        <h2>Simple on the outside.<br><span class="landing-muted">Complete on the inside.</span></h2>
+        <p class="landing-subtitle">Designed for your thumb and your desktop. Everything one tap away, nothing to learn. It opens instantly from your home screen, no app store required.</p>
       </div>
 
       <div class="landing-phone reveal" aria-hidden="true">
         <div class="landing-phone-island"></div>
-        <div class="landing-phone-bar"><span class="landing-mini-circle"></span><span class="landing-mini-title">Inicio</span><span></span></div>
+        <div class="landing-phone-bar"><span class="landing-mini-circle"></span><span class="landing-mini-title">Home</span><span></span></div>
         <div class="landing-phone-body">
           <div class="landing-mini-card"><span class="landing-mini-avatar"></span><span class="landing-mini-lines"><i></i><i></i></span></div>
           <div class="landing-mini-group"><?= str_repeat('<div class="landing-mini-row"><span class="landing-mini-icon"></span><i></i></div>', 4) ?></div>
@@ -288,16 +288,16 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section landing-section--alt" id="devices">
     <div class="landing-container">
       <div class="landing-heading landing-center reveal">
-        <span class="landing-eyebrow">Dispositivos</span>
-        <h2>Una sola app.<br><span class="landing-muted">En todas tus pantallas.</span></h2>
+        <span class="landing-eyebrow">Devices</span>
+        <h2>One app.<br><span class="landing-muted">On every screen.</span></h2>
       </div>
       <div class="landing-devices">
         <?php foreach ([
-            ['smartphone', 'iPhone',  'Compartir → Agregar a inicio'],
-            ['tablet',     'iPad',    'Compartir → Agregar a inicio'],
-            ['smartphone', 'Android', 'Un toque en Instalar'],
-            ['monitor',    'Windows', 'Instalar desde Edge o Chrome'],
-            ['monitor',    'Mac',     'Safari: Archivo → Agregar al Dock'],
+            ['smartphone', 'iPhone',  'Share → Add to Home Screen'],
+            ['tablet',     'iPad',    'Share → Add to Home Screen'],
+            ['smartphone', 'Android', 'One tap on Install'],
+            ['monitor',    'Windows', 'Install from Edge or Chrome'],
+            ['monitor',    'Mac',     'Safari: File → Add to Dock'],
         ] as [$iconName, $device, $howTo]): ?>
           <article class="landing-device reveal">
             <span class="landing-card-icon"><?= icon($iconName, 18) ?></span>
@@ -313,16 +313,16 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section" id="security">
     <div class="landing-container landing-two-columns">
       <div class="landing-heading reveal">
-        <span class="landing-eyebrow">Seguridad</span>
-        <h2>Tus datos,<br><span class="landing-muted">donde deben estar.</span></h2>
-        <p class="landing-subtitle">La información vive en servidores privados, nunca en el teléfono. Si pierdes el dispositivo, tus datos se quedan donde deben estar.</p>
+        <span class="landing-eyebrow">Security</span>
+        <h2>Your data,<br><span class="landing-muted">right where it belongs.</span></h2>
+        <p class="landing-subtitle">Information lives on private servers, never on the phone. If you lose your device, your data stays right where it belongs.</p>
       </div>
       <ul class="landing-list">
         <?php foreach ([
-            ['Tu cuenta Umbrella', 'El mismo usuario y contraseña de siempre, sin cuentas nuevas.'],
-            ['Nada guardado en el dispositivo', 'Los datos se consultan en línea; sin conexión, la app no muestra información.'],
-            ['Conexión cifrada', 'Toda la comunicación viaja protegida con HTTPS.'],
-            ['Acceso por rol', 'Cada persona ve y recibe solo lo que le corresponde.'],
+            ['Your Umbrella account', 'The same username and password as always, no new accounts.'],
+            ['Nothing stored on the device', 'Data is fetched online; offline, the app shows no information.'],
+            ['Encrypted connection', 'All communication travels protected over HTTPS.'],
+            ['Role-based access', 'Everyone sees and receives only what concerns them.'],
         ] as [$title, $text]): ?>
           <li class="reveal">
             <span class="landing-check"><?= icon('check', 14) ?></span>
@@ -337,10 +337,10 @@ require __DIR__ . '/includes/head.php';
   <section class="landing-section landing-section--alt landing-final">
     <div class="landing-container landing-center reveal">
       <span class="landing-app-icon"><?= icon('logo', 30) ?></span>
-      <h2>Umbrella, <span class="landing-gradient">siempre contigo.</span></h2>
-      <p class="landing-subtitle">Instálala en segundos. Entérate de todo y actúa al instante, estés donde estés.</p>
+      <h2>Umbrella, <span class="landing-gradient">always with you.</span></h2>
+      <p class="landing-subtitle">Install it in seconds. Know everything and act instantly, wherever you are.</p>
       <div class="landing-actions">
-        <button type="button" class="btn btn--primary btn--large" data-landing-install><?= icon('download', 16) ?> Instalar app</button>
+        <button type="button" class="btn btn--primary btn--large" data-landing-install><?= icon('download', 16) ?> Install app</button>
       </div>
     </div>
   </section>
@@ -349,9 +349,9 @@ require __DIR__ . '/includes/head.php';
 <footer class="landing-footer">
   <div class="landing-container">
     <div class="landing-trainsbee reveal">
-      <span class="landing-eyebrow">Respaldado por</span>
-      <p class="landing-trainsbee-title">Desarrollado con tecnología de <a href="https://trainsbee.com" target="_blank" rel="noopener">Trainsbee</a></p>
-      <p class="landing-trainsbee-text">Infraestructura personalizada y privada para empresas, operaciones y particulares a gran escala.</p>
+      <span class="landing-eyebrow">Backed by</span>
+      <p class="landing-trainsbee-title">Built with technology by <a href="https://trainsbee.com" target="_blank" rel="noopener">Trainsbee</a></p>
+      <p class="landing-trainsbee-text">Custom, private infrastructure for companies, operations and individuals at scale.</p>
       <a class="link-subtle" href="https://trainsbee.com" target="_blank" rel="noopener">trainsbee.com <?= icon('arrow-up-right', 12) ?></a>
     </div>
     <div class="landing-footer-row">
@@ -363,8 +363,8 @@ require __DIR__ . '/includes/head.php';
 
 <!-- Sticky install bar: appears once the hero button scrolls out of view -->
 <div class="landing-sticky" data-landing-sticky aria-hidden="true">
-  <div class="landing-sticky-brand"><span class="landing-sticky-icon"><?= icon('logo', 18) ?></span><span><strong>UmbrellaApp</strong><small>Tu operación, en tiempo real</small></span></div>
-  <button type="button" class="btn btn--primary" data-landing-install tabindex="-1"><?= icon('download', 14) ?> Instalar app</button>
+  <div class="landing-sticky-brand"><span class="landing-sticky-icon"><?= icon('logo', 18) ?></span><span><strong>UmbrellaApp</strong><small>Your operation, in real time</small></span></div>
+  <button type="button" class="btn btn--primary" data-landing-install tabindex="-1"><?= icon('download', 14) ?> Install app</button>
 </div>
 
 <script src="<?= e(asset('assets/js/landing.js')) ?>" defer></script>

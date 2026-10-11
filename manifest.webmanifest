@@ -2,8 +2,8 @@
   "id": "./",
   "name": "UmbrellaApp",
   "short_name": "Umbrella",
-  "description": "UmbrellaApp - gestión interna",
-  "lang": "es",
+  "description": "UmbrellaApp - your operation in real time",
+  "lang": "en",
   "dir": "ltr",
   "start_url": "./login.php?source=pwa",
   "scope": "./",
@@ -23,8 +23,8 @@
   ],
   "shortcuts": [
     {
-      "name": "Inicio",
-      "short_name": "Inicio",
+      "name": "Home",
+      "short_name": "Home",
       "url": "./home.php?source=shortcut",
       "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }

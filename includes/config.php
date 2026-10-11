@@ -9,9 +9,9 @@ declare(strict_types=1);
 
 const APP_NAME        = 'UmbrellaApp';
 const APP_SHORT_NAME  = 'Umbrella';
-const APP_DESCRIPTION = 'UmbrellaApp - gestión interna';
+const APP_DESCRIPTION = 'UmbrellaApp - your operation in real time';
 const APP_VERSION     = '0.3.0';
-const APP_LANG        = 'es';
+const APP_LANG        = 'en';
 
 // Brand colors (must match manifest.webmanifest)
 const THEME_COLOR      = '#0f1012';

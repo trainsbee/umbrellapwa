@@ -1,5 +1,5 @@
 // Landing page: header background on scroll, section reveal, sticky install
-// bar and the behavior of the "Instalar app" buttons.
+// bar and the behavior of the "Install app" buttons.
 (function () {
   'use strict';
 
@@ -60,7 +60,7 @@
     if (api && api.isStandalone()) { location.href = 'login.php'; return; }
     if (api && api.open()) return;
     if (note) {
-      note.textContent = 'Tu navegador no permite instalar apps. Ábrela en Chrome, Edge o Safari para instalarla, o continúa en el navegador.';
+      note.textContent = 'Your browser cannot install apps. Open this page in Chrome, Edge or Safari to install it, or continue in the browser.';
       note.hidden = false;
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -70,12 +70,12 @@
   var feed = document.querySelector('[data-landing-feed]');
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (feed && !reduced) {
-    // [icon, type, title, details, action] — visible text stays in Spanish
+    // [icon, type, title, details, action]
     var EVENT_TYPES = [
-      ['user-plus', 'lead', 'Nuevo lead', ['Formulario web', 'Campaña de referidos', 'Llamada entrante', 'Landing de producto'], 'Asignar'],
-      ['edit-3', 'signing', 'Cliente firmando', ['en proceso'], 'Seguir'],
-      ['check-circle', 'signed', 'Cliente firmó', ['completado'], 'Ver'],
-      ['shield', 'compliance', 'Compliance completado', ['Verificación aprobada'], 'Revisar'],
+      ['user-plus', 'lead', 'New lead', ['Web form', 'Referral campaign', 'Inbound call', 'Product landing page'], 'Assign'],
+      ['edit-3', 'signing', 'Client signing', ['in progress'], 'Follow'],
+      ['check-circle', 'signed', 'Client signed', ['completed'], 'View'],
+      ['shield', 'compliance', 'Compliance completed', ['Verification approved'], 'Review'],
     ];
     var NAMES = ['Andrea M.', 'Carlos R.', 'Lucía P.', 'Jorge A.', 'Sofía V.', 'Daniel H.', 'Valeria T.', 'Miguel S.'];
     var contractNumber = 4822;
@@ -87,19 +87,19 @@
     var refreshTimes = function () {
       feed.querySelectorAll('li').forEach(function (li) {
         var secs = Math.round((Date.now() - Number(li.getAttribute('data-ts'))) / 1000);
-        li.querySelector('.landing-event-time').textContent = secs < 3 ? 'ahora' : (secs < 60 ? 'hace ' + secs + ' s' : 'hace ' + Math.round(secs / 60) + ' min');
+        li.querySelector('.landing-event-time').textContent = secs < 3 ? 'now' : (secs < 60 ? secs + 's ago' : Math.round(secs / 60) + 'm ago');
       });
     };
 
     var addEvent = function () {
       var t = pick(EVENT_TYPES);
       var details = t[1] === 'lead' ? pick(NAMES) + ' · ' + pick(t[3])
-        : (t[1] === 'compliance' ? t[3][0] + ' · #' + (contractNumber - 3) : 'Contrato #' + (contractNumber++) + ' · ' + t[3][0]);
+        : (t[1] === 'compliance' ? t[3][0] + ' · #' + (contractNumber - 3) : 'Contract #' + (contractNumber++) + ' · ' + t[3][0]);
       var li = document.createElement('li');
       li.className = 'landing-event event-' + t[1];
       li.innerHTML = '<span class="landing-event-icon"><i data-feather="' + t[0] + '" width="15" height="15"></i></span>' +
         '<span class="landing-event-text"><strong>' + t[2] + '</strong><small>' + details + '</small></span>' +
-        '<span class="landing-event-side"><span class="landing-event-time">ahora</span><span class="landing-event-action">' + t[4] + '</span></span>';
+        '<span class="landing-event-side"><span class="landing-event-time">now</span><span class="landing-event-action">' + t[4] + '</span></span>';
       stamp(li);
       feed.insertBefore(li, feed.firstChild);
       if (window.feather) window.feather.replace();
