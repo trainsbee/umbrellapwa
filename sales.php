@@ -49,7 +49,7 @@ require __DIR__ . '/includes/shell-top.php';
     <?php foreach ($records as $r): ?>
       <li class="record">
         <div class="record-main">
-          <strong class="record-name"><?= e($r['name'] !== '' ? $r['name'] : 'No name') ?></strong>
+          <a class="record-name record-name--link" href="client.php?id=<?= e($r['client_id']) ?>"><?= e($r['name'] !== '' ? $r['name'] : 'No name') ?></a>
           <?php if ($r['phone'] !== ''): ?><a class="record-phone" href="tel:<?= e(preg_replace('/\D+/', '', $r['phone'])) ?>"><?= e(phone($r['phone'])) ?></a><?php endif; ?>
           <span class="record-meta"><?= e(implode(' · ', array_filter([local_time($r['created_at']), $r['program'], $r['campaign'], ucfirst(strtolower($r['language']))]))) ?></span>
         </div>

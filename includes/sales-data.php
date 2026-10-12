@@ -86,12 +86,13 @@ function sales_records(string $from, string $to, ?string $status = null, int $li
         ? 'status=eq.' . rawurlencode($status)
         : 'status=in.(' . implode(',', SALE_STATUSES) . ')';
 
-    $path = 'sales?select=client_full_name,debt,status,language,lead_source,created_at,processing:processing_id(phone,program)'
+    $path = 'sales?select=processing_id,client_full_name,debt,status,language,lead_source,created_at,processing:processing_id(phone,program)'
         . '&' . created_at_range($from, $to) . '&' . $filter
         . '&order=created_at.desc&limit=' . $limit;
     $rows = supabase_select_many(['rows' => $path])['rows'];
 
     return array_map(fn (array $row): array => [
+        'client_id' => (string) ($row['processing_id'] ?? ''),
         'name' => (string) ($row['client_full_name'] ?? ''),
         'phone' => (string) ($row['processing']['phone'] ?? ''),
         'debt' => (string) ($row['debt'] ?? ''),
