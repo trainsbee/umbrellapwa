@@ -9,10 +9,12 @@ declare(strict_types=1);
  * In PHP: <?= icon('mail') ?>, <?= icon('bell', 18, 'my-class') ?>
  * In HTML: <i data-feather="mail"></i>
  *
- * The logo (umbrella) is not a Feather icon: it is inlined with the same stroke style.
+ * The logo (umbrella) is not a Feather icon: a solid scalloped canopy plus the
+ * shaft and hook in the same stroke style. tools/brand.php draws the same shape.
  */
 
-const LOGO_PATHS = '<path d="M23 12a11 11 0 0 0-22 0"/><path d="M12 12v7a2 2 0 0 0 4 0"/>';
+const LOGO_PATHS = '<path d="M1 12a11 11 0 0 1 22 0a3.667 2 0 0 0-7.333 0a3.667 2 0 0 0-7.334 0a3.667 2 0 0 0-7.333 0z" fill="currentColor" stroke="none"/>'
+    . '<path d="M12 .75v1"/><path d="M12 11v8a2 2 0 0 0 4 0"/>';
 
 function icon(string $name, int $size = 16, string $class = ''): string
 {

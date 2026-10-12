@@ -18,6 +18,7 @@
   --text-2: #9aa0a6;
   --text-3: #6b7078;
   --accent: #7c74ff;
+  --brand-gradient: linear-gradient(135deg, #a48cff 0%, #4c3be0 100%);
   --accent-border: #5f56f0;
   --red: #ea4335;
   --green: #34a853;
@@ -311,9 +312,9 @@ i.icon[width="22"] { width: 22px; height: 22px; }
 .auth-logo {
   display: inline-grid; place-items: center;
   width: 44px; height: 44px; margin-bottom: 14px;
-  color: var(--accent);
-  background: var(--surface);
-  border: 1px solid var(--border-2);
+  color: #fff;
+  background: var(--brand-gradient);
+  border: 1px solid transparent;
   border-radius: 10px;
 }
 .auth-brand h1 { margin: 0; font-size: 18px; font-weight: 600; letter-spacing: -.01em; }
