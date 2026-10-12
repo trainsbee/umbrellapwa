@@ -89,7 +89,7 @@ function sales_records(string $from, string $to, ?string $status = null, int $li
     $path = 'sales?select=client_full_name,debt,status,language,lead_source,created_at,processing:processing_id(phone,program)'
         . '&' . created_at_range($from, $to) . '&' . $filter
         . '&order=created_at.desc&limit=' . $limit;
-    $rows = supabase_select_many(['rows' => $path], cache_ttl($to))['rows'];
+    $rows = supabase_select_many(['rows' => $path])['rows'];
 
     return array_map(fn (array $row): array => [
         'name' => (string) ($row['client_full_name'] ?? ''),

@@ -8,7 +8,7 @@ declare(strict_types=1);
 const NAV_ITEMS = [
     'home'          => ['Home',          'home',        'home.php'],
     'sales'         => ['Sales',         'trending-up', 'sales.php'],
-    'left-behind'   => ['Left Behind',   'users',       'left-behind.php'],
+    'opportunities' => ['Opportunities', 'users',       'opportunities.php'],
     'reports'       => ['Reports',       'bar-chart-2', 'reports.php'],
 ];
 

@@ -2,9 +2,9 @@
 declare(strict_types=1);
 
 /**
- * Left behind leads from the Umbrella CRM.
+ * Opportunities (leads not converted yet) from the Umbrella CRM.
  * opportunity_imports gets an hourly snapshot of the day (row_count = leads
- * still left behind at that moment); opportunities holds one row per phone
+ * still open at that moment); opportunities holds one row per phone
  * linked to the import that last saw it. The latest snapshot of a day is the
  * source of truth for that day.
  */
@@ -13,7 +13,7 @@ require_once __DIR__ . '/supabase.php';
 require_once __DIR__ . '/format.php';
 
 /** Query for the latest snapshot of a day, with its leads' debts embedded (one request). */
-function left_behind_snapshot_path(string $date): string
+function opportunities_snapshot_path(string $date): string
 {
     return 'opportunity_imports?registered_date=eq.' . $date
         . '&select=id,row_count,created_at,opportunities(total_debt)&order=created_at.desc&limit=1';
@@ -24,7 +24,7 @@ function left_behind_snapshot_path(string $date): string
  *
  * @return array{id: string, count: int, updated_at: string, average_debt: float}|null
  */
-function left_behind_snapshot_from_rows(array $rows): ?array
+function opportunities_snapshot_from_rows(array $rows): ?array
 {
     if ($rows === []) {
         return null;
@@ -42,16 +42,16 @@ function left_behind_snapshot_from_rows(array $rows): ?array
 }
 
 /**
- * Leads left behind in the latest snapshot of every day in [$from, $to]
+ * Opportunities in the latest snapshot of every day in [$from, $to]
  * (one request: every import of the range with its leads embedded).
  *
  * @return list<array{name: string, phone: string, debt: string, status: string, created_at: string}>
  */
-function left_behind_records(string $from, string $to): array
+function opportunities_records(string $from, string $to): array
 {
     $imports = supabase_select_many(['imports' => 'opportunity_imports?registered_date=gte.' . $from . '&registered_date=lte.' . $to
         . '&select=registered_date,created_at,opportunities(phone,client_name,total_debt,status,created_at)'
-        . '&order=registered_date.desc,created_at.desc'], cache_ttl($to))['imports'];
+        . '&order=registered_date.desc,created_at.desc'])['imports'];
 
     $records = [];
     $seenDays = [];

@@ -22,15 +22,6 @@ function today(): string
     return (new DateTimeImmutable('now'))->format('Y-m-d');
 }
 
-/**
- * Cache lifetime for a range: today's numbers move, so 30 seconds; past days
- * barely change, so 5 minutes.
- */
-function cache_ttl(string $to): int
-{
-    return $to >= today() ? 30 : 300;
-}
-
 /** "$12,450" (no cents). Empty input shows a dash. */
 function money($value): string
 {

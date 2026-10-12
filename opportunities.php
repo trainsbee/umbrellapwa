@@ -2,34 +2,34 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
-require_once __DIR__ . '/includes/left-behind-data.php';
+require_once __DIR__ . '/includes/opportunities-data.php';
 require_once __DIR__ . '/includes/date-range.php';
 
 $user = require_login();
 
 [$from, $to] = date_range_params();
 
-$records = left_behind_records($from, $to);
+$records = opportunities_records($from, $to);
 $debts = array_values(array_filter(array_map(fn ($r) => is_numeric($r['debt']) ? (float) $r['debt'] : null, $records), fn ($d) => $d !== null));
 $averageDebt = $debts !== [] ? array_sum($debts) / count($debts) : 0.0;
 
-$pageTitle = 'Left Behind';
-$activeNav = 'left-behind';
+$pageTitle = 'Opportunities';
+$activeNav = 'opportunities';
 require __DIR__ . '/includes/shell-top.php';
 ?>
 <div class="page-header">
   <div>
-    <h1 class="page-title">Left Behind</h1>
+    <h1 class="page-title">Opportunities</h1>
     <p class="page-subtitle"><?= e(date_label($from, $to)) ?> · <?= count($records) ?> <?= count($records) === 1 ? 'lead' : 'leads' ?><?php if ($averageDebt > 0): ?> · avg. debt <?= e(money($averageDebt)) ?><?php endif; ?></p>
   </div>
 </div>
 
-<?php $action = 'left-behind.php'; $hidden = []; require __DIR__ . '/includes/range-filter.php'; ?>
+<?php $action = 'opportunities.php'; $hidden = []; require __DIR__ . '/includes/range-filter.php'; ?>
 
 <?php if ($records === []): ?>
   <section class="empty-state">
     <?= icon('users', 22) ?>
-    <h2>No leads left behind</h2>
+    <h2>No opportunities</h2>
     <p>There is no snapshot for <?= e(date_label($from, $to)) ?>.</p>
   </section>
 <?php else: ?>

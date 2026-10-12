@@ -18,5 +18,3 @@ includes/config.local.php
 *.zip
 *.log
 
-# Server-side cache (contains query results)
-/storage/

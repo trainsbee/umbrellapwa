@@ -82,23 +82,19 @@ function supabase_count(string $table, string $query = ''): int
 
 /**
  * Runs several SELECTs at the same time (HTTP/2 multiplexed over one
- * connection), with an optional short server-side cache.
+ * connection), so a page waits for the slowest query instead of the sum.
+ * Always live data: nothing is cached.
  *
  * @param array<string, string> $paths key => "table?query"
- * @param int $ttl cache lifetime in seconds (0 = no cache)
  * @return array<string, array> key => rows ([] on error)
  */
-function supabase_select_many(array $paths, int $ttl = 0): array
+function supabase_select_many(array $paths): array
 {
     $results = [];
-    $pending = [];
-    foreach ($paths as $key => $path) {
-        $cached = $ttl > 0 ? cache_get($path, $ttl) : null;
-        $cached !== null ? $results[$key] = $cached : $pending[$key] = $path;
+    if (!supabase_configured()) {
+        return array_fill_keys(array_keys($paths), []);
     }
-    if ($pending === [] || !supabase_configured()) {
-        return $results + array_fill_keys(array_keys($pending), []);
-    }
+    $pending = $paths;
 
     $multi = curl_multi_init();
     curl_multi_setopt($multi, CURLMOPT_PIPELINING, CURLPIPE_MULTIPLEX);
@@ -128,43 +124,9 @@ function supabase_select_many(array $paths, int $ttl = 0): array
         $data = json_decode((string) curl_multi_getcontent($ch), true);
         $ok = curl_getinfo($ch, CURLINFO_HTTP_CODE) === 200 && is_array($data);
         $results[$key] = $ok ? $data : [];
-        if ($ok && $ttl > 0) {
-            cache_set($pending[$key], $data);
-        }
         curl_multi_remove_handle($multi, $ch);
         curl_close($ch);
     }
     curl_multi_close($multi);
     return $results;
 }
-
-/* ---------- Short-lived server cache (storage/cache, git-ignored, never served) ---------- */
-
-function cache_file(string $key): string
-{
-    return dirname(__DIR__) . '/storage/cache/' . hash('sha256', $key) . '.json';
-}
-
-function cache_get(string $key, int $ttl): ?array
-{
-    $file = cache_file($key);
-    if (!is_file($file) || filemtime($file) < time() - $ttl) {
-        return null;
-    }
-    $data = json_decode((string) file_get_contents($file), true);
-    return is_array($data) ? $data : null;
-}
-
-function cache_set(string $key, array $data): void
-{
-    $dir = dirname(cache_file($key));
-    if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
-        return;
-    }
-    $tmp = cache_file($key) . '.' . bin2hex(random_bytes(4));
-    if (@file_put_contents($tmp, json_encode($data), LOCK_EX) !== false) {
-        @chmod($tmp, 0600);
-        @rename($tmp, cache_file($key));
-    }
-}
-
