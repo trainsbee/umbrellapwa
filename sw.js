@@ -16,7 +16,7 @@
  * Only bump CACHE_VERSION to change the PRECACHE list or wipe the cache.
  */
 
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
 const OFFLINE_URL = 'offline.php';
 
@@ -157,3 +157,39 @@ async function staleWhileRevalidate(event) {
   }
   return network;
 }
+
+/* ---------------------------------------------------------------- push */
+
+// Shows a notification sent by the server (includes/push.php).
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (err) {
+    data = { body: event.data ? event.data.text() : '' };
+  }
+  event.waitUntil(self.registration.showNotification(data.title || 'UmbrellaApp', {
+    body: data.body || '',
+    icon: 'assets/icons/icon-192.png',
+    badge: 'assets/icons/badge-96.png',
+    tag: data.tag || undefined,
+    data: { url: data.url || 'home.php' },
+  }));
+});
+
+// Opens (or focuses) the app on the page the notification points to.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data && event.notification.data.url ? event.notification.data.url : 'home.php', self.registration.scope).href;
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+    for (const client of windows) {
+      if (client.url.startsWith(self.registration.scope) && 'focus' in client) {
+        await client.focus();
+        return client.navigate(target);
+      }
+    }
+    return self.clients.openWindow(target);
+  })());
+});
+
