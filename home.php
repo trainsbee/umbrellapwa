@@ -44,13 +44,12 @@ require __DIR__ . '/includes/shell-top.php';
 </div>
 
 <a class="spotlight" href="closing-report.php?<?= e($range) ?>">
-  <span class="spotlight-top">
-    <span class="spotlight-icon"><?= icon('target', 18) ?></span>
-    <span class="spotlight-badge"><?= icon('cpu', 11) ?> Automated</span>
+  <span class="spotlight-icon"><?= icon('target', 18) ?></span>
+  <span class="spotlight-body">
+    <span class="spotlight-title">Closing Report <span class="spotlight-badge">Automated</span></span>
+    <span class="spotlight-text">Our advanced automated report, by agent</span>
   </span>
-  <span class="spotlight-title">Closing Report</span>
-  <span class="spotlight-text">Check our advanced automated report: close rate by agent for Honduras and the United States.</span>
-  <span class="spotlight-cta">View report <?= icon('arrow-right', 14) ?></span>
+  <span class="spotlight-arrow"><?= icon('chevron-right', 18) ?></span>
 </a>
 
 <form class="date-nav" method="get" action="home.php">
