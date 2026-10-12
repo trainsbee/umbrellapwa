@@ -16,7 +16,7 @@
  * Only bump CACHE_VERSION to change the PRECACHE list or wipe the cache.
  */
 
-const CACHE_VERSION = 'v7';
+const CACHE_VERSION = 'v8';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
 const OFFLINE_URL = 'offline.php';
 
@@ -170,7 +170,8 @@ self.addEventListener('push', (event) => {
   }
   event.waitUntil(self.registration.showNotification(data.title || 'UmbrellaApp', {
     body: data.body || '',
-    icon: 'assets/icons/icon-192.png',
+    // Each alert has its own image (versioned URL from the server)
+    icon: data.icon || 'assets/icons/icon-192.png?v=2',
     badge: 'assets/icons/badge-96.png',
     tag: data.tag || undefined,
     timestamp: Date.now(),

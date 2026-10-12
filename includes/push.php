@@ -229,10 +229,24 @@ function push_embed($embed): ?array
     return is_array($embed) && $embed !== [] ? $embed : null;
 }
 
+/** Notification body: one line per non-empty part. */
+function push_lines(array $lines): string
+{
+    return implode("\n", array_filter(array_map('trim', $lines), fn ($l) => $l !== ''));
+}
+
+/** Versioned image of an alert (the version busts the service worker cache). */
+function push_icon(string $event): string
+{
+    return asset('assets/icons/alerts/' . str_replace('.', '-', $event) . '.png');
+}
+
 /**
  * Recipients' filter data and the message for an event, or null when the
- * record does not exist. Each event has its own emoji so they are easy to
- * tell apart on the lock screen.
+ * record does not exist. The body is organized in lines (collapsed, Android
+ * shows the title and the first one):
+ *   1. what happened to whom   2. debt · state · program   3. team
+ * Each alert has its own image (assets/icons/alerts, tools/generate-alert-icons.js).
  *
  * "Own" clients are the ones a user is the sales agent of or filled in at
  * Processing (the person who enters the client's data).
@@ -252,18 +266,24 @@ function push_build_event(string $event, string $id): ?array
             return null;
         }
         $creator = push_embed($row['creator'] ?? null);
-        $who = phone((string) ($row['phone'] ?? ''));
+        $phone = phone((string) ($row['phone'] ?? ''));
+        $name = '';
         $digits = preg_replace('/\D+/', '', (string) ($row['phone'] ?? ''));
         if ($digits !== '') {
             $lead = supabase_select('opportunities', 'select=client_name&phone=eq.' . $digits . '&order=file_date.desc&limit=1')[0] ?? null;
-            $who = client_name_case((string) ($lead['client_name'] ?? '')) ?: $who;
+            $name = client_name_case((string) ($lead['client_name'] ?? ''));
         }
         return [
             'owners' => [$row['created_by'] ?? null],
             'managers' => [$creator['manager_id'] ?? null],
             'message' => [
-                'title' => '🆕 Potential client added',
-                'body' => implode(' · ', array_filter([$who, $row['program'] ?? '', ($l = push_agent_label($creator)) !== '' ? 'added by ' . $l : ''])),
+                'title' => 'Potential client added',
+                'body' => push_lines([
+                    $name !== '' ? $name : $phone,
+                    implode(' · ', array_filter([$name !== '' ? $phone : '', (string) ($row['program'] ?? '')])),
+                    ($l = push_agent_label($creator)) !== '' ? 'Added by ' . $l : '',
+                ]),
+                'icon' => push_icon($event),
                 'url' => 'client.php?id=' . $row['id'],
                 'tag' => 'processing-new-' . $row['id'],
             ],
@@ -287,23 +307,22 @@ function push_build_event(string $event, string $id): ?array
     $state = strtoupper(trim((string) ($row['us_state'] ?? '')));
     $processing = push_embed($row['processing'] ?? null) ?? [];
     $creator = push_embed($processing['creator'] ?? null);
-    // Second line of the notification: who filled in the data first, then the agent
-    $team = array_filter([
+    // Last line: who filled in the data first, then the agent
+    $team = implode(' · ', array_filter([
         ($l = push_agent_label($creator)) !== '' ? 'Filled by ' . $l : '',
         ($l = push_agent_label(push_embed($row['agent'] ?? null))) !== '' ? 'Agent ' . $l : '',
-    ]);
-    $agentPart = $team !== [] ? "\n" . implode(' · ', $team) : '';
-    $details = implode(' · ', array_filter([$debt !== '—' ? $debt : '', $state, (string) ($processing['program'] ?? '')]));
+    ]));
+    $details = implode(' · ', array_filter([$debt !== '—' ? 'Debt ' . $debt : '', $state, (string) ($processing['program'] ?? '')]));
 
-    [$title, $body] = match ($event) {
-        'sales.signing' => ['✍️ Client signing', "$name is signing." . ($details !== '' ? " $details." : '') . $agentPart],
+    [$title, $headline] = match ($event) {
+        'sales.signing' => ['Client signing', "$name is signing"],
         'sales.signed' => [
-            ($row['status'] ?? '') === 'THREE_DAYS_WAIT' ? '✅ Signature completed · CA 3-day wait' : '✅ Signature completed',
-            $name . ($debt !== '—' ? ", with a $debt debt" . ($state !== '' ? " from $state" : '') . ',' : '') . ' has completed the signature.' . $agentPart,
+            ($row['status'] ?? '') === 'THREE_DAYS_WAIT' ? 'Signature completed · CA 3-day wait' : 'Signature completed',
+            "$name has completed the signature",
         ],
-        'compliance.checking' => ['🔎 In verification', "$name is being verified." . $agentPart],
-        'compliance.completed' => ['🛡️ Verification passed', "$name has completed the verification successfully." . $agentPart],
-        'compliance.cancelled' => ['❌ Cancelled in verification', "$name cancelled during verification." . $agentPart],
+        'compliance.checking' => ['In verification', "$name is being verified"],
+        'compliance.completed' => ['Verification passed', "$name passed the verification successfully"],
+        'compliance.cancelled' => ['Cancelled in verification', "$name cancelled during verification"],
         default => [null, null],
     };
     if ($title === null) {
@@ -315,7 +334,8 @@ function push_build_event(string $event, string $id): ?array
         'managers' => [$row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null), $creator['manager_id'] ?? null],
         'message' => [
             'title' => $title,
-            'body' => $body,
+            'body' => push_lines([$headline, $details, $team]),
+            'icon' => push_icon($event),
             'url' => 'client.php?id=' . ($row['processing_id'] ?? ''),
             'tag' => str_replace('.', '-', $event) . '-' . $row['id'],
         ],
