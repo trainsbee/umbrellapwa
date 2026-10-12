@@ -28,6 +28,6 @@ if ($built === null) {
     json_response(404, ['ok' => false, 'error' => 'Record not found.']);
 }
 
-$recipients = push_recipients($event, $built['owner'], $built['manager']);
+$recipients = push_recipients($event, $built['owners'], $built['managers']);
 $result = push_send($recipients, $built['message']);
 json_response(200, ['ok' => true, 'recipients' => count($recipients)] + $result);

@@ -47,7 +47,7 @@ function push_events_in(string $stage): array
 const PUSH_SCOPES = [
     'all' => 'Whole operation',
     'team' => 'Their team only',
-    'own' => 'Their own clients only',
+    'own' => 'Their own clients (agent or data entry)',
 ];
 
 function push_configured(): bool
@@ -234,13 +234,17 @@ function push_embed($embed): ?array
  * record does not exist. Each event has its own emoji so they are easy to
  * tell apart on the lock screen.
  *
- * @return array{owner: ?string, manager: ?string, message: array}|null
+ * "Own" clients are the ones a user is the sales agent of or filled in at
+ * Processing (the person who enters the client's data).
+ *
+ * @return array{owners: list<?string>, managers: list<?string>, message: array}|null
  */
 function push_build_event(string $event, string $id): ?array
 {
     $id = rawurlencode($id);
     $agent = 'names,surnames,manager_id';
-    $saleFields = "id,processing_id,client_full_name,status,debt,us_state,assigned_to,sales_manager_id,agent:assigned_to($agent),processing(program)";
+    $saleFields = "id,processing_id,client_full_name,status,debt,us_state,assigned_to,sales_manager_id,agent:assigned_to($agent),"
+        . "processing(program,created_by,creator:created_by($agent))";
 
     if ($event === 'processing.new') {
         $row = supabase_select('processing', "select=id,phone,program,created_by,creator:created_by($agent)&id=eq.$id&limit=1")[0] ?? null;
@@ -255,8 +259,8 @@ function push_build_event(string $event, string $id): ?array
             $who = client_name_case((string) ($lead['client_name'] ?? '')) ?: $who;
         }
         return [
-            'owner' => $row['created_by'] ?? null,
-            'manager' => $creator['manager_id'] ?? null,
+            'owners' => [$row['created_by'] ?? null],
+            'managers' => [$creator['manager_id'] ?? null],
             'message' => [
                 'title' => '🆕 Potential client added',
                 'body' => implode(' · ', array_filter([$who, $row['program'] ?? '', ($l = push_agent_label($creator)) !== '' ? 'added by ' . $l : ''])),
@@ -281,10 +285,15 @@ function push_build_event(string $event, string $id): ?array
     $name = client_name_case((string) ($row['client_full_name'] ?? '')) ?: 'The client';
     $debt = money($row['debt'] ?? null);
     $state = strtoupper(trim((string) ($row['us_state'] ?? '')));
-    $agentLabel = push_agent_label(push_embed($row['agent'] ?? null));
-    // Second line of the notification
-    $agentPart = $agentLabel !== '' ? "\nAgent: " . $agentLabel : '';
-    $details = implode(' · ', array_filter([$debt !== '—' ? $debt : '', $state, (string) (push_embed($row['processing'] ?? null)['program'] ?? '')]));
+    $processing = push_embed($row['processing'] ?? null) ?? [];
+    $creator = push_embed($processing['creator'] ?? null);
+    // Second line of the notification: who filled in the data first, then the agent
+    $team = array_filter([
+        ($l = push_agent_label($creator)) !== '' ? 'Filled by ' . $l : '',
+        ($l = push_agent_label(push_embed($row['agent'] ?? null))) !== '' ? 'Agent ' . $l : '',
+    ]);
+    $agentPart = $team !== [] ? "\n" . implode(' · ', $team) : '';
+    $details = implode(' · ', array_filter([$debt !== '—' ? $debt : '', $state, (string) ($processing['program'] ?? '')]));
 
     [$title, $body] = match ($event) {
         'sales.signing' => ['✍️ Client signing', "$name is signing." . ($details !== '' ? " $details." : '') . $agentPart],
@@ -302,8 +311,8 @@ function push_build_event(string $event, string $id): ?array
     }
 
     return [
-        'owner' => $row['assigned_to'] ?? null,
-        'manager' => $row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null),
+        'owners' => [$row['assigned_to'] ?? null, $processing['created_by'] ?? null],
+        'managers' => [$row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null), $creator['manager_id'] ?? null],
         'message' => [
             'title' => $title,
             'body' => $body,
@@ -319,16 +328,18 @@ function push_build_event(string $event, string $id): ?array
  *
  * @return list<string>
  */
-function push_recipients(string $event, ?string $owner, ?string $manager): array
+function push_recipients(string $event, array $owners, array $managers): array
 {
+    $owners = array_map('strval', array_filter($owners));
+    $managers = array_map('strval', array_filter($managers));
     $rules = supabase_select('pwa_notification_rules', 'select=user_id,scope&muted=is.false&event=eq.' . rawurlencode($event));
     $candidates = [];
     foreach ($rules as $r) {
         $userId = (string) $r['user_id'];
         $match = match ((string) $r['scope']) {
             'all' => true,
-            'team' => $manager !== null && $userId === (string) $manager,
-            'own' => $owner !== null && $userId === (string) $owner,
+            'team' => in_array($userId, $managers, true),
+            'own' => in_array($userId, $owners, true),
             default => false,
         };
         if ($match) {
