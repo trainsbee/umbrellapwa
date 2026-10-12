@@ -22,7 +22,7 @@ function brand_color(GdImage $img, array $rgb): int
  * Draws the umbrella centered in a $size px box whose corner is at ($ox, $oy).
  * Icon coordinates use a 24x24 grid (2-unit stroke).
  */
-function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size): void
+function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size, array $inkRgb = BRAND_STROKE, array $bgRgb = BRAND_BG): void
 {
     $u = $size / 24;
     // The drawing spans y 0 to 22: shift it down 1 unit to center it.
@@ -30,8 +30,8 @@ function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size): void
     $y = fn (float $v): int => (int) round($oy + ($v + 1) * $u);
     $d = fn (float $v): int => (int) round($v * $u);
 
-    $bg = brand_color($img, BRAND_BG);
-    $ink = brand_color($img, BRAND_STROKE);
+    $bg = brand_color($img, $bgRgb);
+    $ink = brand_color($img, $inkRgb);
     $w = 2; // stroke width
 
     // Canopy: upper half circle, center (12,12), radius 11
@@ -94,3 +94,33 @@ function brand_icon(int $size, string $mode): GdImage
     imagecopyresampled($out, $canvas, 0, 0, 0, 0, $size, $size, $big, $big);
     return $out;
 }
+
+/**
+ * Monochrome notification badge (Android status bar): a white umbrella on a
+ * transparent background. Drawn white-on-black at 4x, then the brightness
+ * becomes the alpha channel.
+ */
+function brand_badge(int $size): GdImage
+{
+    $ss = 4;
+    $big = $size * $ss;
+    $canvas = imagecreatetruecolor($big, $big);
+    imagefill($canvas, 0, 0, imagecolorallocate($canvas, 0, 0, 0));
+    $logo = $big * 0.8;
+    brand_draw_logo($canvas, ($big - $logo) / 2, ($big - $logo) / 2, $logo, [255, 255, 255], [0, 0, 0]);
+
+    $small = imagecreatetruecolor($size, $size);
+    imagecopyresampled($small, $canvas, 0, 0, 0, 0, $size, $size, $big, $big);
+
+    $out = imagecreatetruecolor($size, $size);
+    imagealphablending($out, false);
+    imagesavealpha($out, true);
+    for ($x = 0; $x < $size; $x++) {
+        for ($y = 0; $y < $size; $y++) {
+            $level = imagecolorat($small, $x, $y) & 0xFF;
+            imagesetpixel($out, $x, $y, imagecolorallocatealpha($out, 255, 255, 255, 127 - intdiv($level * 127, 255)));
+        }
+    }
+    return $out;
+}
+

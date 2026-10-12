@@ -27,6 +27,10 @@ foreach ($icons as [$file, $size, $mode]) {
     echo "ok  $file ({$size}x{$size}, $mode)\n";
 }
 
+// Monochrome badge for notifications (Android status bar)
+imagepng(brand_badge(96), "$dir/badge-96.png", 9);
+echo "ok  badge-96.png (96x96, monochrome)\n";
+
 // favicon.ico with embedded 16 and 32 px PNGs (modern ICO format)
 $entries = [];
 foreach ([16, 32] as $size) {
