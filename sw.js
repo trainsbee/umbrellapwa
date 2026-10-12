@@ -16,7 +16,7 @@
  * Only bump CACHE_VERSION to change the PRECACHE list or wipe the cache.
  */
 
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v7';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
 const OFFLINE_URL = 'offline.php';
 
@@ -173,6 +173,9 @@ self.addEventListener('push', (event) => {
     icon: 'assets/icons/icon-192.png',
     badge: 'assets/icons/badge-96.png',
     tag: data.tag || undefined,
+    timestamp: Date.now(),
+    // Button on Android and desktop (iOS ignores it; tapping the notification does the same)
+    actions: data.url && data.url.indexOf('client.php') === 0 ? [{ action: 'open', title: 'View client' }] : [],
     data: { url: data.url || 'home.php' },
   }));
 });

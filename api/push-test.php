@@ -22,8 +22,8 @@ if ($target !== $user['id'] && !is_admin($user)) {
 }
 
 $result = push_send([$target], [
-    'title' => 'UmbrellaApp',
-    'body' => 'Test notification · it works on this device.',
+    'title' => '🔔 UmbrellaApp',
+    'body' => "Test notification: it works on this device.\nAlerts open the client's profile.",
     'url' => 'notifications.php',
     'tag' => 'test',
 ]);
