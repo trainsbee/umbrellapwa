@@ -7,12 +7,15 @@ declare(strict_types=1);
  * Variables before including:
  *   $pageTitle (string) page title
  *   $activeNav (string) NAV_ITEMS key to highlight
+ *   $user      (array)  signed-in user (pages get it from require_login())
  */
 
 require_once __DIR__ . '/nav.php';
+require_once __DIR__ . '/auth.php';
 
 $activeNav = $activeNav ?? '';
-$user = DEMO_USER;
+$user = $user ?? current_user() ?? ['name' => 'Umbrella', 'roles' => []];
+$roleLabel = !empty($user['roles']) ? implode(', ', $user['roles']) : 'No role assigned';
 $bodyClass = 'has-shell';
 require __DIR__ . '/head.php';
 ?>
@@ -40,7 +43,7 @@ require __DIR__ . '/head.php';
       <span class="avatar"><?= e(initials($user['name'])) ?></span>
       <span class="profile-text">
         <strong><?= e($user['name']) ?></strong>
-        <small><?= e($user['role']) ?></small>
+        <small><?= e($roleLabel) ?></small>
       </span>
       <?= icon('chevron-right', 16, 'row-arrow') ?>
     </a>
@@ -82,10 +85,15 @@ require __DIR__ . '/head.php';
       <a href="#" class="row">
         <?= icon('message-square', 18, 'row-icon') ?><span class="row-label">Help / FAQ</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="login.php" class="row row--danger">
+      <button type="submit" form="signOutForm" class="row row--danger">
         <?= icon('log-out', 18, 'row-icon') ?><span class="row-label">Sign out</span><?= icon('chevron-right', 16, 'row-arrow') ?>
-      </a>
+      </button>
     </div>
+
+    <!-- Sign out is a POST with a CSRF token; the button above submits it -->
+    <form id="signOutForm" method="post" action="logout.php" hidden>
+      <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+    </form>
 
     <p class="sidebar-version"><?= e(APP_NAME) ?> &middot; v<?= e(APP_VERSION) ?></p>
   </div>

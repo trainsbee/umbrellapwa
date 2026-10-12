@@ -13,6 +13,8 @@ require_once __DIR__ . '/includes/config.php';
 
 $pageTitle = 'Offline';
 $activeNav = '';
+// Generic identity: this page is cached on the device, so it never shows who was signed in
+$user = ['name' => 'Umbrella', 'roles' => []];
 require __DIR__ . '/includes/shell-top.php';
 ?>
 <section class="empty-state empty-state--offline">

@@ -8,12 +8,9 @@ declare(strict_types=1);
 const NAV_ITEMS = [
     'home'          => ['Home',          'home',        'home.php'],
     'sales'         => ['Sales',         'trending-up', 'sales.php'],
-    'opportunities' => ['Opportunities', 'users',       'opportunities.php'],
+    'left-behind'   => ['Left Behind',   'users',       'left-behind.php'],
     'reports'       => ['Reports',       'bar-chart-2', 'reports.php'],
 ];
-
-// Sample user until the login is connected to Supabase.
-const DEMO_USER = ['name' => 'Umbrella User', 'role' => 'No role assigned'];
 
 /** Avatar initials: "Umbrella User" -> "UU". */
 function initials(string $name): string

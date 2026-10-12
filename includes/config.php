@@ -13,6 +13,11 @@ const APP_DESCRIPTION = 'UmbrellaApp - your operation in real time';
 const APP_VERSION     = '0.3.0';
 const APP_LANG        = 'en';
 
+// Business time zone: "today" and every date range are computed here (the
+// operation runs on Honduras time, same as the Umbrella CRM)
+const APP_TIMEZONE = 'America/Tegucigalpa';
+date_default_timezone_set(APP_TIMEZONE);
+
 // Brand colors (must match manifest.webmanifest)
 const THEME_COLOR      = '#0f1012';
 const BACKGROUND_COLOR = '#0f1012';

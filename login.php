@@ -1,15 +1,29 @@
 <?php
 declare(strict_types=1);
 
-require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . '/includes/auth.php';
 
-// Visual base of the login. Authentication (Supabase) comes later; until
-// then the button goes straight into the app so it can be reviewed.
-$email = '';
-$error = null;
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+// Already signed in: go straight to the app
+if (current_user() !== null) {
     header('Location: home.php');
     exit;
+}
+
+$username = '';
+$error = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = trim((string) ($_POST['username'] ?? ''));
+    if (!csrf_valid($_POST['csrf'] ?? null)) {
+        $error = 'Your session expired. Please try again.';
+    } else {
+        $result = attempt_login($username, (string) ($_POST['password'] ?? ''));
+        if ($result['ok']) {
+            login_user($result['user']);
+            header('Location: home.php');
+            exit;
+        }
+        $error = $result['error'];
+    }
 }
 
 $pageTitle = 'Sign in';
@@ -31,20 +45,18 @@ require __DIR__ . '/includes/head.php';
     <?php endif; ?>
 
     <form method="post" action="login.php" novalidate>
+      <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
       <div class="field">
-        <label for="email">Email</label>
+        <label for="username">Username</label>
         <div class="input-group">
-          <?= icon('mail', 14, 'input-icon') ?>
-          <input class="input" type="email" id="email" name="email" value="<?= e($email) ?>"
-                 placeholder="you@company.com" autocomplete="username" inputmode="email" autocapitalize="off" required>
+          <?= icon('user', 14, 'input-icon') ?>
+          <input class="input" type="text" id="username" name="username" value="<?= e($username) ?>"
+                 placeholder="Your Umbrella username" autocomplete="username" autocapitalize="off" spellcheck="false" required autofocus>
         </div>
       </div>
 
       <div class="field">
-        <div class="field-header">
-          <label for="password">Password</label>
-          <a href="#" class="link-subtle">Forgot your password?</a>
-        </div>
+        <label for="password">Password</label>
         <div class="input-group">
           <?= icon('lock', 14, 'input-icon') ?>
           <input class="input" type="password" id="password" name="password"
