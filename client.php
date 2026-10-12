@@ -94,10 +94,20 @@ require __DIR__ . '/includes/shell-top.php';
 
   <section class="client-card">
     <h2 class="client-card-title">Team</h2>
+    <?php if ($client['processor'] !== ''): ?>
+      <!-- The Processing user fills in all of the client's data: shown first -->
+      <div class="data-owner">
+        <span class="data-owner-avatar"><?= e(initials($client['processor'])) ?></span>
+        <span class="data-owner-text">
+          <span class="data-owner-role"><?= icon('edit-3', 11) ?> Data entry</span>
+          <strong><?= e($client['processor']) ?></strong>
+          <small>Filled in the client's data at Processing</small>
+        </span>
+      </div>
+    <?php endif; ?>
     <dl class="client-facts">
       <div><dt><?= icon('briefcase', 14) ?> Sales agent</dt><dd><?= e($client['agent'] !== '' ? $client['agent'] : 'Not assigned yet') ?></dd></div>
       <?php if ($client['manager'] !== ''): ?><div><dt><?= icon('users', 14) ?> Sales manager</dt><dd><?= e($client['manager']) ?></dd></div><?php endif; ?>
-      <div><dt><?= icon('phone-call', 14) ?> Processing</dt><dd><?= e($client['processor'] !== '' ? $client['processor'] : '—') ?></dd></div>
     </dl>
   </section>
 

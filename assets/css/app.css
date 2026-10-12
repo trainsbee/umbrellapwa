@@ -957,3 +957,11 @@ a.metric:active { transform: scale(.98); }
 .pipeline-text small { font-size: 12px; color: var(--text-2); }
 .pipeline-step--current .pipeline-text small { color: var(--accent); }
 .pipeline-step--failed .pipeline-text small { color: var(--red); }
+
+/* Who filled in the client's data (Processing): highlighted first in Team */
+.data-owner { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; padding: 12px; background: color-mix(in srgb, var(--accent) 8%, transparent); border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent); border-radius: var(--radius-lg); }
+.data-owner-avatar { flex: none; display: grid; place-items: center; width: 40px; height: 40px; font-size: 14px; font-weight: 700; color: #fff; background: var(--brand-gradient); border-radius: 50%; }
+.data-owner-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.data-owner-text strong { font-size: 15px; font-weight: 600; overflow-wrap: anywhere; }
+.data-owner-role { display: inline-flex; align-items: center; gap: 4px; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+.data-owner-text small { font-size: 12px; color: var(--text-2); }
