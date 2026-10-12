@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 /**
  * Draws the UmbrellaApp logo with GD: the umbrella from the 'logo' icon in
- * includes/icons.php, in white on a violet diagonal gradient.
+ * includes/icons.php, as a white line on a violet diagonal gradient.
  *   <path d="M23 12a11 11 0 0 0-22 0"/>   (canopy)
  *   <path d="M12 12v7a2 2 0 0 0 4 0"/>    (shaft and handle)
  * Used by generate-icons.php and generate-splash.php.
@@ -23,39 +23,39 @@ function brand_color(GdImage $img, array $rgb): int
 }
 
 /**
- * Draws the umbrella mark (same shape as LOGO_PATHS in includes/icons.php)
- * centered in a $size px box whose corner is at ($ox, $oy), on a 24x24 grid:
- * solid canopy with a scalloped edge, tip, shaft and hook.
- * $bgRgb is used to carve the scallops and the inside of the hook.
+ * Draws the umbrella (same SVG as LOGO_PATHS in includes/icons.php) centered
+ * in a $size px box whose corner is at ($ox, $oy). Icon coordinates use a
+ * 24x24 grid with a $w-unit stroke:
+ *   <path d="M23 12a11 11 0 0 0-22 0"/>   (canopy)
+ *   <path d="M12 12v7a2 2 0 0 0 4 0"/>    (shaft and handle)
+ * $bgRgb carves the inside of the arcs.
  */
 function brand_draw_logo(GdImage $img, float $ox, float $oy, float $size, array $inkRgb = BRAND_STROKE, array $bgRgb = BRAND_BG, float $w = 2): void
 {
     $u = $size / 24;
-    // The drawing spans y 0.5 to 22: shift it down 0.75 units to center it.
+    // The drawing spans y 0 to 22: shift it down 1 unit to center it.
     $x = fn (float $v): int => (int) round($ox + $v * $u);
-    $y = fn (float $v): int => (int) round($oy + ($v + 0.75) * $u);
+    $y = fn (float $v): int => (int) round($oy + ($v + 1) * $u);
     $d = fn (float $v): int => (int) round($v * $u);
 
     $bg = brand_color($img, $bgRgb);
     $ink = brand_color($img, $inkRgb);
 
-    // Canopy: solid upper half disc, center (12,12), radius 11
-    imagefilledarc($img, $x(12), $y(12), $d(22), $d(22), 180, 360, $ink, IMG_ARC_PIE);
-    // Scalloped edge: three half ellipses carved out of the bottom
-    foreach ([1 + 11 / 3, 12, 23 - 11 / 3] as $cx) {
-        imagefilledellipse($img, $x($cx), $y(12), $d(22 / 3), $d(4), $bg);
-    }
-    // Tip
-    imagefilledrectangle($img, $x(12 - $w / 2), $y(0.5), $x(12 + $w / 2), $y(1.5), $ink);
-    imagefilledellipse($img, $x(12), $y(0.5), $d($w), $d($w), $ink);
+    // Canopy: upper half circle, center (12,12), radius 11
+    imagefilledarc($img, $x(12), $y(12), $d(2 * (11 + $w / 2)), $d(2 * (11 + $w / 2)), 180, 360, $ink, IMG_ARC_PIE);
+    imagefilledarc($img, $x(12), $y(12), $d(2 * (11 - $w / 2)), $d(2 * (11 - $w / 2)), 180, 360, $bg, IMG_ARC_PIE);
 
-    // Shaft: from (12,10) to (12,19)
-    imagefilledrectangle($img, $x(12 - $w / 2), $y(10), $x(12 + $w / 2), $y(19), $ink);
+    // Shaft: from (12,12) to (12,19)
+    imagefilledrectangle($img, $x(12 - $w / 2), $y(12), $x(12 + $w / 2), $y(19), $ink);
 
-    // Hook: lower half ring, center (14,19), radius 2
+    // Handle: lower half circle, center (14,19), radius 2
     imagefilledarc($img, $x(14), $y(19), $d(2 * (2 + $w / 2)), $d(2 * (2 + $w / 2)), 0, 180, $ink, IMG_ARC_PIE);
     imagefilledarc($img, $x(14), $y(19), $d(2 * (2 - $w / 2)), $d(2 * (2 - $w / 2)), 0, 180, $bg, IMG_ARC_PIE);
-    imagefilledellipse($img, $x(16), $y(19), $d($w), $d($w), $ink);
+
+    // Round caps
+    foreach ([[1, 12], [23, 12], [12, 12], [12, 19], [16, 19]] as [$px, $py]) {
+        imagefilledellipse($img, $x($px), $y($py), $d($w), $d($w), $ink);
+    }
 }
 
 /**
@@ -97,7 +97,7 @@ function brand_icon(int $size, string $mode): GdImage
 {
     // Thicker stroke at small sizes so the umbrella stays readable
     $stroke = $size <= 32 ? 2.6 : 2.2;
-    $mask = brand_logo_mask($size, $mode === 'maskable' ? 0.5 : 0.58, $stroke);
+    $mask = brand_logo_mask($size, $mode === 'maskable' ? 0.5 : 0.6, $stroke);
     $radius = $mode === 'any' ? $size * 0.225 : 0;
 
     $out = imagecreatetruecolor($size, $size);
