@@ -7,6 +7,7 @@ declare(strict_types=1);
  */
 
 require_once __DIR__ . '/supabase.php';
+require_once __DIR__ . '/access.php';
 
 function start_session(): void
 {
@@ -75,12 +76,17 @@ function attempt_login(string $username, string $password): array
         }
     }
 
-    return ['ok' => true, 'user' => [
+    $user = [
         'id' => (string) $row['id'],
         'username' => (string) $row['username'],
         'name' => trim(($row['names'] ?? '') . ' ' . ($row['surnames'] ?? '')),
         'roles' => $roles,
-    ]];
+    ];
+    if (!has_app_access($user)) {
+        return ['ok' => false, 'error' => 'Your account does not have access to this app. Ask an administrator.'];
+    }
+
+    return ['ok' => true, 'user' => $user];
 }
 
 function login_user(array $user): void
@@ -88,6 +94,7 @@ function login_user(array $user): void
     start_session();
     session_regenerate_id(true);
     $_SESSION['user'] = $user;
+    $_SESSION['access_checked_at'] = time();
 }
 
 function current_user(): ?array
@@ -96,13 +103,35 @@ function current_user(): ?array
     return $_SESSION['user'] ?? null;
 }
 
-/** Returns the signed-in user or sends the visitor to the login page. */
+/**
+ * Returns the signed-in user or sends the visitor to the login page.
+ * Access is re-checked every few minutes, so a revoked user is signed out.
+ */
 function require_login(): array
 {
     $user = current_user();
+    if ($user !== null && time() - (int) ($_SESSION['access_checked_at'] ?? 0) > ACCESS_RECHECK_SECONDS) {
+        if (!has_app_access($user)) {
+            logout_user();
+            $user = null;
+        } else {
+            $_SESSION['access_checked_at'] = time();
+        }
+    }
     if ($user === null) {
         header('Location: login.php');
         exit;
+    }
+    return $user;
+}
+
+/** Like require_login(), but only for admins (403 for everyone else). */
+function require_admin(): array
+{
+    $user = require_login();
+    if (!is_admin($user)) {
+        http_response_code(403);
+        exit('Forbidden');
     }
     return $user;
 }
