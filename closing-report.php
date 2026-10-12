@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/closing-report-data.php';
+require_once __DIR__ . '/includes/bot.php';
 require_once __DIR__ . '/includes/date-range.php';
 
 $user = require_login();
 
 [$from, $to] = date_range_params();
 $report = closing_report($from, $to);
+
+$canAskBot = can_ask_bot($user);
+$pageScripts = ['assets/js/closing-report.js'];
 
 $pageTitle = 'Closing Report';
 $activeNav = 'reports';
@@ -21,6 +25,18 @@ require __DIR__ . '/includes/shell-top.php';
 </div>
 
 <?php $action = 'closing-report.php'; $hidden = []; require __DIR__ . '/includes/range-filter.php'; ?>
+
+<!-- Ask the data bot (Orbita) to pull the calls of this range from Infuse -->
+<div class="bot-box">
+  <button type="button" class="btn btn--block bot-button" data-bot-refresh
+          data-from="<?= e($from) ?>" data-to="<?= e($to) ?>" data-csrf="<?= e(csrf_token()) ?>"<?= $canAskBot ? '' : ' disabled' ?>>
+    <?= icon('refresh-cw', 14) ?> Ask the bot for new data
+  </button>
+  <p class="bot-status" data-bot-status hidden></p>
+  <?php if (!$canAskBot): ?>
+    <p class="bot-status">Only Admin and Automation roles can ask the bot for data.</p>
+  <?php endif; ?>
+</div>
 
 <?php if (!$report['ok']): ?>
   <div class="notice notice--error" role="alert"><?= icon('alert-circle', 14) ?><span><?= e($report['error']) ?></span></div>

@@ -200,8 +200,8 @@ html.install-sheet-open { overflow: hidden; }
 .btn--large { height: 40px; padding: 0 22px; font-size: 14px; border-radius: 8px; gap: 8px; }
 .btn--icon { width: var(--control-h); padding: 0; }
 
-.btn[data-cargando] { pointer-events: none; }
-.btn[data-cargando]::after {
+.btn[data-loading] { pointer-events: none; }
+.btn[data-loading]::after {
   content: "";
   width: 12px;
   height: 12px;
@@ -757,3 +757,14 @@ a.metric:active { transform: scale(.98); }
   .metric-grid--3 { gap: 8px; }
   .panel-grid { grid-template-columns: 1fr; }
 }
+
+/* ---------- Data bot button (Closing Report) ---------- */
+.bot-box { margin: -4px 0 14px; }
+.bot-button { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+.bot-button[data-loading] .icon { animation: spin .9s linear infinite; }
+.bot-button[data-loading]::after { display: none; }
+.bot-status { margin: 8px 0 0; font-size: 12px; text-align: center; color: var(--text-2); }
+.bot-status--busy { color: var(--accent); }
+.bot-status--ok { color: var(--green); }
+.bot-status--warn { color: var(--amber); }
+.bot-status--error { color: var(--red); }
