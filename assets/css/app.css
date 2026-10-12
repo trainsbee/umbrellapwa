@@ -837,7 +837,12 @@ a.metric:active { transform: scale(.98); }
 .alert-text, .setting-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .alert-text strong, .setting-text strong { font-size: 14px; font-weight: 600; }
 .alert-text small, .setting-text small { font-size: 12px; color: var(--text-2); }
-.toggle { padding: 0; background: none; border: 0; cursor: pointer; }
+.alert-item form { flex: none; display: flex; }
+.toggle { display: flex; padding: 0; background: none; border: 0; cursor: pointer; }
+.toggle .switch { display: block; border-color: var(--text-3); }
+.toggle .switch::after { background: var(--text-3); }
+.toggle[aria-checked="true"] .switch { border-color: var(--accent); background: var(--accent); }
+.toggle[aria-checked="true"] .switch::after { background: #fff; }
 .toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
 
 /* Settings with a native checkbox styled as a switch */

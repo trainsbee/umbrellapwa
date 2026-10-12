@@ -84,6 +84,9 @@
       if (navigator.brave) {
         return 'Brave blocks push by default. Turn on Settings → Privacy and security → "Use Google services for push messaging", restart Brave and try again.';
       }
+      if (/android/i.test(navigator.userAgent)) {
+        return 'This phone could not reach its push service. On Android, push needs Google Play services (phones without the Play Store, such as recent Huawei models, cannot receive it). Also turn off any VPN or data saver and try again.';
+      }
       return 'Your browser could not reach its push service. Turn off any VPN or blocker for this site, or try Chrome, Edge or Safari, then try again.';
     }
     return message || 'Notifications could not be turned on.';
