@@ -175,6 +175,11 @@ function push_send(array $userIds, array $message): array
         } elseif ($report->isSubscriptionExpired()) {
             $expiredIds[] = $id;
         }
+        if (!$report->isSuccess()) {
+            // Leaves a trace of why a device stopped receiving (no payload, no keys)
+            $status = $report->getResponse()?->getStatusCode() ?? 0;
+            error_log('push failed: ' . parse_url($report->getEndpoint(), PHP_URL_HOST) . ' status ' . $status . ' ' . $report->getReason());
+        }
     }
 
     if ($expiredIds !== []) {
