@@ -30,7 +30,9 @@ create table if not exists public.pwa_access (
 --          own  = only their own clients
 create table if not exists public.pwa_notification_rules (
     user_id    uuid not null references public.users(id) on delete cascade,
-    event      text not null check (event in ('processing.new', 'sales.signing', 'sales.signed', 'compliance.completed')),
+    event      text not null constraint pwa_notification_rules_event_check check (event in (
+                   'processing.new', 'sales.signing', 'sales.signed',
+                   'compliance.checking', 'compliance.completed', 'compliance.cancelled')),
     scope      text not null default 'all' check (scope in ('all', 'team', 'own')),
     muted      boolean not null default false,
     updated_at timestamptz not null default now(),
@@ -76,7 +78,10 @@ declare
     v_event  text;
 begin
     if tg_table_name = 'processing' then
-        v_event := 'processing.new';
+        -- Only new leads that start in Processing
+        if new.status = 'PROCESSING' then
+            v_event := 'processing.new';
+        end if;
     elsif tg_table_name = 'sales' then
         if new.status = 'SIGNING' and (tg_op = 'INSERT' or old.status is distinct from 'SIGNING') then
             v_event := 'sales.signing';
@@ -85,9 +90,17 @@ begin
             v_event := 'sales.signed';
         end if;
     elsif tg_table_name = 'compliance' then
-        if new.compliance_status = 'COMPLETED'
+        if new.compliance_status in ('PENDING_COMPLIANCE', 'PENDING VERIFICATION', 'CHECKING')
+           and (tg_op = 'INSERT' or old.compliance_status is null
+                or old.compliance_status not in ('PENDING_COMPLIANCE', 'PENDING VERIFICATION', 'CHECKING')) then
+            v_event := 'compliance.checking';
+        elsif new.compliance_status = 'COMPLETED'
            and (tg_op = 'INSERT' or old.compliance_status is distinct from 'COMPLETED') then
             v_event := 'compliance.completed';
+        elsif new.compliance_status in ('CANCELLED', 'CANCEL AFTER COMPLIANCE')
+           and (tg_op = 'INSERT' or old.compliance_status is null
+                or old.compliance_status not in ('CANCELLED', 'CANCEL AFTER COMPLIANCE')) then
+            v_event := 'compliance.cancelled';
         end if;
     end if;
 

@@ -5,29 +5,43 @@ declare(strict_types=1);
  * Push notifications (standard Web Push with VAPID).
  *
  * Flow: a trigger in Supabase posts {event, id} to api/push-event.php when a
- * processing is created, a client starts signing or signs, or compliance is
- * completed. This file loads that record, works out who should be told
- * (pwa_notification_rules: event, scope, muted; users must have app access)
- * and sends the notification to every device they subscribed.
- *
- * Notifications never include the client's name or phone: they show on the
- * lock screen.
+ * lead enters Processing, a client starts signing or signs, or compliance
+ * starts, passes or cancels the verification. This file loads that client,
+ * works out who should be told (pwa_notification_rules: event, scope, muted;
+ * users must have app access) and sends the notification to every device
+ * they subscribed. Tapping it opens the client's profile (client.php).
  */
 
 require_once __DIR__ . '/access.php';
 require_once __DIR__ . '/format.php';
+require_once __DIR__ . '/client-data.php';
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 
-/** Event => [label, description, Feather icon]. */
-const PUSH_EVENTS = [
-    'processing.new' => ['New processing', 'A new lead enters Processing', 'phone-call'],
-    'sales.signing' => ['Client signing', 'A client starts signing the contract', 'edit-3'],
-    'sales.signed' => ['Client signed', 'A client signs (includes California 3-day wait)', 'check-circle'],
-    'compliance.completed' => ['Compliance completed', 'A sale passes compliance', 'shield'],
+/** Pipeline stages the alerts are grouped by. */
+const PUSH_STAGES = [
+    'processing' => 'Processing',
+    'sales' => 'Sales',
+    'compliance' => 'Compliance',
 ];
+
+/** Event => [label, description, Feather icon, stage], in pipeline order. */
+const PUSH_EVENTS = [
+    'processing.new' => ['Potential client added', 'A new lead enters Processing', 'user-plus', 'processing'],
+    'sales.signing' => ['Client signing', 'The client starts signing the contract', 'edit-3', 'sales'],
+    'sales.signed' => ['Signature completed', 'The client signs (includes California 3-day wait)', 'check-circle', 'sales'],
+    'compliance.checking' => ['In verification', 'Compliance starts verifying the client', 'search', 'compliance'],
+    'compliance.completed' => ['Verification passed', 'The client passes compliance', 'shield', 'compliance'],
+    'compliance.cancelled' => ['Cancelled in verification', 'The client cancels during compliance', 'x-circle', 'compliance'],
+];
+
+/** Events of one stage. @return array<string, array> */
+function push_events_in(string $stage): array
+{
+    return array_filter(PUSH_EVENTS, fn ($e) => $e[3] === $stage);
+}
 
 /** Scope => label. */
 const PUSH_SCOPES = [
@@ -216,38 +230,46 @@ function push_embed($embed): ?array
 }
 
 /**
- * Loads the record behind an event and builds the message plus who owns it.
+ * Recipients' filter data and the message for an event, or null when the
+ * record does not exist. Each event has its own emoji so they are easy to
+ * tell apart on the lock screen.
  *
- * @return array{message: array, owner: ?string, manager: ?string}|null
+ * @return array{owner: ?string, manager: ?string, message: array}|null
  */
 function push_build_event(string $event, string $id): ?array
 {
     $id = rawurlencode($id);
     $agent = 'names,surnames,manager_id';
-    $today = today();
+    $saleFields = "id,processing_id,client_full_name,status,debt,us_state,assigned_to,sales_manager_id,agent:assigned_to($agent),processing(program)";
 
     if ($event === 'processing.new') {
-        $row = supabase_select('processing', "select=id,program,created_by,creator:created_by($agent)&id=eq.$id&limit=1")[0] ?? null;
+        $row = supabase_select('processing', "select=id,phone,program,created_by,creator:created_by($agent)&id=eq.$id&limit=1")[0] ?? null;
         if ($row === null) {
             return null;
         }
         $creator = push_embed($row['creator'] ?? null);
+        $who = phone((string) ($row['phone'] ?? ''));
+        $digits = preg_replace('/\D+/', '', (string) ($row['phone'] ?? ''));
+        if ($digits !== '') {
+            $lead = supabase_select('opportunities', 'select=client_name&phone=eq.' . $digits . '&order=file_date.desc&limit=1')[0] ?? null;
+            $who = client_name_case((string) ($lead['client_name'] ?? '')) ?: $who;
+        }
         return [
             'owner' => $row['created_by'] ?? null,
             'manager' => $creator['manager_id'] ?? null,
             'message' => [
-                'title' => 'New processing',
-                'body' => implode(' · ', array_filter([$row['program'] ?? '', ($l = push_agent_label($creator)) !== '' ? 'by ' . $l : ''])),
-                'url' => 'home.php',
-                'tag' => 'processing-' . $row['id'],
+                'title' => '🆕 Potential client added',
+                'body' => implode(' · ', array_filter([$who, $row['program'] ?? '', ($l = push_agent_label($creator)) !== '' ? 'added by ' . $l : ''])),
+                'url' => 'client.php?id=' . $row['id'],
+                'tag' => 'processing-new-' . $row['id'],
             ],
         ];
     }
 
-    if ($event === 'sales.signing' || $event === 'sales.signed') {
-        $row = supabase_select('sales', "select=id,status,debt,assigned_to,sales_manager_id,agent:assigned_to($agent),processing(program)&id=eq.$id&limit=1")[0] ?? null;
-    } elseif ($event === 'compliance.completed') {
-        $compliance = supabase_select('compliance', "select=id,sale:sales_id(id,status,debt,assigned_to,sales_manager_id,agent:assigned_to($agent),processing(program))&id=eq.$id&limit=1")[0] ?? null;
+    if (str_starts_with($event, 'sales.')) {
+        $row = supabase_select('sales', "select=$saleFields&id=eq.$id&limit=1")[0] ?? null;
+    } elseif (str_starts_with($event, 'compliance.')) {
+        $compliance = supabase_select('compliance', "select=id,sale:sales_id($saleFields)&id=eq.$id&limit=1")[0] ?? null;
         $row = push_embed($compliance['sale'] ?? null);
     } else {
         return null;
@@ -256,26 +278,36 @@ function push_build_event(string $event, string $id): ?array
         return null;
     }
 
-    $program = (string) (push_embed($row['processing'] ?? null)['program'] ?? '');
+    $name = client_name_case((string) ($row['client_full_name'] ?? '')) ?: 'The client';
+    $debt = money($row['debt'] ?? null);
+    $state = strtoupper(trim((string) ($row['us_state'] ?? '')));
     $agentLabel = push_agent_label(push_embed($row['agent'] ?? null));
-    $titles = [
-        'sales.signing' => 'Client signing',
-        'sales.signed' => ($row['status'] ?? '') === 'THREE_DAYS_WAIT' ? 'Client signed · 3-day wait' : 'Client signed',
-        'compliance.completed' => 'Compliance completed',
-    ];
-    $urls = [
-        'sales.signing' => 'sales.php?from=' . $today . '&to=' . $today . '&status=SIGNING',
-        'sales.signed' => 'sales.php?from=' . $today . '&to=' . $today,
-        'compliance.completed' => 'sales.php?from=' . $today . '&to=' . $today,
-    ];
+    // Second line of the notification
+    $agentPart = $agentLabel !== '' ? "\nAgent: " . $agentLabel : '';
+    $details = implode(' · ', array_filter([$debt !== '—' ? $debt : '', $state, (string) (push_embed($row['processing'] ?? null)['program'] ?? '')]));
+
+    [$title, $body] = match ($event) {
+        'sales.signing' => ['✍️ Client signing', "$name is signing." . ($details !== '' ? " $details." : '') . $agentPart],
+        'sales.signed' => [
+            ($row['status'] ?? '') === 'THREE_DAYS_WAIT' ? '✅ Signature completed · CA 3-day wait' : '✅ Signature completed',
+            $name . ($debt !== '—' ? ", with a $debt debt" . ($state !== '' ? " from $state" : '') . ',' : '') . ' has completed the signature.' . $agentPart,
+        ],
+        'compliance.checking' => ['🔎 In verification', "$name is being verified." . $agentPart],
+        'compliance.completed' => ['🛡️ Verification passed', "$name has completed the verification successfully." . $agentPart],
+        'compliance.cancelled' => ['❌ Cancelled in verification', "$name cancelled during verification." . $agentPart],
+        default => [null, null],
+    };
+    if ($title === null) {
+        return null;
+    }
 
     return [
         'owner' => $row['assigned_to'] ?? null,
         'manager' => $row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null),
         'message' => [
-            'title' => $titles[$event],
-            'body' => implode(' · ', array_filter([$program, money($row['debt'] ?? null) !== '—' ? money($row['debt']) : '', $agentLabel])),
-            'url' => $urls[$event],
+            'title' => $title,
+            'body' => $body,
+            'url' => 'client.php?id=' . ($row['processing_id'] ?? ''),
             'tag' => str_replace('.', '-', $event) . '-' . $row['id'],
         ],
     ];
