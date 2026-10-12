@@ -682,8 +682,8 @@ a.metric:active { transform: scale(.98); }
    without any shadow. */
 .spotlight {
   position: relative; overflow: hidden; isolation: isolate;
-  display: flex; flex-direction: column; gap: 4px;
-  margin-bottom: 14px; padding: 16px;
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 14px; padding: 12px 14px;
   color: var(--text); text-decoration: none;
   background: linear-gradient(120deg,
     color-mix(in srgb, var(--accent) 26%, var(--surface)) 0%,
@@ -713,19 +713,17 @@ a.metric:active { transform: scale(.98); }
   pointer-events: none;
 }
 @keyframes spotlight-pulse { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
-.spotlight-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
-.spotlight-icon { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; background: var(--accent); border-radius: 6px; }
+.spotlight-icon { flex: none; display: grid; place-items: center; width: 38px; height: 38px; color: #fff; background: var(--accent); border-radius: 6px; }
+.spotlight-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.spotlight-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; letter-spacing: -.01em; }
 .spotlight-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  padding: 3px 9px;
-  font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  padding: 2px 7px;
+  font-size: 9.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
   color: #fff; background: var(--accent); border-radius: 999px;
 }
-.spotlight-title { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
-.spotlight-text { font-size: 13px; line-height: 1.45; color: var(--text-2); }
-.spotlight-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--accent); }
-.spotlight-cta .icon { transition: transform .2s; }
-.spotlight:hover .spotlight-cta .icon { transform: translateX(3px); }
+.spotlight-text { font-size: 12.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotlight-arrow { flex: none; color: var(--accent); transition: transform .2s; }
+.spotlight:hover .spotlight-arrow { transform: translateX(3px); }
 @media (prefers-reduced-motion: reduce) {
   .spotlight, .spotlight::before, .spotlight::after { animation: none; }
 }
@@ -768,3 +766,68 @@ a.metric:active { transform: scale(.98); }
 .bot-status--ok { color: var(--green); }
 .bot-status--warn { color: var(--amber); }
 .bot-status--error { color: var(--red); }
+
+/* ---------- Reports hub ---------- */
+.report-links { display: flex; flex-direction: column; gap: 10px; }
+.report-links .spotlight { margin-bottom: 0; }
+.spotlight--alt {
+  background-image: linear-gradient(120deg,
+    color-mix(in srgb, #4fd1c5 22%, var(--surface)) 0%,
+    color-mix(in srgb, var(--accent) 12%, var(--surface)) 55%,
+    color-mix(in srgb, #4fd1c5 14%, var(--surface)) 100%);
+  border-color: color-mix(in srgb, #4fd1c5 50%, transparent);
+}
+.spotlight--alt::after { border-color: #4fd1c5; }
+.spotlight--alt .spotlight-icon, .spotlight--alt .spotlight-badge { background: #14a396; }
+.spotlight--alt .spotlight-arrow { color: #4fd1c5; }
+
+/* ---------- Leader Board ---------- */
+.metric-value--sm { font-size: 22px; }
+
+/* "Agents without sales today": a metric card that expands */
+.disclosure { margin-bottom: 14px; }
+.disclosure > summary { list-style: none; cursor: pointer; }
+.disclosure > summary::-webkit-details-marker { display: none; }
+.metric--row { flex-direction: row; align-items: center; gap: 12px; }
+.metric--row .metric-icon { margin: 0; }
+.disclosure-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.disclosure-text strong { font-size: 14px; }
+.disclosure-text small { font-size: 12px; color: var(--text-2); }
+.disclosure-arrow { color: var(--text-2); transition: transform .2s; }
+.disclosure[open] .disclosure-arrow { transform: rotate(180deg); }
+.manager-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.manager-groups .ranking { gap: 8px; }
+.manager-groups .ranking-count { font-weight: 500; color: var(--text-3); }
+
+/* Segment boards */
+.board { margin: 18px 0; }
+.board-header { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.board-title { margin: 0; font-size: 13px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.board-meta { font-size: 12px; color: var(--text-3); }
+.board-table td:first-child { white-space: normal; min-width: 190px; }
+.agent { display: flex; align-items: center; gap: 10px; }
+.agent-rank { flex: none; width: 18px; font-size: 12px; font-weight: 700; color: var(--text-3); text-align: right; }
+.board-table tr.is-top .agent-rank { color: var(--amber); }
+.agent-avatar {
+  flex: none; display: grid; place-items: center;
+  width: 30px; height: 30px;
+  font-size: 11px; font-weight: 700; color: var(--accent);
+  background: var(--surface-2); border: 1px solid var(--border-2); border-radius: 50%;
+}
+.board-table tr.is-top .agent-avatar { color: #fff; background: var(--accent); border-color: var(--accent); }
+.agent-text { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.agent-name { font-weight: 600; }
+.agent-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag { padding: 1px 6px; font-size: 10.5px; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-radius: 4px; }
+
+/* Period totals */
+.totals-panel { margin-top: 10px; }
+.totals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; }
+.totals div { padding: 10px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; }
+.totals dt { font-size: 11px; color: var(--text-3); }
+.totals dd { margin: 4px 0 0; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 760px) {
+  .manager-groups { grid-template-columns: 1fr; }
+  .totals { grid-template-columns: 1fr 1fr; }
+}

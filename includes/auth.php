@@ -115,3 +115,11 @@ function logout_user(): void
     setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
     session_destroy();
 }
+
+/** True when the user has any of the given roles (ADMIN and ROLE_ADMIN always pass). */
+function has_any_role(array $user, array $roles): bool
+{
+    $userRoles = array_map('strtoupper', $user['roles'] ?? []);
+    return array_intersect($userRoles, array_merge(['ADMIN', 'ROLE_ADMIN'], $roles)) !== [];
+}
+

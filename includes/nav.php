@@ -9,7 +9,7 @@ const NAV_ITEMS = [
     'home'          => ['Home',          'home',        'home.php'],
     'sales'         => ['Sales',         'trending-up', 'sales.php'],
     'opportunities' => ['Opportunities', 'users',       'opportunities.php'],
-    'reports'       => ['Reports',       'bar-chart-2', 'closing-report.php'],
+    'reports'       => ['Reports',       'bar-chart-2', 'reports.php'],
 ];
 
 /** Avatar initials: "Umbrella User" -> "UU". */
