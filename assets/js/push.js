@@ -66,6 +66,29 @@
     return;
   }
 
+  // Drops any stale subscription (e.g. made with another key) and retries once
+  function subscribe() {
+    var options = { userVisibleOnly: true, applicationServerKey: keyBytes(vapidKey) };
+    return registration.pushManager.subscribe(options).catch(function () {
+      return registration.pushManager.getSubscription().then(function (old) {
+        return old ? old.unsubscribe() : null;
+      }).then(function () {
+        return registration.pushManager.subscribe(options);
+      });
+    });
+  }
+
+  function friendlyError(err) {
+    var message = (err && err.message) || '';
+    if (/push service/i.test(message) || (err && err.name === 'AbortError')) {
+      if (navigator.brave) {
+        return 'Brave blocks push by default. Turn on Settings → Privacy and security → "Use Google services for push messaging", restart Brave and try again.';
+      }
+      return 'Your browser could not reach its push service. Turn off any VPN or blocker for this site, or try Chrome, Edge or Safari, then try again.';
+    }
+    return message || 'Notifications could not be turned on.';
+  }
+
   var registration = null;
   navigator.serviceWorker.ready.then(function (reg) {
     registration = reg;
@@ -77,14 +100,14 @@
     setStatus('Waiting for permission…');
     Notification.requestPermission().then(function (permission) {
       if (permission !== 'granted') throw new Error('Permission was not granted.');
-      return registration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: keyBytes(vapidKey) });
+      return subscribe();
     }).then(function (subscription) {
       return api('api/push-subscription.php', 'POST', { subscription: subscription.toJSON() }).then(function (res) {
         if (!res.ok) throw new Error(res.error);
         render(subscription);
       });
     }).catch(function (err) {
-      setStatus(err.message || 'Notifications could not be turned on.', 'error');
+      setStatus(friendlyError(err), 'error');
     }).finally(function () { enableBtn.disabled = false; });
   });
 
