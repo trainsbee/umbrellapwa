@@ -11,3 +11,6 @@ const SUPABASE_URL = 'https://your-project.supabase.co';
 
 // Server-side key. It never reaches the browser: every query runs in PHP.
 const SUPABASE_KEY = 'your-service-role-key';
+
+// Closing Report: username of the manager whose team the report covers
+const CLOSING_REPORT_MANAGER = 'manager-username';

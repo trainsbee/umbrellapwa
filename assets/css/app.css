@@ -677,6 +677,82 @@ a.metric:active { transform: scale(.98); }
 .pill--red { --tone: var(--red); }
 .pill--neutral { --tone: var(--text-2); }
 
+/* ---------- Spotlight card (Closing Report on Home) ---------- */
+/* Animated gradient plus a light sweep and a pulsing border: invites a tap
+   without any shadow. */
+.spotlight {
+  position: relative; overflow: hidden; isolation: isolate;
+  display: flex; flex-direction: column; gap: 4px;
+  margin-bottom: 14px; padding: 16px;
+  color: var(--text); text-decoration: none;
+  background: linear-gradient(120deg,
+    color-mix(in srgb, var(--accent) 26%, var(--surface)) 0%,
+    color-mix(in srgb, #4fd1c5 14%, var(--surface)) 55%,
+    color-mix(in srgb, var(--accent) 18%, var(--surface)) 100%);
+  background-size: 200% 200%;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-radius: 8px;
+  animation: spotlight-gradient 8s ease-in-out infinite alternate;
+  transition: transform .1s;
+}
+.spotlight:active { transform: scale(.98); }
+@keyframes spotlight-gradient { to { background-position: 100% 100%; } }
+/* Light sweep */
+.spotlight::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, .10) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: spotlight-sweep 3.6s ease-in-out infinite;
+}
+@keyframes spotlight-sweep { 60%, 100% { transform: translateX(100%); } }
+/* Pulsing border */
+.spotlight::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  border: 1px solid var(--accent);
+  animation: spotlight-pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes spotlight-pulse { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+.spotlight-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.spotlight-icon { display: grid; place-items: center; width: 34px; height: 34px; color: #fff; background: var(--accent); border-radius: 6px; }
+.spotlight-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 9px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  color: #fff; background: var(--accent); border-radius: 999px;
+}
+.spotlight-title { font-size: 17px; font-weight: 700; letter-spacing: -.01em; }
+.spotlight-text { font-size: 13px; line-height: 1.45; color: var(--text-2); }
+.spotlight-cta { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.spotlight-cta .icon { transition: transform .2s; }
+.spotlight:hover .spotlight-cta .icon { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .spotlight, .spotlight::before, .spotlight::after { animation: none; }
+}
+
+/* ---------- Report page ---------- */
+.page-eyebrow { display: inline-flex; align-items: center; gap: 5px; margin-bottom: 6px; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.tabs button.tab { border: 0; background: none; cursor: pointer; font: inherit; font-size: 13px; }
+.tabs button.tab.active { background: var(--surface-2); }
+.tab-count { margin-left: 4px; padding: 0 6px; font-size: 11px; font-weight: 700; color: var(--text-2); background: var(--surface-2); border-radius: 999px; }
+.tab.active .tab-count { color: #fff; background: var(--accent); }
+
+/* Wide table: scrolls sideways on phones with the agent column pinned */
+.table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; }
+.report-table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.report-table th, .report-table td { padding: 10px 12px; text-align: right; border-bottom: 1px solid var(--border); }
+.report-table th { font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); background: var(--panel); }
+.report-table th:first-child, .report-table td:first-child {
+  position: sticky; left: 0; z-index: 1;
+  text-align: left; font-weight: 600;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+.report-table th:first-child { background: var(--panel); }
+.report-table tbody tr:hover td { background: color-mix(in srgb, var(--accent) 6%, var(--surface)); }
+.report-table tfoot td { font-weight: 700; border-bottom: 0; background: var(--panel); }
+.report-table td.muted { color: var(--text-2); }
+
 @media (max-width: 600px) {
   .metric-grid--3 { gap: 8px; }
   .panel-grid { grid-template-columns: 1fr; }

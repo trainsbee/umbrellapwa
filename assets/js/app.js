@@ -100,4 +100,18 @@
   document.addEventListener('change', function (e) {
     if (e.target.matches('[data-autosubmit]') && e.target.form) e.target.form.submit();
   });
+
+  // In-page tabs: [data-tabs] buttons with data-tab="x" show [data-tab-panel="x"]
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('[data-tabs] [data-tab]');
+    if (!tab) return;
+    var key = tab.getAttribute('data-tab');
+    tab.closest('[data-tabs]').querySelectorAll('[data-tab]').forEach(function (t) {
+      t.classList.toggle('active', t === tab);
+      t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-tab-panel]').forEach(function (panel) {
+      panel.hidden = panel.getAttribute('data-tab-panel') !== key;
+    });
+  });
 })();

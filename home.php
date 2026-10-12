@@ -43,6 +43,16 @@ require __DIR__ . '/includes/shell-top.php';
   </p>
 </div>
 
+<a class="spotlight" href="closing-report.php?<?= e($range) ?>">
+  <span class="spotlight-top">
+    <span class="spotlight-icon"><?= icon('target', 18) ?></span>
+    <span class="spotlight-badge"><?= icon('cpu', 11) ?> Automated</span>
+  </span>
+  <span class="spotlight-title">Closing Report</span>
+  <span class="spotlight-text">Check our advanced automated report: close rate by agent for Honduras and the United States.</span>
+  <span class="spotlight-cta">View report <?= icon('arrow-right', 14) ?></span>
+</a>
+
 <form class="date-nav" method="get" action="home.php">
   <a class="btn btn--icon" href="home.php?date=<?= e($previous) ?>" aria-label="Previous day"><?= icon('chevron-left', 14) ?></a>
   <input class="input" type="date" name="date" value="<?= e($date) ?>" max="<?= e(today()) ?>" data-autosubmit aria-label="Day">
