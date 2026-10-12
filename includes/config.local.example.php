@@ -14,7 +14,3 @@ const SUPABASE_KEY = 'your-service-role-key';
 
 // Closing Report: username of the manager whose team the report covers
 const CLOSING_REPORT_MANAGER = 'manager-username';
-
-// Leader Board: managers shown as one combined group in "Agents without sales today"
-const LEADERBOARD_COMBINED_MANAGERS = ['manager-one', 'manager-two'];
-const LEADERBOARD_COMBINED_LABEL = 'Manager One & Manager Two';

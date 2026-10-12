@@ -4,6 +4,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/includes/sales-data.php';
 require_once __DIR__ . '/includes/opportunities-data.php';
+require_once __DIR__ . '/includes/leaderboard-data.php';
 
 $user = require_login();
 
@@ -29,6 +30,7 @@ $salesPercent = $total > 0 ? (int) round($sales['sales'] / $total * 100) : null;
 $opportunitiesPercent = $salesPercent !== null ? 100 - $salesPercent : null;
 
 $range = 'from=' . $date . '&to=' . $date;
+$reportQuery = '?' . e($range);
 $firstName = explode(' ', $user['name'])[0] ?: $user['username'];
 
 $pageTitle = 'Home';
@@ -43,14 +45,28 @@ require __DIR__ . '/includes/shell-top.php';
   </p>
 </div>
 
-<a class="spotlight" href="closing-report.php?<?= e($range) ?>">
-  <span class="spotlight-icon"><?= icon('target', 18) ?></span>
-  <span class="spotlight-body">
-    <span class="spotlight-title">Closing Report <span class="spotlight-badge">Automated</span></span>
-    <span class="spotlight-text">Our advanced automated report, by agent</span>
-  </span>
-  <span class="spotlight-arrow"><?= icon('chevron-right', 18) ?></span>
-</a>
+<div class="spotlight-grid">
+  <a class="spotlight" href="closing-report.php<?= $reportQuery ?>">
+    <span class="spotlight-top">
+      <span class="spotlight-icon"><?= icon('target', 18) ?></span>
+      <span class="spotlight-badge"><?= icon('cpu', 11) ?> Automated</span>
+    </span>
+    <span class="spotlight-title">Closing Report</span>
+    <span class="spotlight-text">Check our advanced automated report: close rate by agent for Honduras and the United States.</span>
+    <span class="spotlight-cta">View report <?= icon('arrow-right', 14) ?></span>
+  </a>
+  <?php if (can_view_leaderboard($user)): ?>
+    <a class="spotlight spotlight--alt" href="leaderboard.php<?= $reportQuery ?>">
+      <span class="spotlight-top">
+        <span class="spotlight-icon"><?= icon('award', 18) ?></span>
+        <span class="spotlight-badge"><?= icon('activity', 11) ?> Live</span>
+      </span>
+      <span class="spotlight-title">Leader Board</span>
+      <span class="spotlight-text">See who is leading: sales and opportunities by segment and agent, updated live.</span>
+      <span class="spotlight-cta">View leader board <?= icon('arrow-right', 14) ?></span>
+    </a>
+  <?php endif; ?>
+</div>
 
 <form class="date-nav" method="get" action="home.php">
   <a class="btn btn--icon" href="home.php?date=<?= e($previous) ?>" aria-label="Previous day"><?= icon('chevron-left', 14) ?></a>

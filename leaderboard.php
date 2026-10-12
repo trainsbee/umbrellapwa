@@ -35,7 +35,7 @@ require __DIR__ . '/includes/shell-top.php';
     <h2>No access</h2>
     <p>The Leader Board is available to Admin and Leaderboard roles.</p>
   </section>
-<?php else: $t = $lb['totals']; $noSalesCount = array_sum(array_map(fn ($g) => count($g['agents']), $lb['no_sales_today'])); ?>
+<?php else: $t = $lb['totals']; ?>
 
 <?php $action = 'leaderboard.php'; $hidden = []; require __DIR__ . '/includes/range-filter.php'; ?>
 
@@ -72,27 +72,6 @@ require __DIR__ . '/includes/shell-top.php';
     <span class="metric-sub"><?= $t['opportunities_no_sales'] > 0 ? 'With sales ' . $t['opportunities_with_sales'] . ' · no sales ' . $t['opportunities_no_sales'] : 'Left by agents who sold' ?></span>
   </div>
 </div>
-
-<!-- Agents without sales today -->
-<details class="disclosure">
-  <summary class="metric metric--warning metric--row">
-    <span class="metric-icon"><?= icon('user-x', 16) ?></span>
-    <span class="disclosure-text"><strong><?= $noSalesCount ?> agents without sales today</strong><small>By manager · tap to see who</small></span>
-    <span class="disclosure-arrow"><?= icon('chevron-down', 16) ?></span>
-  </summary>
-  <div class="manager-groups">
-    <?php foreach ($lb['no_sales_today'] as $group): ?>
-      <section class="panel">
-        <h3 class="panel-title"><?= e($group['manager']) ?> <span class="tab-count"><?= count($group['agents']) ?></span></h3>
-        <ul class="ranking">
-          <?php foreach ($group['agents'] as $agent): ?>
-            <li class="ranking-row"><span class="ranking-name"><?= e($agent['name']) ?></span><span class="ranking-count"><?= $agent['deals'] ?> in range</span></li>
-          <?php endforeach; ?>
-        </ul>
-      </section>
-    <?php endforeach; ?>
-  </div>
-</details>
 
 <!-- Boards by segment -->
 <?php if ($lb['boards'] === []): ?>

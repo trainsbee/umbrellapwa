@@ -21,13 +21,10 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/closing-report-data.php';
 
-// Embeds use the column form (alias:column(fields)) to get the referenced row:
-// on the self-referencing users table, users!manager_id would return the
-// subordinates instead of the manager.
+// Embeds use the column form (alias:column(fields)) to get the referenced row.
 const LEADERBOARD_ROLE = 'LEADERBOARD';
 const OTHER_LEADS_SOURCE = 'OTHER LEADS';
 const NO_AGENT_KEY = '__no_agent__';
-const NO_MANAGER_KEY = '__no_manager__';
 
 /** Boards in display order: segment => title. */
 const LEADERBOARD_BOARDS = [
@@ -114,11 +111,10 @@ function passed_compliance($compliance): bool
  * Everything the Leader Board shows for [$from, $to].
  *
  * @return array{boards: array, totals: array, top_programs: array, top_campaigns: array,
- *               signed: list<array>, no_sales_today: array}
+ *               signed: list<array>}
  */
 function leaderboard(string $from, string $to): array
 {
-    $today = today();
     $saleStatuses = 'status=in.(' . implode(',', SALE_STATUSES) . ')';
     $person = 'names,surnames,username';
     $reported = 'or(' . implode(',', array_map(fn ($d) => 'report_dates.cs.["' . $d . '"]', range_days($from, $to))) . ')';
@@ -131,13 +127,7 @@ function leaderboard(string $from, string $to): array
         'opportunities' => "opportunities?select=sales_agent_id,language,country,program,lead_source,agent:sales_agent_id($person)"
             . '&sales_agent_id=not.is.null&order=sales_agent_id'
             . '&and=' . rawurlencode('(or(hour_presence.is.null,hour_presence.not.cs.["SIGNED"]),' . $reported . ')'),
-        'salesTeam' => "user_roles?select=roles!inner(name),users(id,$person,manager_id,status,manager:manager_id($person))"
-            . '&roles.name=eq.SALES&order=user_id',
     ];
-    // Today's sellers: derived from the range when it is today, otherwise one more parallel query
-    if ($from !== $today || $to !== $today) {
-        $paths['todaySales'] = 'sales?select=assigned_to&' . $saleStatuses . '&' . created_at_range($today, $today);
-    }
 
     $data = supabase_select_many(array_map(fn ($p) => $p . '&limit=1000', $paths));
     foreach ($paths as $key => $path) {
@@ -277,52 +267,12 @@ function leaderboard(string $from, string $to): array
     uasort($programs, $byCount);
     uasort($campaigns, $byCount);
 
-    // ---------- Agents without sales today ----------
-    $todaySellers = isset($data['todaySales'])
-        ? array_fill_keys(array_filter(array_map(fn ($r) => (string) ($r['assigned_to'] ?? ''), $data['todaySales'])), true)
-        : $sellers;
-    $groups = [];
-    $combined = defined('LEADERBOARD_COMBINED_MANAGERS') ? array_map('strtolower', LEADERBOARD_COMBINED_MANAGERS) : [];
-    foreach ($data['salesTeam'] as $link) {
-        $u = embed_first($link['users'] ?? null);
-        if ($u === null || (int) ($u['status'] ?? 0) !== 1 || isset($todaySellers[(string) $u['id']])) {
-            continue;
-        }
-        $manager = embed_first($u['manager'] ?? null);
-        $managerKey = (string) ($u['manager_id'] ?? '') !== '' ? (string) $u['manager_id'] : NO_MANAGER_KEY;
-        $managerName = $managerKey === NO_MANAGER_KEY ? 'No manager' : person_name($manager, 'No manager');
-        if ($manager !== null && in_array(strtolower((string) ($manager['username'] ?? '')), $combined, true)) {
-            $managerKey = '__combined__';
-            $managerName = LEADERBOARD_COMBINED_LABEL;
-        }
-        $id = (string) $u['id'];
-        $deals = 0;
-        $debt = 0.0;
-        foreach ($agents as $bySegment) {
-            $deals += $bySegment[$id]['deals'] ?? 0;
-            $debt += $bySegment[$id]['debt'] ?? 0.0;
-        }
-        $groups[$managerKey]['manager'] = $managerName;
-        $groups[$managerKey]['agents'][] = ['name' => person_name($u, $id), 'deals' => $deals, 'debt' => $debt];
-    }
-    foreach ($groups as &$group) {
-        usort($group['agents'], fn ($a, $b) => [$b['deals'], $b['debt'], $a['name']] <=> [$a['deals'], $a['debt'], $b['name']]);
-    }
-    unset($group);
-    uasort($groups, function ($a, $b) {
-        if (($a['manager'] === 'No manager') !== ($b['manager'] === 'No manager')) {
-            return $a['manager'] === 'No manager' ? 1 : -1;
-        }
-        return strcasecmp($a['manager'], $b['manager']);
-    });
-
     return [
         'boards' => $boards,
         'totals' => $totals,
         'top_programs' => array_slice($programs, 0, 5, true),
         'top_campaigns' => array_slice($campaigns, 0, 5, true),
         'signed' => $signed,
-        'no_sales_today' => array_values($groups),
     ];
 }
 
