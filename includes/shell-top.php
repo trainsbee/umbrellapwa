@@ -15,7 +15,7 @@ require_once __DIR__ . '/auth.php';
 
 $activeNav = $activeNav ?? '';
 $user = $user ?? current_user() ?? ['name' => 'Umbrella', 'roles' => []];
-$roleLabel = !empty($user['roles']) ? implode(', ', $user['roles']) : 'No role assigned';
+$username = (string) ($user['username'] ?? '');
 $bodyClass = 'has-shell';
 require __DIR__ . '/head.php';
 ?>
@@ -43,7 +43,7 @@ require __DIR__ . '/head.php';
       <span class="avatar"><?= e(initials($user['name'])) ?></span>
       <span class="profile-text">
         <strong><?= e($user['name']) ?></strong>
-        <small><?= e($roleLabel) ?></small>
+        <?php if ($username !== ''): ?><small>@<?= e($username) ?></small><?php endif; ?>
       </span>
       <?= icon('chevron-right', 16, 'row-arrow') ?>
     </a>

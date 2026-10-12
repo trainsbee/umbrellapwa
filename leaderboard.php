@@ -155,46 +155,5 @@ require __DIR__ . '/includes/shell-top.php';
   <?php endforeach; ?>
 </div>
 
-<!-- Period totals -->
-<section class="panel totals-panel">
-  <h2 class="panel-title">Period totals</h2>
-  <dl class="totals">
-    <?php foreach ([
-        'Total sales' => $t['sales'], 'Total debt' => money_exact(round($t['debt'], 2)),
-        'Sales without Other Leads' => $t['primary_sales'], 'Debt without Other Leads' => money_exact(round($t['primary_debt'], 2)),
-        'Other Leads sales' => $t['other_leads_sales'], 'Other Leads debt' => money_exact(round($t['other_leads_debt'], 2)),
-        'On the boards' => $t['classified'], 'Unclassified' => $t['other_sales'],
-    ] as $label => $value): ?>
-      <div><dt><?= e($label) ?></dt><dd><?= e((string) $value) ?></dd></div>
-    <?php endforeach; ?>
-  </dl>
-</section>
-
-<!-- Signed sales -->
-<section class="board">
-  <header class="board-header">
-    <h2 class="board-title">Signed sales</h2>
-    <span class="board-meta"><?= count($lb['signed']) ?> records · newest first</span>
-  </header>
-  <?php if ($lb['signed'] === []): ?>
-    <p class="panel-empty">No signed sales in this range.</p>
-  <?php else: ?>
-    <ul class="records">
-      <?php foreach ($lb['signed'] as $s): ?>
-        <li class="record">
-          <div class="record-main">
-            <strong class="record-name"><?= e($s['client'] !== '' ? $s['client'] : 'No name') ?></strong>
-            <?php if ($s['phone'] !== ''): ?><a class="record-phone" href="tel:<?= e(preg_replace('/\D+/', '', $s['phone'])) ?>"><?= e(phone($s['phone'])) ?></a><?php endif; ?>
-            <span class="record-meta"><?= e(implode(' · ', array_filter([local_time($s['created_at']), $s['agent'], $s['to'] !== '' ? 'TO ' . $s['to'] : '', $s['program'], $s['campaign'], $s['segment']]))) ?></span>
-          </div>
-          <div class="record-side">
-            <span class="record-amount"><?= e(money_exact($s['debt'])) ?></span>
-            <span class="pill pill--<?= e(status_tone($s['status'])) ?>"><?= e(status_label($s['status'])) ?></span>
-          </div>
-        </li>
-      <?php endforeach; ?>
-    </ul>
-  <?php endif; ?>
-</section>
 <?php endif; ?>
 <?php require __DIR__ . '/includes/shell-bottom.php'; ?>

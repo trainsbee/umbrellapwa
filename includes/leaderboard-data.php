@@ -111,7 +111,7 @@ function passed_compliance($compliance): bool
  * Everything the Leader Board shows for [$from, $to].
  *
  * @return array{boards: array, totals: array, top_programs: array, top_campaigns: array,
- *               signed: list<array>}
+ *               }
  */
 function leaderboard(string $from, string $to): array
 {
@@ -120,10 +120,9 @@ function leaderboard(string $from, string $to): array
     $reported = 'or(' . implode(',', array_map(fn ($d) => 'report_dates.cs.["' . $d . '"]', range_days($from, $to))) . ')';
 
     $paths = [
-        'sales' => 'sales?select=id,client_full_name,assigned_to,sales_manager_id,to_id,debt,created_at,language,country,lead_source,status,'
-            . "agent:assigned_to($person),manager:sales_manager_id($person),to_user:to_id($person),"
-            . 'processing(phone,program),compliance(compliance_status)'
-            . '&' . $saleStatuses . '&' . created_at_range($from, $to) . '&order=created_at.desc,id.desc',
+        'sales' => 'sales?select=id,assigned_to,to_id,debt,language,country,lead_source,'
+            . "agent:assigned_to($person),to_user:to_id($person),processing(program),compliance(compliance_status)"
+            . '&' . $saleStatuses . '&' . created_at_range($from, $to) . '&order=id',
         'opportunities' => "opportunities?select=sales_agent_id,language,country,program,lead_source,agent:sales_agent_id($person)"
             . '&sales_agent_id=not.is.null&order=sales_agent_id'
             . '&and=' . rawurlencode('(or(hour_presence.is.null,hour_presence.not.cs.["SIGNED"]),' . $reported . ')'),
@@ -137,11 +136,9 @@ function leaderboard(string $from, string $to): array
     // ---------- Sales by segment and agent ----------
     $agents = [];   // segment => agentKey => [deals, debt, to_ids]
     $names = [];    // agentKey => display name
-    $totals = ['sales' => 0, 'debt' => 0.0, 'primary_sales' => 0, 'primary_debt' => 0.0, 'other_leads_sales' => 0,
-               'other_leads_debt' => 0.0, 'classified' => 0, 'other_sales' => 0, 'incomplete_compliance' => 0];
+    $totals = ['sales' => 0, 'debt' => 0.0, 'incomplete_compliance' => 0];
     $programs = [];
     $campaigns = [];
-    $signed = [];
     $sellers = [];
 
     foreach ($data['sales'] as $row) {
@@ -159,14 +156,6 @@ function leaderboard(string $from, string $to): array
         $totals['sales']++;
         $totals['debt'] += $debt;
         $passed || $totals['incomplete_compliance']++;
-        if ($otherLeads) {
-            $totals['other_leads_sales']++;
-            $totals['other_leads_debt'] += $debt;
-        } else {
-            $totals['primary_sales']++;
-            $totals['primary_debt'] += $debt;
-            $segment === 'other' ? $totals['other_sales']++ : $totals['classified']++;
-        }
 
         $a = &$agents[$segment][$agentKey];
         $a['deals'] = ($a['deals'] ?? 0) + 1;
@@ -184,19 +173,6 @@ function leaderboard(string $from, string $to): array
         $campaigns[$campaignLabel]['sales'] = ($campaigns[$campaignLabel]['sales'] ?? 0) + 1;
         $campaigns[$campaignLabel]['incomplete'] = ($campaigns[$campaignLabel]['incomplete'] ?? 0) + ($passed ? 0 : 1);
 
-        $signed[] = [
-            'created_at' => (string) ($row['created_at'] ?? ''),
-            'phone' => (string) ($processing['phone'] ?? ''),
-            'client' => (string) ($row['client_full_name'] ?? ''),
-            'program' => $program,
-            'campaign' => (string) ($row['lead_source'] ?? ''),
-            'agent' => $agentName,
-            'manager' => (string) ($row['sales_manager_id'] ?? '') !== '' ? person_name(embed_first($row['manager'] ?? null), 'No manager') : 'No manager',
-            'to' => $toName,
-            'status' => (string) ($row['status'] ?? ''),
-            'debt' => $debt,
-            'segment' => SEGMENT_LABELS[$segment],
-        ];
     }
 
     // ---------- Opportunities by segment and agent ----------
@@ -272,7 +248,6 @@ function leaderboard(string $from, string $to): array
         'totals' => $totals,
         'top_programs' => array_slice($programs, 0, 5, true),
         'top_campaigns' => array_slice($campaigns, 0, 5, true),
-        'signed' => $signed,
     ];
 }
 

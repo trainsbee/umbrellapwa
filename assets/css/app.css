@@ -809,13 +809,4 @@ a.metric:active { transform: scale(.98); }
 .agent-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 .tag { padding: 1px 6px; font-size: 10.5px; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-radius: 4px; }
 
-/* Period totals */
-.totals-panel { margin-top: 10px; }
-.totals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 0; }
-.totals div { padding: 10px; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; }
-.totals dt { font-size: 11px; color: var(--text-3); }
-.totals dd { margin: 4px 0 0; font-size: 16px; font-weight: 700; font-variant-numeric: tabular-nums; }
-
-@media (max-width: 760px) {
-  .totals { grid-template-columns: 1fr 1fr; }
 }
