@@ -95,4 +95,9 @@
   window.addEventListener('offline', function () { setOfflineBanner(true); });
   window.addEventListener('online', function () { setOfflineBanner(false); });
   if (!navigator.onLine) setOfflineBanner(true);
+
+  // <input data-autosubmit> submits its form as soon as the value changes
+  document.addEventListener('change', function (e) {
+    if (e.target.matches('[data-autosubmit]') && e.target.form) e.target.form.submit();
+  });
 })();
