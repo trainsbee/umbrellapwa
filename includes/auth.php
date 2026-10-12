@@ -55,8 +55,9 @@ function attempt_login(string $username, string $password): array
         return ['ok' => false, 'error' => 'Sign in is not available right now.'];
     }
 
+    // User and roles in a single request
     $rows = supabase_select('users', 'username=eq.' . rawurlencode($username)
-        . '&select=id,username,password,names,surnames,status&limit=1');
+        . '&select=id,username,password,names,surnames,status,user_roles(roles(name))&limit=1');
     $row = $rows[0] ?? null;
 
     // Same message for unknown users and wrong passwords
@@ -68,7 +69,7 @@ function attempt_login(string $username, string $password): array
     }
 
     $roles = [];
-    foreach (supabase_select('user_roles', 'user_id=eq.' . rawurlencode((string) $row['id']) . '&select=roles(name)') as $r) {
+    foreach ($row['user_roles'] ?? [] as $r) {
         if (!empty($r['roles']['name'])) {
             $roles[] = (string) $r['roles']['name'];
         }

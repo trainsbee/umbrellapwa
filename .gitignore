@@ -17,3 +17,6 @@ includes/config.local.php
 /vendor/
 *.zip
 *.log
+
+# Server-side cache (contains query results)
+/storage/

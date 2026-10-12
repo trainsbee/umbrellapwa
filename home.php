@@ -13,10 +13,15 @@ $previous = (new DateTimeImmutable($date))->modify('-1 day')->format('Y-m-d');
 $next = (new DateTimeImmutable($date))->modify('+1 day')->format('Y-m-d');
 $isToday = $date === today();
 
-$sales = sales_summary($date);
-$leftBehind = left_behind_snapshot($date);
+// Both queries run at the same time (and are briefly cached on the server)
+$data = supabase_select_many([
+    'sales' => sales_summary_path($date),
+    'leftBehind' => left_behind_snapshot_path($date),
+], cache_ttl($date));
+$sales = sales_summary_from_rows($data['sales']);
+$leftBehind = left_behind_snapshot_from_rows($data['leftBehind']);
 $leftBehindCount = $leftBehind['count'] ?? 0;
-$averageDebt = $leftBehind !== null ? left_behind_average_debt($leftBehind['id']) : 0.0;
+$averageDebt = $leftBehind['average_debt'] ?? 0.0;
 
 // Share of the day's leads that closed vs. were left behind
 $total = $sales['sales'] + $leftBehindCount;

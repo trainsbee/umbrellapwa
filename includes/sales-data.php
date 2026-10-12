@@ -27,17 +27,22 @@ function created_at_range(string $from, string $to): string
         . '&created_at=lt.' . rawurlencode($end->format('Y-m-d\TH:i:s\Z'));
 }
 
+/** Query behind the day summary (one request; see sales_summary_from_rows). */
+function sales_summary_path(string $date): string
+{
+    return 'sales?select=status,language,lead_source,processing:processing_id(program)'
+        . '&' . created_at_range($date, $date)
+        . '&status=in.(SIGNED,THREE_DAYS_WAIT,SIGNING)&limit=5000';
+}
+
 /**
- * Everything the dashboard needs about sales for one day, from a single query.
+ * Everything the dashboard needs about sales for one day.
  *
  * @return array{sales: int, spanish: int, english: int, signing: int, three_day_wait: int,
  *               signed: int, top_programs: array<string, int>, top_campaigns: array<string, int>}
  */
-function sales_summary(string $date, int $top = 5): array
+function sales_summary_from_rows(array $rows, int $top = 5): array
 {
-    $rows = supabase_select('sales', 'select=status,language,lead_source,processing:processing_id(program)'
-        . '&' . created_at_range($date, $date)
-        . '&status=in.(SIGNED,THREE_DAYS_WAIT,SIGNING)&limit=5000');
 
     $summary = ['sales' => 0, 'spanish' => 0, 'english' => 0, 'signing' => 0, 'three_day_wait' => 0, 'signed' => 0,
                 'top_programs' => [], 'top_campaigns' => []];
@@ -81,9 +86,10 @@ function sales_records(string $from, string $to, ?string $status = null, int $li
         ? 'status=eq.' . rawurlencode($status)
         : 'status=in.(' . implode(',', SALE_STATUSES) . ')';
 
-    $rows = supabase_select('sales', 'select=client_full_name,debt,status,language,lead_source,created_at,processing:processing_id(phone,program)'
+    $path = 'sales?select=client_full_name,debt,status,language,lead_source,created_at,processing:processing_id(phone,program)'
         . '&' . created_at_range($from, $to) . '&' . $filter
-        . '&order=created_at.desc&limit=' . $limit);
+        . '&order=created_at.desc&limit=' . $limit;
+    $rows = supabase_select_many(['rows' => $path], cache_ttl($to))['rows'];
 
     return array_map(fn (array $row): array => [
         'name' => (string) ($row['client_full_name'] ?? ''),

@@ -19,7 +19,7 @@ DirectoryIndex index.php
 # Block internal folders and sensitive files
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^(includes|tools|deploy)/ - [F,L]
+    RewriteRule ^(includes|tools|deploy|storage)/ - [F,L]
     RewriteRule (^|/)\. - [F,L]
     RewriteRule \.(sql|md|log|zip)$ - [F,L]
 </IfModule>
