@@ -114,4 +114,14 @@
       panel.hidden = panel.getAttribute('data-tab-panel') !== key;
     });
   });
+
+  // <input data-filter-list="#list"> hides items whose data-filter-text does not match
+  document.addEventListener('input', function (e) {
+    var input = e.target.closest('[data-filter-list]');
+    if (!input) return;
+    var term = input.value.trim().toLowerCase();
+    document.querySelectorAll(input.getAttribute('data-filter-list') + ' [data-filter-text]').forEach(function (item) {
+      item.hidden = term !== '' && item.getAttribute('data-filter-text').indexOf(term) === -1;
+    });
+  });
 })();

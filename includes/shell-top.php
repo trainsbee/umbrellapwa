@@ -59,6 +59,15 @@ require __DIR__ . '/head.php';
       <?php endforeach; ?>
     </nav>
 
+    <?php if (is_admin($user)): ?>
+      <p class="section-title">Admin</p>
+      <div class="group">
+        <a href="users.php" class="row<?= in_array(basename($_SERVER['SCRIPT_NAME']), ['users.php', 'user-detail.php'], true) ? ' active' : '' ?>">
+          <?= icon('shield', 18, 'row-icon') ?><span class="row-label">Users &amp; access</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        </a>
+      </div>
+    <?php endif; ?>
+
     <p class="section-title">Other settings</p>
     <div class="group">
       <a href="#" class="row">
@@ -67,7 +76,7 @@ require __DIR__ . '/head.php';
       <a href="#" class="row">
         <?= icon('lock', 18, 'row-icon') ?><span class="row-label">Password</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
-      <a href="#" class="row">
+      <a href="notifications.php" class="row<?= $activeNav === '' && basename($_SERVER['SCRIPT_NAME']) === 'notifications.php' ? ' active' : '' ?>">
         <?= icon('bell', 18, 'row-icon') ?><span class="row-label">Notifications</span><?= icon('chevron-right', 16, 'row-arrow') ?>
       </a>
       <button type="button" class="row" data-theme-toggle role="switch" aria-checked="true">

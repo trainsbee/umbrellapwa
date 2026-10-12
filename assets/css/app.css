@@ -810,3 +810,64 @@ a.metric:active { transform: scale(.98); }
 .tag { padding: 1px 6px; font-size: 10.5px; font-weight: 600; color: var(--text-2); background: var(--surface-2); border-radius: 4px; }
 
 }
+
+/* ==================================================================
+   Notifications, Users & access
+   ================================================================== */
+
+.back-link { margin: 4px 0 8px; padding-left: 8px; }
+.notice--success { color: var(--green); border-color: color-mix(in srgb, var(--green) 35%, transparent); background: color-mix(in srgb, var(--green) 8%, transparent); }
+
+/* This device */
+.push-device { margin-bottom: 10px; }
+.push-device-head { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; }
+.push-device-head .metric-icon { margin: 0; flex: none; }
+.push-device-head .panel-title { margin: 0; }
+.push-status { margin: 4px 0 0; font-size: 13px; color: var(--text-2); }
+.push-status--ok { color: var(--green); }
+.push-status--warn { color: var(--amber); }
+.push-status--error { color: var(--red); }
+.push-actions { display: flex; flex-direction: column; gap: 8px; }
+
+/* Alert rows with a switch */
+.alert-list { list-style: none; margin: 0; padding: 0; }
+.alert-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; }
+.alert-item + .alert-item { border-top: 1px solid var(--border); }
+.alert-icon { flex: none; display: grid; place-items: center; width: 32px; height: 32px; color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 6px; }
+.alert-text, .setting-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.alert-text strong, .setting-text strong { font-size: 14px; font-weight: 600; }
+.alert-text small, .setting-text small { font-size: 12px; color: var(--text-2); }
+.toggle { padding: 0; background: none; border: 0; cursor: pointer; }
+.toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: 999px; }
+
+/* Settings with a native checkbox styled as a switch */
+.setting { display: flex; align-items: center; gap: 12px; width: 100%; cursor: pointer; }
+.switch-input {
+  appearance: none; -webkit-appearance: none; flex: none; position: relative;
+  width: 34px; height: 20px; margin: 0;
+  border: 1.5px solid var(--text-3); border-radius: 999px;
+  cursor: pointer; transition: border-color .2s, background-color .2s;
+}
+.switch-input::after {
+  content: ""; position: absolute; top: 2.5px; left: 3px;
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--text-3);
+  transition: transform .2s, background-color .2s;
+}
+.switch-input:checked { border-color: var(--accent); background: var(--accent); }
+.switch-input:checked::after { transform: translateX(13px); background: #fff; }
+.switch-input:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.alert-item--setting { flex-direction: column; align-items: stretch; gap: 8px; }
+.scope-select { padding: 0 10px; }
+.user-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; }
+.test-button { margin-top: 0; }
+
+/* Users list */
+.search-input { margin-bottom: 12px; }
+.records .record:has(.record-link) { padding: 0; }
+.record-link { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px 14px; color: inherit; text-decoration: none; }
+.record-link:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.record-link .record-main { flex: 1; }
+.record[hidden] { display: none; }
+.user-header { display: flex; align-items: center; gap: 14px; }
+.agent-avatar--lg { width: 48px; height: 48px; font-size: 15px; }
