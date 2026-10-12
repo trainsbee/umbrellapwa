@@ -51,23 +51,26 @@ require __DIR__ . '/includes/shell-top.php';
   <?php if ($rules === []): ?>
     <p class="panel-empty">An administrator has not assigned you any alerts yet.</p>
   <?php else: ?>
-    <ul class="alert-list">
-      <?php foreach (PUSH_EVENTS as $event => [$label, $description, $iconName]): if (!isset($rules[$event])) { continue; } $muted = $rules[$event]['muted']; ?>
-        <li class="alert-item">
-          <span class="alert-icon"><?= icon($iconName, 16) ?></span>
-          <span class="alert-text">
-            <strong><?= e($label) ?></strong>
-            <small><?= e(PUSH_SCOPES[$rules[$event]['scope']] ?? '') ?> · <?= e($description) ?></small>
-          </span>
-          <form method="post" action="notifications.php">
-            <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
-            <input type="hidden" name="event" value="<?= e($event) ?>">
-            <input type="hidden" name="muted" value="<?= $muted ? '0' : '1' ?>">
-            <button type="submit" class="toggle" role="switch" aria-checked="<?= $muted ? 'false' : 'true' ?>" aria-label="<?= e($label) ?>"><span class="switch" aria-hidden="true"></span></button>
-          </form>
-        </li>
-      <?php endforeach; ?>
-    </ul>
+    <?php foreach (PUSH_STAGES as $stage => $stageLabel): if (array_intersect_key(push_events_in($stage), $rules) === []) { continue; } ?>
+      <p class="alert-stage"><?= e($stageLabel) ?></p>
+      <ul class="alert-list">
+        <?php foreach (push_events_in($stage) as $event => [$label, $description, $iconName]): if (!isset($rules[$event])) { continue; } $muted = $rules[$event]['muted']; ?>
+          <li class="alert-item">
+            <span class="alert-icon alert-icon--<?= e($event === 'compliance.cancelled' ? 'danger' : $stage) ?>"><?= icon($iconName, 16) ?></span>
+            <span class="alert-text">
+              <strong><?= e($label) ?></strong>
+              <small><?= e(PUSH_SCOPES[$rules[$event]['scope']] ?? '') ?> · <?= e($description) ?></small>
+            </span>
+            <form method="post" action="notifications.php">
+              <input type="hidden" name="csrf" value="<?= e(csrf_token()) ?>">
+              <input type="hidden" name="event" value="<?= e($event) ?>">
+              <input type="hidden" name="muted" value="<?= $muted ? '0' : '1' ?>">
+              <button type="submit" class="toggle" role="switch" aria-checked="<?= $muted ? 'false' : 'true' ?>" aria-label="<?= e($label) ?>"><span class="switch" aria-hidden="true"></span></button>
+            </form>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    <?php endforeach; ?>
   <?php endif; ?>
 </section>
 <?php require __DIR__ . '/includes/shell-bottom.php'; ?>

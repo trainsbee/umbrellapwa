@@ -78,22 +78,26 @@ require __DIR__ . '/includes/shell-top.php';
 
     <section class="panel" data-alerts<?= $target['access'] ? '' : ' hidden' ?>>
       <h2 class="panel-title">Push alerts</h2>
-      <ul class="alert-list">
-        <?php foreach (PUSH_EVENTS as $event => [$label, $description, $iconName]): $field = str_replace('.', '_', $event); $rule = $rules[$event] ?? null; ?>
-          <li class="alert-item alert-item--setting">
-            <label class="setting">
-              <span class="alert-icon"><?= icon($iconName, 16) ?></span>
-              <span class="setting-text"><strong><?= e($label) ?></strong><small><?= e($description) ?><?= ($rule['muted'] ?? false) ? ' · muted by the user' : '' ?></small></span>
-              <input type="checkbox" class="switch-input" name="alert[<?= e($field) ?>]" value="1"<?= $rule !== null ? ' checked' : '' ?>>
-            </label>
-            <select class="input scope-select" name="scope[<?= e($field) ?>]" aria-label="Who: <?= e($label) ?>">
-              <?php foreach (PUSH_SCOPES as $scope => $scopeLabel): ?>
-                <option value="<?= e($scope) ?>"<?= ($rule['scope'] ?? 'all') === $scope ? ' selected' : '' ?>><?= e($scopeLabel) ?></option>
-              <?php endforeach; ?>
-            </select>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+      <p class="panel-hint">Choose which moments of the client pipeline this user is told about, and for whom.</p>
+      <?php foreach (PUSH_STAGES as $stage => $stageLabel): ?>
+        <p class="alert-stage"><?= e($stageLabel) ?></p>
+        <ul class="alert-list">
+          <?php foreach (push_events_in($stage) as $event => [$label, $description, $iconName]): $field = str_replace('.', '_', $event); $rule = $rules[$event] ?? null; ?>
+            <li class="alert-item alert-item--setting">
+              <label class="setting">
+                <span class="alert-icon alert-icon--<?= e($event === 'compliance.cancelled' ? 'danger' : $stage) ?>"><?= icon($iconName, 16) ?></span>
+                <span class="setting-text"><strong><?= e($label) ?></strong><small><?= e($description) ?><?= ($rule['muted'] ?? false) ? ' · muted by the user' : '' ?></small></span>
+                <input type="checkbox" class="switch-input" name="alert[<?= e($field) ?>]" value="1"<?= $rule !== null ? ' checked' : '' ?>>
+              </label>
+              <select class="input scope-select" name="scope[<?= e($field) ?>]" aria-label="Who: <?= e($label) ?>">
+                <?php foreach (PUSH_SCOPES as $scope => $scopeLabel): ?>
+                  <option value="<?= e($scope) ?>"<?= ($rule['scope'] ?? 'all') === $scope ? ' selected' : '' ?>><?= e($scopeLabel) ?></option>
+                <?php endforeach; ?>
+              </select>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      <?php endforeach; ?>
     </section>
 
     <button type="submit" class="btn btn--primary btn--block"><?= icon('save', 14) ?> Save changes</button>
