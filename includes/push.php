@@ -249,7 +249,7 @@ function push_icon(string $event): string
  * Each alert has its own image (assets/icons/alerts, tools/generate-alert-icons.js).
  *
  * "Own" clients are the ones a user is the sales agent of or filled in at
- * Processing (the person who enters the client's data).
+ * Sales (the person who enters the client's data, see sale_data_entry_id).
  *
  * @return array{owners: list<?string>, managers: list<?string>, message: array}|null
  */
@@ -257,8 +257,8 @@ function push_build_event(string $event, string $id): ?array
 {
     $id = rawurlencode($id);
     $agent = 'names,surnames,manager_id';
-    $saleFields = "id,processing_id,client_full_name,status,debt,us_state,assigned_to,sales_manager_id,agent:assigned_to($agent),"
-        . "processing(program,created_by,creator:created_by($agent))";
+    $saleFields = "id,processing_id,client_full_name,status,debt,us_state,assigned_to,sales_manager_id,status_change_history,"
+        . "agent:assigned_to($agent),processing(program)";
 
     if ($event === 'processing.new') {
         $row = supabase_select('processing', "select=id,phone,program,created_by,creator:created_by($agent)&id=eq.$id&limit=1")[0] ?? null;
@@ -306,10 +306,12 @@ function push_build_event(string $event, string $id): ?array
     $debt = money($row['debt'] ?? null);
     $state = strtoupper(trim((string) ($row['us_state'] ?? '')));
     $processing = push_embed($row['processing'] ?? null) ?? [];
-    $creator = push_embed($processing['creator'] ?? null);
+    $dataEntryId = sale_data_entry_id($row['status_change_history'] ?? null);
+    $dataEntry = $dataEntryId === null ? null
+        : supabase_select('users', "select=$agent&id=eq." . rawurlencode($dataEntryId) . '&limit=1')[0] ?? null;
     // Last line: who filled in the data first, then the agent
     $team = implode(' · ', array_filter([
-        ($l = push_agent_label($creator)) !== '' ? 'Filled by ' . $l : '',
+        ($l = push_agent_label($dataEntry)) !== '' ? 'Filled by ' . $l : '',
         ($l = push_agent_label(push_embed($row['agent'] ?? null))) !== '' ? 'Agent ' . $l : '',
     ]));
     $details = implode(' · ', array_filter([$debt !== '—' ? 'Debt ' . $debt : '', $state, (string) ($processing['program'] ?? '')]));
@@ -330,8 +332,8 @@ function push_build_event(string $event, string $id): ?array
     }
 
     return [
-        'owners' => [$row['assigned_to'] ?? null, $processing['created_by'] ?? null],
-        'managers' => [$row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null), $creator['manager_id'] ?? null],
+        'owners' => [$row['assigned_to'] ?? null, $dataEntryId],
+        'managers' => [$row['sales_manager_id'] ?? (push_embed($row['agent'] ?? null)['manager_id'] ?? null), $dataEntry['manager_id'] ?? null],
         'message' => [
             'title' => $title,
             'body' => push_lines([$headline, $details, $team]),

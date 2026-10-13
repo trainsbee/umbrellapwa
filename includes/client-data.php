@@ -49,6 +49,20 @@ function client_embed($embed): ?array
     return is_array($embed) && $embed !== [] ? $embed : null;
 }
 
+/**
+ * Who filled in the client's data at Sales: the first user in the sale's
+ * status change history (the one who moved it out of PENDING), or null.
+ */
+function sale_data_entry_id($history): ?string
+{
+    foreach (is_array($history) ? $history : [] as $change) {
+        if (!empty($change['user_id'])) {
+            return (string) $change['user_id'];
+        }
+    }
+    return null;
+}
+
 /** First time the sale's status timeline reached one of $statuses (UTC ISO), or null. */
 function client_timeline_at(array $timeline, array $statuses): ?string
 {
@@ -77,7 +91,7 @@ function client_profile(string $processingId): ?array
     $person = 'names,surnames';
     $data = supabase_select_many([
         'processing' => "processing?select=id,phone,status,program,created_at,transferred_at,creator:created_by($person)&id=eq.$id&limit=1",
-        'sale' => 'sales?select=id,client_full_name,status,final_status,us_state,city,country,language,debt,lead_source,created_at,status_timeline,'
+        'sale' => 'sales?select=id,client_full_name,status,final_status,us_state,city,country,language,debt,lead_source,created_at,status_timeline,status_change_history,'
             . "agent:assigned_to($person),manager:sales_manager_id($person),"
             . 'compliance(compliance_status,signature_ip,ip_state,ip_city,bank_account_change,bank_account_change_done,legal_protection,created_at,updated_at)'
             . "&processing_id=eq.$id&limit=1",
@@ -89,6 +103,9 @@ function client_profile(string $processingId): ?array
     $sale = $data['sale'][0] ?? null;
     $compliance = client_embed($sale['compliance'] ?? null);
     $timeline = is_array($sale['status_timeline'] ?? null) ? $sale['status_timeline'] : [];
+    $dataEntryId = sale_data_entry_id($sale['status_change_history'] ?? null);
+    $dataEntry = $dataEntryId === null ? null
+        : supabase_select('users', "select=$person&id=eq." . rawurlencode($dataEntryId) . '&limit=1')[0] ?? null;
 
     // Name, state and debt from the sale; before it exists, from opportunities
     $name = client_name_case((string) ($sale['client_full_name'] ?? ''));
@@ -131,7 +148,8 @@ function client_profile(string $processingId): ?array
         'lead_source' => (string) ($sale['lead_source'] ?? ''),
         'agent' => client_person(client_embed($sale['agent'] ?? null)),
         'manager' => client_person(client_embed($sale['manager'] ?? null)),
-        'processor' => client_person(client_embed($processing['creator'] ?? null)),
+        'data_entry' => client_person($dataEntry),
+        'added_by' => client_person(client_embed($processing['creator'] ?? null)),
         'created_at' => (string) $processing['created_at'],
         'ip' => $ip,
         'account_change' => $accountChange,
