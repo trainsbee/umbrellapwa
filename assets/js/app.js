@@ -17,6 +17,36 @@
     btn.setAttribute('aria-label', visible ? 'Hide password' : 'Show password');
   });
 
+  // Sync: [data-sync] reloads the current page with fresh data (pages are
+  // never cached, see sw.js) and checks for a new app version on the way.
+  document.addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-sync]');
+    if (!btn || btn.classList.contains('is-syncing')) return;
+    var label = btn.querySelector('span:last-child');
+
+    if (!navigator.onLine) {
+      btn.classList.add('is-offline');
+      if (label) label.textContent = 'Offline';
+      setTimeout(function () {
+        btn.classList.remove('is-offline');
+        if (label) label.textContent = 'Sync';
+      }, 2000);
+      return;
+    }
+
+    btn.classList.add('is-syncing');
+    if (label) label.textContent = 'Syncing';
+    var update = Promise.resolve();
+    if ('serviceWorker' in navigator) {
+      update = navigator.serviceWorker.getRegistration()
+        .then(function (reg) { return reg && reg.update(); })
+        .catch(function () {});
+    }
+    // Never wait more than 3 s for the update check.
+    Promise.race([update, new Promise(function (r) { setTimeout(r, 3000); })])
+      .then(function () { window.location.reload(); });
+  });
+
   // Light / dark theme: any [data-theme-toggle] switches it.
   var THEME_KEY = 'umbrella-theme';
   var THEME_COLORS = { dark: '#0f1012', light: '#f6f6f7' };
