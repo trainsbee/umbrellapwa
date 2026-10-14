@@ -65,6 +65,9 @@ require __DIR__ . '/head.php';
         <a href="users.php" class="row<?= in_array(basename($_SERVER['SCRIPT_NAME']), ['users.php', 'user-detail.php'], true) ? ' active' : '' ?>">
           <?= icon('shield', 18, 'row-icon') ?><span class="row-label">Users &amp; access</span><?= icon('chevron-right', 16, 'row-arrow') ?>
         </a>
+        <a href="active-users.php" class="row<?= basename($_SERVER['SCRIPT_NAME']) === 'active-users.php' ? ' active' : '' ?>">
+          <?= icon('activity', 18, 'row-icon') ?><span class="row-label">Active users</span><?= icon('chevron-right', 16, 'row-arrow') ?>
+        </a>
       </div>
     <?php endif; ?>
 

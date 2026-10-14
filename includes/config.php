@@ -10,7 +10,7 @@ declare(strict_types=1);
 const APP_NAME        = 'UmbrellaApp';
 const APP_SHORT_NAME  = 'Umbrella';
 const APP_DESCRIPTION = 'UmbrellaApp - your operation in real time';
-const APP_VERSION     = '0.3.0';
+const APP_VERSION     = '0.4.0';
 const APP_LANG        = 'en';
 
 // Business time zone: "today" and every date range are computed here (the

@@ -16,7 +16,7 @@
  * Only bump CACHE_VERSION to change the PRECACHE list or wipe the cache.
  */
 
-const CACHE_VERSION = 'v8';
+const CACHE_VERSION = 'v9';
 const STATIC_CACHE = 'umbrella-static-' + CACHE_VERSION;
 const OFFLINE_URL = 'offline.php';
 

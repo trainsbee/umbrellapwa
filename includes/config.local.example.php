@@ -22,3 +22,7 @@ const VAPID_SUBJECT = 'https://pwa.umbrellasync.com';
 
 // Shared secret Supabase sends in X-Webhook-Secret when a notification event happens
 const PUSH_WEBHOOK_SECRET = 'long-random-string';
+
+// Optional: Supabase anon (public) key. Turns on live "Online now" in Active users
+// (Realtime Presence). It is sent to the browser, so never put the service key here.
+const SUPABASE_ANON_KEY = '';

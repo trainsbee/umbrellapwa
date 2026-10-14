@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/supabase.php';
 require_once __DIR__ . '/access.php';
+require_once __DIR__ . '/presence.php';
 
 function start_session(): void
 {
@@ -122,6 +123,13 @@ function require_login(): array
         header('Location: login.php');
         exit;
     }
+    // "Last seen": written after the page is sent, so it never slows it down
+    register_shutdown_function(function () use ($user): void {
+        if (function_exists('fastcgi_finish_request')) {
+            fastcgi_finish_request();
+        }
+        presence_touch($user);
+    });
     return $user;
 }
 
